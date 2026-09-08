@@ -3,7 +3,7 @@ import type { FileDetails, FileVersion, ReviewJob } from "@ha/domain/workspace"
 import { Link } from "@tanstack/react-router"
 import { Option } from "effect"
 import { AsyncResult } from "effect/unstable/reactivity"
-import { ChevronRight, GitBranch } from "lucide-react"
+import { ChevronRight, GitBranch } from "@workspace/ui/components/icons"
 import { Button } from "@workspace/ui/components/button"
 import {
   cancelRevision,

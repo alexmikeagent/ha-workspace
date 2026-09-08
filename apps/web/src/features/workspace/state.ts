@@ -14,6 +14,17 @@ export const desktopSidebarOpenAtom = Atom.kvs({
   schema: Schema.Boolean,
   defaultValue: () => true,
 })
+export const INSPECTOR_MIN_WIDTH = 280
+export const INSPECTOR_MAX_WIDTH = 560
+export const INSPECTOR_DEFAULT_WIDTH = 330
+export const inspectorWidthAtom = Atom.kvs({
+  runtime: preferenceRuntime,
+  key: "ha-workspace.ui.inspector-width.v1",
+  schema: Schema.Finite.check(
+    Schema.isBetween({ minimum: INSPECTOR_MIN_WIDTH, maximum: INSPECTOR_MAX_WIDTH }),
+  ),
+  defaultValue: () => INSPECTOR_DEFAULT_WIDTH,
+})
 export const inspectorOpenAtom = Atom.writable(
   () => typeof window !== "undefined" && window.innerWidth > 1100,
   (get, open: boolean) => get.setSelf(open),

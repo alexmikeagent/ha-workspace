@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-08T06:56:19.422344+00:00",
+  "checkedAt": "2026-09-08T15:10:07.432835+00:00",
   "htmlGenerated": true,
   "uniqueIds": 39,
   "localAnchorsValid": 14,
@@ -19,8 +19,41 @@
     "eligiblePathAudit": "No omissions or extra fixtures"
   },
   "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
-  "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior.",
-  "applicationVerification": "Source checks clean; 80 TypeScript tests pass under Doppler, default CI passes 79 and skips 1 optional local-runtime check; 21 Python helper tests pass; configured Bun build and Doppler injection pass.",
+  "planBrowserVerification": "Not rerun during this theme documentation update. Static validation does not establish visual behavior.",
+  "applicationVerification": "Vite+ checked 108 formatted files and 66 source files with no lint warnings or type errors. Latest source suite: 85 tests passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Configured production build passed.",
   "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
-  "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed."
+  "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed.",
+  "externalAssets": 0,
+  "designUpdate": {
+    "sourceSnapshot": "2026-09-08",
+    "direction": "Vercel/Geist neutral dark adaptation; Base UI shadcn base-nova; Hugeicons; T3 interaction contract preserved",
+    "planFonts": "Geist-first local stack with system fallback; no network requests",
+    "applicationFonts": "Self-hosted Geist Sans/Mono variable 5.3.0; package-index CSS with Unicode-range subsets",
+    "scope": "Plan verified statically; application theme and interaction QA completed separately by the root task."
+  },
+  "inspectorUpdate": {
+    "context": "File/source metadata only; removed client extracted-text panel and fetch",
+    "width": "Effect Atom persisted preference, default 330px, bounded 280\u2013560px and container; pointer/keyboard above 760px, full-width mobile",
+    "brand": "Compact HA mark and single-line HA Workspace label",
+    "scrollbars": "Neutral track/thumb theme with native scrolling",
+    "verification": "Root integrated-browser QA passed pointer/keyboard resizing, persistence, viewport clamping, full-width mobile behavior, and drawer focus. No console warnings or errors."
+  },
+  "themeBrowserVerification": {
+    "date": "2026-09-08",
+    "desktopViewportWidth": 1224,
+    "font": "Geist loaded",
+    "icons": "Hugeicons rendered",
+    "context": "Metadata-only; removed extracted-text panel absent",
+    "scrollbars": "Dark catalog scrollbar verified",
+    "pointerResize": "330 to 465px across PDF; drag shield removed on release",
+    "keyboardResize": "ArrowRight 449px, Home 280px, End 560px, Shift+ArrowRight 528px",
+    "persistence": "528px survived reload and catalog/document navigation",
+    "compactViewport": "900px viewport, 676px container, inspector clamped to 316px",
+    "mobileViewport": "390px, full-width inspector, no resize handle or horizontal overflow",
+    "drawer": "280px; focuses Companies; Escape restores Open navigation; navigation closes drawer",
+    "sidebar": "Click collapse and Ctrl+B expansion passed",
+    "console": "No warnings or errors",
+    "restoredState": "330px inspector, 1224px desktop viewport",
+    "limitations": "Local viewport checks; remote iPhone access remains unverified. No private filenames or screenshots stored."
+  }
 }

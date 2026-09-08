@@ -1,8 +1,8 @@
 # HA Workspace — architecture and delivery plan
 
-Status: connected local prototype, updated September 8, 2026. The authenticated catalog, Confect/Atom subscriptions, previews, source context, downloads, versioned comments, and bounded exact-text revision jobs are implemented. Doppler injection and the configured production build pass. Source checks, backend tests, browser checks, and real-document verification establish different parts of the result; see `SETUP.md` for their scope. AI execution, generated reports/invoices, full Office editing, and remote access remain future work.
+Status: connected local prototype, updated September 8, 2026. The authenticated catalog, Confect/Atom subscriptions, previews, file/source metadata, downloads, versioned comments, and bounded exact-text revision jobs are implemented. Doppler injection and the configured production build pass. Source checks, backend tests, browser checks, and real-document verification establish different parts of the result; see `SETUP.md` for their scope. AI execution, generated reports/invoices, full Office editing, and remote access remain future work.
 
-Based on the **HA Workflow App Wireframe** task (`01a07ea0-e62b-7351-9374-828b3122a949`) and its final local HTML prototype. Use the wireframe to understand the work: find a file, review it, request a correction, and inspect the next revision. The finished interface will use a modern visual system and clearer interaction design. Its exact layout, spacing, and motion are product decisions, guided by the workflow.
+Based on the **HA Workflow App Wireframe** task (`01a07ea0-e62b-7351-9374-828b3122a949`) and its final local HTML prototype. Use the wireframe to understand the work: find a file, review it, request a correction, and inspect the next revision. The adopted interface uses Vercel-inspired neutral dark surfaces, self-hosted Geist Sans/Mono, Base UI through shadcn `base-nova`, and Hugeicons. T3-style sidebar behavior and accessible motion remain part of the workflow. `DESIGN.md` is the current design authority.
 
 ## Recommended direction
 
@@ -32,7 +32,7 @@ Arrows show logical responsibilities. File bytes go through authenticated upload
 
 The app reads a standalone copy of the consulting and inspection collections. Company/project groupings come from folder evidence, with ambiguous context kept explicit. All four navigation categories share file rows, filters, search, and the version workspace. Catalog queries cap returned matches and tell the view when to narrow a search.
 
-PDF and image previews use protected local content URLs. Word and PowerPoint convert locally to PDF; workbooks expose bounded read-only grids; text is displayed without executing markup. Extracted context is an excerpt from the source, not an AI summary or approved client fact. Comments remain attached to their source revision; important drafts persist through an Effect IndexedDB adapter.
+PDF and image previews use protected local content URLs. Word and PowerPoint convert locally to PDF; workbooks expose bounded read-only grids; text is displayed without executing markup. The Context inspector contains file/source metadata and labeled folder inference. Extracted document text is no longer an inspector feature; backend extraction supports preview and worker validation. Comments remain attached to their source revision; important drafts persist through an Effect IndexedDB adapter.
 
 The first revision operation is deliberately precise: replace one exact match in DOCX, TXT, or Markdown. DOCX edits support uninterrupted body text; headers, fields, tracked changes, and cross-paragraph edits require another workflow. The worker preserves source bytes, validates the candidate, renders Word output, and commits a new immutable version through the durable queue. It does not infer changes from comments or generate new reports.
 
@@ -78,7 +78,7 @@ Use scoped `@confect/*` packages; the unrelated bare `confect` npm package is no
 
 ### Scaffold and tooling
 
-Start from the official shadcn flow: `bunx shadcn@4.21.0 init -t start --monorepo`, choosing Bun, neutral colors, and one primitive base (proposed: Radix). Its monorepo starter currently includes Turborepo. Preserve the generated app/UI arrangement, then replace the generated task orchestration with Vite+ after a baseline build. [shadcn installation](https://ui.shadcn.com/docs/installation/tanstack), [monorepo guide](https://ui.shadcn.com/docs/monorepo).
+The repository began with the official shadcn TanStack Start monorepo flow. Keep its app/UI package arrangement and the established Bun/Vite+ orchestration. The selected primitive base is now Base UI, recorded as `base-nova` in both `components.json` files, with neutral CSS variables and `hugeicons` as the icon library. Geist variable font assets are bundled locally. Do not scaffold over the connected application to apply a visual preset. [shadcn installation](https://ui.shadcn.com/docs/installation/tanstack), [monorepo guide](https://ui.shadcn.com/docs/monorepo), [Base UI support](https://ui.shadcn.com/docs/changelog/2026-01-base-ui).
 
 Run Vite+ migration from the new repository root. Meet its Vite 8+/Vitest 4.1+ migration prerequisites first; inspect aliases and plugin compatibility rather than assuming the scaffold already meets them. Preserve TanStack Start, React, and Tailwind Vite plugins and their documented ordering. Vite+ migration also manages the Vite alias and matching Vitest version. [Migration](https://viteplus.dev/guide/migrate).
 
@@ -202,7 +202,7 @@ Convex queries/mutations stay deterministic and do no filesystem/process I/O. Ev
 | Images       | Protected image preview with fit/zoom controls                                       | Region annotations and richer photo context                           |
 | TXT/Markdown | Plain readable text, source download, exact-text revisions                           | Editor, line anchors, sanitized rich Markdown view                    |
 
-Preview metadata and bytes remain bound to the selected file/version ID. Unsupported formats stay downloadable. The current grid and extracted text are bounded excerpts, not proof of recalculation or Office layout fidelity. Macro and external-resource validation runs before local Office conversion.
+Preview metadata and bytes remain bound to the selected file/version ID. Unsupported formats stay downloadable. Workbook grids and plain-text previews are bounded views, not proof of recalculation or Office layout fidelity. Macro and external-resource validation runs before local Office conversion.
 
 Derived previews are stored outside Git under the private data root, keyed by source hash and the renderer version. Future annotation anchors must stay with their original revision when layout changes; never silently move a comment to a new paragraph or cell.
 
@@ -243,7 +243,7 @@ Use persistent local volumes outside Drive sync, backup metadata with referenced
 ## Delivery sequence and remaining gates
 
 1. **Connected local foundation:** the pinned monorepo, Doppler injection, guarded isolated Convex deployment, authenticated Confect reads/commands, Bun server, and local import are implemented. Continue production-build, reconnect, resource-lifetime, and worker-recovery checks as the surface grows.
-2. **Modern workspace:** real company/project/file views, filters, search, versions, context, and T3-style fully collapsible navigation are connected. The desktop sidebar remembers its state through Effect Atom; Ctrl/Cmd+B, separate mobile navigation, and reduced motion are implemented. Local viewport checks are distinct from remote iPhone testing. Inspector resizing, broader keyboard navigation, and theme expansion remain design work.
+2. **Modern workspace:** real company/project/file views, filters, search, versions, file/source metadata, and T3-style fully collapsible navigation are connected. The desktop sidebar remembers its state through Effect Atom; Ctrl/Cmd+B, separate mobile navigation, and reduced motion are implemented. Local viewport checks are distinct from remote iPhone testing. The inspector now resizes with pointer and keyboard input and saves its width through Effect Atom; mobile keeps its full-width layout. Broader keyboard coverage and theme expansion remain design work.
 3. **Persistent review loop:** previews, downloads, versioned comments, saved drafts, exact-text revision requests, and durable job states are implemented. Validate representative files and changed-preview outcomes. Rich page/region/cell annotations are future work.
 4. **One generated HA report:** select the authorized template, ask only for missing facts, generate/verify/preview, apply a correction, and publish a new filename. Prove the general/Dulles exceptions and same-client authority rules in that workflow.
 5. **Agent and instruction editor:** connect the replaceable runtime adapter, stream durable progress, save/apply instruction versions, and preserve the active run's snapshot. Existing desktop history and credentials are not implicitly inherited.

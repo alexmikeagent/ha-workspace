@@ -25,9 +25,10 @@ import {
   ShieldCheck,
   Sparkles,
   X,
-} from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+} from "@workspace/ui/components/icons"
+import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/ui/components/sheet"
+import { ResizableInspector } from "@/features/workspace/resizable-inspector"
 import {
   desktopSidebarOpenAtom,
   filePageAtom,
@@ -103,15 +104,12 @@ function Navigation({
   return (
     <>
       <div className="workspace-brand">
-        <span className="brand-mark">
-          H<span>A</span>
+        <span className="brand-mark" aria-hidden="true">
+          HA
         </span>
-        <div>
-          <strong>{import.meta.env.VITE_APP_NAME}</strong>
-          <span>Personal workspace</span>
-        </div>
+        <strong>{import.meta.env.VITE_APP_NAME}</strong>
       </div>
-      <div className="nav-group-label">WORKSPACE</div>
+      <div className="nav-group-label">Workspace</div>
       <nav aria-label="Workspace navigation" className="workspace-nav">
         {sections.map((item) => (
           <Link
@@ -129,7 +127,7 @@ function Navigation({
         ))}
       </nav>
       <div className="sidebar-collections">
-        <div className="nav-group-label">CONNECTED SOURCE</div>
+        <div className="nav-group-label">Connected source</div>
         <div className="source-row">
           <HardDrive size={17} />
           <div>
@@ -147,7 +145,7 @@ function Navigation({
         <div className="profile-avatar">HA</div>
         <div>
           <strong>HA Consulting</strong>
-          <span>Local owner session</span>
+          <span>Local owner</span>
         </div>
         <ShieldCheck size={17} />
       </div>
@@ -297,9 +295,6 @@ function Workspace() {
             <main id="workspace-main" className="workspace-main catalog-main">
               <div className="page-heading">
                 <div>
-                  <span className="eyebrow">
-                    {company ? "COMPANY WORKSPACE" : "YOUR WORK, CONNECTED"}
-                  </span>
                   <h1>{project?.name ?? company?.name ?? current.label}</h1>
                   <p>
                     {company
@@ -307,9 +302,6 @@ function Workspace() {
                       : current.description}
                   </p>
                 </div>
-                <span className="section-icon">
-                  <current.icon size={23} />
-                </span>
               </div>
               {AsyncResult.isFailure(state) && (
                 <output className="connection-banner">
@@ -647,7 +639,7 @@ function FileRow({
 function CatalogInspector({ catalog }: { catalog?: Catalog }) {
   const [, setInspectorOpen] = useAtom(inspectorOpenAtom)
   return (
-    <aside className="workspace-inspector catalog-inspector" aria-label="Workspace context">
+    <ResizableInspector className="catalog-inspector" label="Workspace context">
       <div className="inspector-heading">
         <span>Workspace context</span>
         <Button
@@ -707,7 +699,7 @@ function CatalogInspector({ catalog }: { catalog?: Catalog }) {
         <ShieldCheck size={13} />
         Original files stay separate
       </div>
-    </aside>
+    </ResizableInspector>
   )
 }
 
@@ -798,12 +790,14 @@ function ReadyFileWorkspace({
               {projectName && ` / ${projectName}`}
             </p>
           </div>
-          <Button asChild variant="outline">
-            <a href={versionUrl(details.file.id, version.id, "download")}>
-              <Download size={14} />
-              <span>Download</span>
-            </a>
-          </Button>
+          <a
+            className={buttonVariants({ variant: "outline" })}
+            aria-label="Download document"
+            href={versionUrl(details.file.id, version.id, "download")}
+          >
+            <Download size={14} />
+            <span>Download</span>
+          </a>
         </div>
         <div className="document-version-bar">
           <label>
@@ -846,7 +840,7 @@ function ReadyFileWorkspace({
         <DocumentPreview details={details} version={version} />
       </main>
       {inspectorOpen && (
-        <aside className="workspace-inspector document-inspector" aria-label="Document inspector">
+        <ResizableInspector className="document-inspector" label="Document inspector">
           <div className="inspector-heading">
             <span>Document workspace</span>
             <Button
@@ -893,7 +887,7 @@ function ReadyFileWorkspace({
               </Button>
             </div>
           )}
-        </aside>
+        </ResizableInspector>
       )}
     </div>
   )
