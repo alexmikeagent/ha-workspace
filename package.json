@@ -1,32 +1,42 @@
 {
   "name": "ha-workspace",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "turbo format",
-    "typecheck": "turbo typecheck"
-  },
-  "devDependencies": {
-    "prettier": "^3.8.3",
-    "prettier-plugin-tailwindcss": "^0.8.0",
-    "turbo": "^2.9.18",
-    "typescript": "^6"
-  },
-  "packageManager": "bun@1.4.2",
-  "engines": {
-    "node": ">=20"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
-  },
   "workspaces": [
     "apps/*",
     "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "doppler run --no-fallback -- vp -C apps/web dev",
+    "build": "doppler run --no-fallback -- vp -C apps/web build",
+    "start": "doppler run --no-fallback -- bun apps/web/server.ts",
+    "worker:check": "doppler run --no-fallback -- bun apps/worker/src/main.ts",
+    "check": "vp check",
+    "lint": "vp lint",
+    "format": "vp fmt",
+    "test": "vp test run",
+    "verify": "vp run check && vp run test && vp run build"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.0.0-rc.112",
+    "@types/bun": "1.4.2",
+    "@types/node": "24.10.1",
+    "typescript": "6.0.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0",
+    "vite-plus": "0.3.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0",
+    "vitest": "4.1.11"
+  },
+  "engines": {
+    "bun": "1.4.2",
+    "node": ">=24.11.0 <25"
+  },
+  "packageManager": "bun@1.4.2",
+  "trustedDependencies": [
+    "@tailwindcss/oxide",
+    "esbuild"
   ]
 }

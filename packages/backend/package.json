@@ -1,0 +1,22 @@
+{
+  "name": "@ha/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@confect/core": "10.0.0-next.21",
+    "@confect/js": "10.0.0-next.21",
+    "@confect/server": "10.0.0-next.21",
+    "@ha/application": "workspace:*",
+    "@ha/domain": "workspace:*",
+    "convex": "1.45.0",
+    "effect": "4.0.0-rc.112"
+  },
+  "devDependencies": {
+    "@confect/cli": "10.0.0-next.21",
+    "@confect/test": "10.0.0-next.21"
+  }
+}

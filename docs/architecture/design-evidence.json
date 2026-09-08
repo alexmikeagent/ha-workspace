@@ -1,0 +1,22 @@
+{
+  "referenceArchive": "/usr/lib/chatgpt/resources/app.asar",
+  "entry": "webview/assets/app-initial-5b0a474bff5e.css",
+  "note": "Declared defaults only; not computed current-window styles. No app assets copied.",
+  "declarations": [
+    "--font-sans:var(--vscode-font-family,var(--font-sans-default))",
+    "--font-mono:var(--vscode-editor-font-family,var(--font-mono-default))",
+    "--font-sans-default:-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "--font-content:var(--codex-content-font-family,var(--font-sans))",
+    "--font-mono-default:ui-monospace, \"SFMono-Regular\", \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace",
+    "--font-sans-default:-apple-system-body, ui-sans-serif, -apple-system, system-ui, \"Segoe UI\", \"Helvetica\", \"Apple Color Emoji\", \"Arial\", sans-serif, \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
+    "--spacing:.25rem",
+    "--text-base:14px",
+    "--height-toolbar:46px",
+    "--height-toolbar-sm:36px",
+    "--height-toolbar-pane:40px",
+    "--spacing-token-sidebar:clamp(240px, var(--codex-sidebar-preferred-width,275px), min(520px, calc(100vw - 320px)))",
+    "--text-base:var(--text-sm)",
+    "--text-base:1rem",
+    "--height-toolbar:calc(var(--spacing) * 13)"
+  ]
+}

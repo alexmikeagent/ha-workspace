@@ -1,0 +1,471 @@
+{
+  "checkedAtUtc": "2026-09-08T02:52:34.232012+00:00",
+  "status": "Package metadata verified. Effect use-case and Atom/Confect/React probes typechecked. Fake-stream Atom recovery, shared subscription, isolation, and cleanup executed on Node. No live backend, browser-auth, Bun, or full application integration test.",
+  "packages": [
+    {
+      "name": "effect",
+      "selectedVersion": "4.0.0-rc.112",
+      "registry": "https://registry.npmjs.org/effect/4.0.0-rc.112",
+      "distTags": {
+        "snapshot": "0.0.0-snapshot-6ebc752baf28354006ca2a0ae783a5bccf5de9ad",
+        "latest": "3.22.1",
+        "beta": "4.0.0-beta.107",
+        "rc": "4.0.0-rc.112"
+      },
+      "engines": {},
+      "peerDependencies": {},
+      "peerDependenciesMeta": {},
+      "dependencies": {
+        "msgpackr": "^2.0.5",
+        "fast-check": "^4.9.0"
+      }
+    },
+    {
+      "name": "@effect/platform-node",
+      "selectedVersion": "4.0.0-rc.112",
+      "registry": "https://registry.npmjs.org/@effect/platform-node/4.0.0-rc.112",
+      "distTags": {
+        "snapshot": "0.0.0-snapshot-6ebc752baf28354006ca2a0ae783a5bccf5de9ad",
+        "latest": "0.108.1",
+        "beta": "4.0.0-beta.107",
+        "rc": "4.0.0-rc.112"
+      },
+      "engines": {
+        "node": ">=18.0.0"
+      },
+      "peerDependencies": {
+        "redis": ">=5.0.0 <7.0.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {
+        "mime": "^4.1.0",
+        "undici": "^8.10.0",
+        "@effect/platform-node-shared": "^4.0.0-rc.112"
+      },
+      "decision": "Tooling/Confect dependency boundary; Bun worker uses platform-bun."
+    },
+    {
+      "name": "@confect/core",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/core/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "convex": "^1.32.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    },
+    {
+      "name": "@confect/server",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/server/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "@confect/core": "^10.0.0-next.21",
+        "@effect/platform-node": "^4.0.0-rc.112",
+        "convex": "^1.45.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {
+        "@effect/platform-node": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "@effect/ai-openai-compat": "4.0.0-rc.112"
+      }
+    },
+    {
+      "name": "@confect/cli",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/cli/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "@confect/core": "^10.0.0-next.21",
+        "@confect/server": "^10.0.0-next.21",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {
+        "@effect/platform-node": "^4.0.0-rc.112",
+        "bundle-require": "^5.1.0",
+        "code-block-writer": "^13.0.3",
+        "esbuild": "0.27.0 - 0.27.3 || ^0.27.5 || ^0.28.0",
+        "exsolve": "^1.1.1"
+      }
+    },
+    {
+      "name": "@confect/react",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/react/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "@confect/core": "^10.0.0-next.21",
+        "convex": "^1.36.0",
+        "effect": "^4.0.0-rc.112",
+        "react": "^18.0.0 || ^19.0.0"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {},
+      "decision": "Researched alternative; not selected. Use Confect JS streams through Atom to avoid parallel subscriptions."
+    },
+    {
+      "name": "@confect/js",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/js/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "@confect/core": "^10.0.0-next.21",
+        "convex": "^1.32.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    },
+    {
+      "name": "@confect/test",
+      "selectedVersion": "10.0.0-next.21",
+      "registry": "https://registry.npmjs.org/@confect/test/10.0.0-next.21",
+      "distTags": {
+        "next": "10.0.0-next.21",
+        "latest": "9.4.2"
+      },
+      "engines": {
+        "node": ">=24"
+      },
+      "peerDependencies": {
+        "@confect/core": "^10.0.0-next.21",
+        "@confect/server": "^10.0.0-next.21",
+        "convex": "^1.32.0",
+        "convex-test": ">=0.0.50 <0.1.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    },
+    {
+      "name": "vite-plus",
+      "selectedVersion": "0.3.0",
+      "registry": "https://registry.npmjs.org/vite-plus/0.3.0",
+      "distTags": {
+        "test": "0.0.2-g9a3a310d.20260303-0757",
+        "alpha": "0.1.21-alpha.7",
+        "latest": "0.3.0"
+      },
+      "engines": {
+        "node": "^20.19.0 || ^22.18.0 || >=24.11.0"
+      },
+      "peerDependencies": {
+        "@vitest/browser-playwright": "4.1.11",
+        "@vitest/browser-webdriverio": "4.1.11"
+      },
+      "peerDependenciesMeta": {
+        "@vitest/browser-playwright": {
+          "optional": true
+        },
+        "@vitest/browser-webdriverio": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "@oxc-project/types": "=0.146.0",
+        "@oxlint/plugins": "=1.79.0",
+        "@vitest/browser": "4.1.11",
+        "@vitest/browser-preview": "4.1.11",
+        "@vitest/expect": "4.1.11",
+        "@vitest/mocker": "4.1.11",
+        "@vitest/pretty-format": "4.1.11",
+        "@vitest/runner": "4.1.11",
+        "@vitest/snapshot": "4.1.11",
+        "@vitest/spy": "4.1.11",
+        "@vitest/utils": "4.1.11",
+        "oxfmt": "=0.64.0",
+        "oxlint": "=1.79.0",
+        "oxlint-tsgolint": "=7.0.2001",
+        "vitest": "4.1.11",
+        "@voidzero-dev/vite-plus-core": "0.3.0"
+      }
+    },
+    {
+      "name": "@tanstack/react-start",
+      "selectedVersion": "1.168.50",
+      "registry": "https://registry.npmjs.org/@tanstack/react-start/1.168.50",
+      "distTags": {
+        "beta": "0.0.1-beta.204",
+        "alpha": "1.132.0-alpha.25",
+        "pre": "1.168.33-pre.0",
+        "latest": "1.168.50"
+      },
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peerDependencies": {
+        "vite": ">=7.0.0",
+        "react": ">=18.0.0 || >=19.0.0",
+        "react-dom": ">=18.0.0 || >=19.0.0",
+        "@rsbuild/core": "^2.0.0"
+      },
+      "peerDependenciesMeta": {
+        "vite": {
+          "optional": true
+        },
+        "@rsbuild/core": {
+          "optional": true
+        },
+        "@vitejs/plugin-rsc": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "pathe": "^2.0.3",
+        "@tanstack/react-router": "1.170.33",
+        "@tanstack/router-utils": "1.162.2",
+        "@tanstack/react-start-rsc": "0.1.49",
+        "@tanstack/start-client-core": "1.170.28",
+        "@tanstack/start-plugin-core": "1.171.40",
+        "@tanstack/start-server-core": "1.169.32",
+        "@tanstack/react-start-client": "1.168.31",
+        "@tanstack/react-start-server": "1.167.38"
+      }
+    },
+    {
+      "name": "convex",
+      "selectedVersion": "1.45.0",
+      "registry": "https://registry.npmjs.org/convex/1.45.0",
+      "distTags": {
+        "latest": "1.45.0",
+        "alpha": "1.45.0-alpha.0"
+      },
+      "engines": {
+        "npm": ">=7.0.0",
+        "node": ">=20.0.0"
+      },
+      "peerDependencies": {
+        "react": "^18.0.0 || ^19.0.0-0 || ^19.0.0",
+        "@clerk/react": "^6.4.3",
+        "@auth0/auth0-react": "^2.0.1",
+        "@clerk/clerk-react": "^4.12.8 || ^5.0.0"
+      },
+      "peerDependenciesMeta": {
+        "react": {
+          "optional": true
+        },
+        "@clerk/react": {
+          "optional": true
+        },
+        "@auth0/auth0-react": {
+          "optional": true
+        },
+        "@clerk/clerk-react": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "ws": "8.21.0",
+        "esbuild": "0.27.0",
+        "prettier": "^3.0.0"
+      }
+    },
+    {
+      "name": "shadcn",
+      "selectedVersion": "4.21.0",
+      "registry": "https://registry.npmjs.org/shadcn/4.21.0",
+      "distTags": {
+        "canary": "4.2.0-canary.0",
+        "rc": "4.10.0-rc.674ae44",
+        "beta": "0.0.0-beta.01b72a3",
+        "latest": "4.21.0"
+      },
+      "engines": {
+        "node": ">=20.18.1"
+      },
+      "peerDependencies": {},
+      "peerDependenciesMeta": {},
+      "dependencies": {
+        "cn": "^0.2.4",
+        "ora": "^8.2.0",
+        "zod": "^3.24.1",
+        "diff": "^8.0.2",
+        "open": "^11.0.0",
+        "execa": "^9.6.0",
+        "kleur": "^4.1.5",
+        "socks": "^2.8.8",
+        "dedent": "^1.6.0",
+        "recast": "^0.23.11",
+        "undici": "^7.27.2",
+        "postcss": "^8.5.6",
+        "prompts": "^2.4.2",
+        "fs-extra": "^11.3.1",
+        "ts-morph": "^26.0.0",
+        "commander": "^14.0.0",
+        "deepmerge": "^4.3.1",
+        "fast-glob": "^3.3.3",
+        "fuzzysort": "^3.1.0",
+        "@babel/core": "^7.28.0",
+        "cosmiconfig": "^9.0.0",
+        "browserslist": "^4.26.2",
+        "@babel/parser": "^7.28.0",
+        "tsconfig-paths": "^4.2.0",
+        "@dotenvx/dotenvx": "^1.48.4",
+        "stringify-object": "^5.0.0",
+        "zod-to-json-schema": "^3.24.6",
+        "postcss-selector-parser": "^7.1.0",
+        "@babel/preset-typescript": "^7.27.1",
+        "@modelcontextprotocol/sdk": "^1.26.0",
+        "validate-npm-package-name": "^7.0.1",
+        "@types/validate-npm-package-name": "^4.0.2",
+        "@babel/plugin-transform-typescript": "^7.28.0"
+      }
+    },
+    {
+      "name": "tailwindcss",
+      "selectedVersion": "4.3.3",
+      "registry": "https://registry.npmjs.org/tailwindcss/4.3.3",
+      "distTags": {
+        "next": "4.0.0",
+        "v3-lts": "3.4.19",
+        "latest": "4.3.3",
+        "insiders": "0.0.0-insiders.f723e83"
+      },
+      "engines": {},
+      "peerDependencies": {},
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    },
+    {
+      "name": "bun",
+      "selectedVersion": "1.4.2",
+      "registry": "https://registry.npmjs.org/bun/1.4.2",
+      "distTags": {
+        "latest": "1.4.2",
+        "canary": "1.4.2-canary.20260906.1"
+      },
+      "engines": {},
+      "peerDependencies": {},
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    },
+    {
+      "name": "@effect/platform-bun",
+      "selectedVersion": "4.0.0-rc.112",
+      "registry": "https://registry.npmjs.org/@effect/platform-bun/4.0.0-rc.112",
+      "distTags": {
+        "snapshot": "0.0.0-snapshot-6ebc752baf28354006ca2a0ae783a5bccf5de9ad",
+        "latest": "0.91.2",
+        "beta": "4.0.0-beta.107",
+        "rc": "4.0.0-rc.112"
+      },
+      "engines": {},
+      "peerDependencies": {
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {
+        "@effect/platform-node-shared": "^4.0.0-rc.112"
+      }
+    },
+    {
+      "name": "@effect/atom-react",
+      "selectedVersion": "4.0.0-rc.112",
+      "registry": "https://registry.npmjs.org/@effect/atom-react/4.0.0-rc.112",
+      "distTags": {
+        "beta": "4.0.0-beta.0",
+        "latest": "4.0.0-beta.107",
+        "rc": "4.0.0-rc.112"
+      },
+      "engines": {},
+      "peerDependencies": {
+        "react": ">=19.0.0 <20.0.0",
+        "scheduler": ">=0.25.0 <0.28.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {},
+      "decision": "Selected UI state layer. Requires React 19 and compatible scheduler; integration checks pending."
+    },
+    {
+      "name": "@effect/vitest",
+      "selectedVersion": "4.0.0-rc.112",
+      "registry": "https://registry.npmjs.org/@effect/vitest/4.0.0-rc.112",
+      "distTags": {
+        "snapshot": "0.0.0-snapshot-6ebc752baf28354006ca2a0ae783a5bccf5de9ad",
+        "latest": "0.30.0",
+        "beta": "4.0.0-beta.107",
+        "rc": "4.0.0-rc.112"
+      },
+      "engines": {},
+      "peerDependencies": {
+        "vitest": ">=4.1.0 <5.0.0",
+        "effect": "^4.0.0-rc.112"
+      },
+      "peerDependenciesMeta": {},
+      "dependencies": {}
+    }
+  ],
+  "updatedAtUtc": "2026-09-08T05:12:28.623726+00:00",
+  "runtimeDecision": {
+    "bun": "1.4.2 stable: package manager and target app/worker runtime",
+    "tooling": "Compatible Node 24.x >=24.11.0; exact patch chosen in foundation build",
+    "convex": "Existing local backend has its own runtime; configuration/version inspection pending"
+  },
+  "sources": [
+    "https://bun.com/blog/bun-v1.4",
+    "https://bun.com/blog/bun-v1.4.2",
+    "https://viteplus.dev/guide/install",
+    "https://viteplus.dev/guide/env",
+    "https://bun.com/guides/ecosystem/tanstack-start",
+    "https://confect.dev/v10/clients/js/websocket.md",
+    "https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/atom/react/src/RegistryContext.ts",
+    "https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/unstable/reactivity/Atom.ts"
+  ],
+  "stateDecision": {
+    "ui": "Effect Atom registry per authenticated session",
+    "transport": "One scoped @confect/js WebSocketClient",
+    "liveReads": "reactiveQueryResult streams projected into AsyncResult atoms",
+    "commands": "Atom.runtime.fn executes application Effect use cases",
+    "durableState": "Local Convex",
+    "urlState": "TanStack Router",
+    "browserManagedRuntime": "Replaced by Atom runtime; standalone example uses ManagedRuntime only as an API check"
+  },
+  "atomFixture": {
+    "effect": "4.0.0-rc.112",
+    "atomReact": "4.0.0-rc.112",
+    "confect": "10.0.0-next.21",
+    "convex": "1.45.0",
+    "react": "19.2.4",
+    "scheduler": "0.27.0",
+    "record": "ATOM-VERIFICATION.md"
+  }
+}

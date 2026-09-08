@@ -1,38 +1,32 @@
 {
-  "name": "web",
-  "version": "0.0.1",
-  "type": "module",
+  "name": "@ha/web",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "dev": "doppler run --no-fallback -- vp dev",
+    "build": "doppler run --no-fallback -- vp build"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4",
-    "@tanstack/react-devtools": "latest",
-    "@tanstack/react-router": "latest",
-    "@tanstack/react-router-devtools": "latest",
-    "@tanstack/react-start": "latest",
-    "@tanstack/router-plugin": "latest",
+    "@effect/atom-react": "4.0.0-rc.112",
+    "@effect/platform-bun": "4.0.0-rc.112",
+    "@ha/application": "workspace:*",
+    "@ha/domain": "workspace:*",
+    "@tanstack/react-router": "1.170.33",
+    "@tanstack/react-start": "1.168.50",
     "@workspace/ui": "workspace:*",
-    "lucide-react": "^1.42.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "tailwindcss": "^4"
+    "effect": "4.0.0-rc.112",
+    "lucide-react": "1.42.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "scheduler": "0.27.0"
   },
   "devDependencies": {
-    "@tanstack/devtools-vite": "latest",
-    "@tanstack/eslint-config": "latest",
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^6",
-    "eslint": "^9",
-    "typescript": "^6",
-    "vite": "^8"
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "tailwindcss": "4.3.3",
+    "vite-plus": "0.3.0"
   }
 }

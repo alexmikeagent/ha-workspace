@@ -1,0 +1,4023 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="The architecture and build plan for HA Workspace: local Convex, Bun, Effect Atom, a verified fake Drive, and a modern document review interface."
+    />
+    <title>HA Workspace · Architecture plan</title>
+    <style>
+      :root {
+        --bg: #111314;
+        --rail: #141617;
+        --surface: #191c1e;
+        --raised: #202426;
+        --line: #303638;
+        --ink: #eef1ed;
+        --muted: #abb3af;
+        --quiet: #929c96;
+        --accent: #d5e8a2;
+        --green: #a8ceae;
+        --blue: #a9c5df;
+        --amber: #e5c595;
+        --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 85px;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font: 15px/1.65 var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent);
+      }
+      button:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 5px;
+      }
+      button {
+        border: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p {
+        margin: 0;
+      }
+      p {
+        color: var(--muted);
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 500;
+        line-height: 1.2;
+      }
+      code,
+      pre {
+        font-family: var(--mono);
+      }
+      code {
+        font-size: 0.85em;
+        overflow-wrap: anywhere;
+      }
+      svg {
+        display: block;
+      }
+      ::selection {
+        background: #d5e8a238;
+        color: var(--ink);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .skip {
+        position: fixed;
+        z-index: 20;
+        top: -100px;
+        left: 20px;
+        background: var(--accent);
+        color: var(--bg);
+        padding: 10px;
+      }
+      .skip:focus {
+        top: 10px;
+      }
+      .rail {
+        width: 222px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        background: var(--rail);
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        padding: 28px 20px;
+        z-index: 10;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-size: 14px;
+        line-height: 1.25;
+        letter-spacing: -0.2px;
+      }
+      .brandmark {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #758064;
+        border-radius: 9px;
+        color: var(--accent);
+        font: 12px var(--mono);
+      }
+      .brand small {
+        display: block;
+        font-size: 11px;
+        color: var(--quiet);
+        margin-top: 5px;
+      }
+      .rail-label {
+        font: 10px var(--mono);
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        color: var(--quiet);
+        margin: 53px 10px 12px;
+      }
+      .nav {
+        display: grid;
+        gap: 5px;
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 10px 11px;
+        border-radius: 7px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .nav a span {
+        font: 10px var(--mono);
+        color: var(--quiet);
+      }
+      .nav a:hover {
+        background: #ffffff05;
+        color: var(--ink);
+      }
+      .nav a[aria-current="true"] {
+        background: #d5e8a20c;
+        color: var(--accent);
+      }
+      .nav a[aria-current="true"] span {
+        color: var(--accent);
+      }
+      .rail-bottom {
+        margin-top: auto;
+        font-size: 11px;
+        color: var(--quiet);
+      }
+      .rail-bottom strong {
+        font-weight: 400;
+        display: block;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-right: 7px;
+      }
+      .rail-bottom .rule {
+        height: 1px;
+        background: var(--line);
+        margin: 18px 0;
+      }
+      .frame {
+        margin-left: 222px;
+      }
+      .topbar {
+        height: 65px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 42px;
+        background: #111314ed;
+        position: sticky;
+        top: 0;
+        z-index: 8;
+        backdrop-filter: blur(12px);
+        font-size: 12px;
+      }
+      .crumb {
+        color: var(--quiet);
+      }
+      .crumb b {
+        font-weight: 400;
+        color: var(--ink);
+      }
+      .crumb span {
+        margin: 0 12px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 3px 10px;
+        font: 10px var(--mono);
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .quiet-button {
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 8px 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .quiet-button:hover {
+        color: var(--ink);
+      }
+      .quiet-button svg {
+        width: 14px;
+        height: 14px;
+      }
+      .mobile-menu {
+        display: none;
+      }
+      .content {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 52px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font: 11px var(--mono);
+        letter-spacing: 1px;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+      .eyebrow:before {
+        content: "";
+        width: 19px;
+        height: 1px;
+        background: var(--accent);
+      }
+      .hero {
+        padding: 65px 0 48px;
+        position: relative;
+      }
+      .hero h1 {
+        font-size: clamp(38px, 4.3vw, 62px);
+        letter-spacing: -2.7px;
+        margin: 22px 0;
+        max-width: 850px;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .intro {
+        max-width: 650px;
+        font-size: 17px;
+        line-height: 1.7;
+      }
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-top: 31px;
+        font: 11px var(--mono);
+        color: var(--quiet);
+      }
+      .meta-row span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .meta-row i {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--quiet);
+      }
+      .decision {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 20px 23px;
+        background: #d5e8a207;
+        border: 1px solid #d5e8a223;
+        border-radius: 10px;
+        margin-top: 36px;
+      }
+      .decision .label {
+        font: 10px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .decision p {
+        font-size: 13px;
+        color: var(--ink);
+      }
+      .decision code {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 3px;
+      }
+      .decision .check {
+        margin-left: auto;
+        width: 24px;
+        height: 24px;
+        flex: none;
+        color: var(--accent);
+        border: 1px solid #d5e8a244;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        font-size: 12px;
+      }
+      .section {
+        padding: 46px 0 53px;
+        border-top: 1px solid var(--line);
+        scroll-margin-top: 64px;
+      }
+      .section-heading {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+      .section-number {
+        font: 11px var(--mono);
+        color: var(--quiet);
+        display: block;
+        margin-bottom: 11px;
+      }
+      .section h2 {
+        font-size: 27px;
+        letter-spacing: -0.8px;
+      }
+      .section-heading > p {
+        font-size: 13px;
+        max-width: 370px;
+        padding-top: 25px;
+      }
+      .section-heading .tag {
+        font: 10px var(--mono);
+        color: var(--quiet);
+        white-space: nowrap;
+        padding-top: 33px;
+      }
+      .section-lead {
+        margin-top: 12px;
+        max-width: 750px;
+        font-size: 14px;
+      }
+      .map-wrap {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+      .map-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 22px;
+        border-bottom: 1px solid var(--line);
+        font: 11px var(--mono);
+        color: var(--quiet);
+      }
+      .map-header span:first-child {
+        color: var(--muted);
+      }
+      .map {
+        position: relative;
+        padding: 25px;
+        isolation: isolate;
+        background-image: radial-gradient(#ffffff09 0.8px, transparent 0.8px);
+        background-size: 18px 18px;
+      }
+      .map-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: auto auto auto;
+        gap: 48px 35px;
+        position: relative;
+      }
+      .map-wires {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        overflow: visible;
+      }
+      .map-node {
+        position: relative;
+        text-align: left;
+        background: #1e2223;
+        border: 1px solid #3b4244;
+        padding: 18px;
+        border-radius: 9px;
+        min-height: 107px;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .map-node:hover {
+        background: #242a2b;
+        border-color: #727d75;
+      }
+      .map-node[aria-pressed="true"] {
+        background: #252c25;
+        border-color: #91a56f;
+        box-shadow: 0 0 0 3px #d5e8a208;
+      }
+      .map-node .node-label {
+        display: block;
+        font: 9px var(--mono);
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        color: var(--quiet);
+        margin-bottom: 10px;
+      }
+      .map-node strong {
+        font-weight: 500;
+        font-size: 15px;
+        display: block;
+      }
+      .map-node small {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .node-corner {
+        position: absolute;
+        right: 13px;
+        top: 12px;
+        font: 11px var(--mono);
+        color: var(--quiet);
+      }
+      #node-client {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      #node-web {
+        grid-column: 1;
+        grid-row: 2;
+      }
+      #node-convex {
+        grid-column: 2;
+        grid-row: 2;
+      }
+      #node-worker {
+        grid-column: 3;
+        grid-row: 2;
+      }
+      #node-render {
+        grid-column: 1;
+        grid-row: 3;
+      }
+      #node-files {
+        grid-column: 2;
+        grid-row: 3;
+      }
+      #node-agent {
+        grid-column: 3;
+        grid-row: 3;
+      }
+      .network-note {
+        grid-column: 2/4;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 10px;
+      }
+      .network-note h3 {
+        font-size: 14px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .network-note p {
+        font-size: 12px;
+        max-width: 330px;
+      }
+      .node-detail {
+        border-top: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 25px;
+        padding: 22px 25px;
+        min-height: 126px;
+        background: #171a1b;
+      }
+      .node-detail h3 {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .node-detail p {
+        font-size: 13px;
+        max-width: 690px;
+      }
+      .node-detail .detail-cap {
+        font: 10px var(--mono);
+        color: var(--accent);
+        display: block;
+        margin-bottom: 7px;
+      }
+      .footnote {
+        font-size: 11px;
+        color: var(--quiet);
+        margin-top: 14px;
+      }
+      .stack {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 30px;
+      }
+      .stack-list {
+        border-top: 1px solid var(--line);
+      }
+      .stack-row {
+        display: grid;
+        grid-template-columns: 45px 1fr auto;
+        gap: 13px;
+        align-items: start;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .stack-logo {
+        height: 35px;
+        width: 35px;
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        font: 13px var(--mono);
+        color: var(--accent);
+      }
+      .stack-row h3 {
+        font-size: 15px;
+        margin-bottom: 5px;
+      }
+      .stack-row p {
+        font-size: 12px;
+        max-width: 280px;
+      }
+      .version {
+        font: 10px var(--mono);
+        color: var(--quiet);
+        padding-top: 3px;
+      }
+      .repo {
+        background: #171a1b;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 23px;
+        align-self: start;
+      }
+      .repo-title {
+        font: 11px var(--mono);
+        color: var(--quiet);
+        margin-bottom: 22px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .repo pre {
+        font-size: 12px;
+        line-height: 2;
+        margin: 0;
+        color: var(--muted);
+        overflow: auto;
+      }
+      .repo .dir {
+        color: var(--ink);
+      }
+      .repo .comment {
+        color: var(--quiet);
+      }
+      .repo-note {
+        font-size: 12px;
+        padding-top: 21px;
+        margin-top: 20px;
+        border-top: 1px solid var(--line);
+      }
+      .compatibility {
+        display: flex;
+        gap: 14px;
+        align-items: start;
+        margin-top: 24px;
+        background: #e5c59507;
+        border: 1px solid #e5c59520;
+        padding: 17px 19px;
+        border-radius: 8px;
+      }
+      .compatibility span {
+        color: var(--amber);
+        font: 11px var(--mono);
+        padding-top: 3px;
+        white-space: nowrap;
+      }
+      .compatibility p {
+        font-size: 12px;
+      }
+      .flow-strip {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .flow-stage {
+        text-align: left;
+        padding: 21px 15px;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+        min-height: 120px;
+      }
+      .flow-stage:last-child {
+        border-right: 0;
+      }
+      .flow-stage .count {
+        font: 10px var(--mono);
+        color: var(--quiet);
+        display: block;
+        margin-bottom: 19px;
+      }
+      .flow-stage strong {
+        font-size: 13px;
+        font-weight: 500;
+        display: block;
+      }
+      .flow-stage small {
+        display: block;
+        color: var(--quiet);
+        font-size: 11px;
+        margin-top: 5px;
+      }
+      .flow-stage:hover {
+        background: var(--raised);
+      }
+      .flow-stage[aria-pressed="true"] {
+        background: #d5e8a212;
+      }
+      .flow-stage[aria-pressed="true"] .count {
+        color: var(--accent);
+      }
+      .flow-caption {
+        padding: 22px 0 7px;
+        display: grid;
+        grid-template-columns: 155px 1fr;
+        gap: 22px;
+        min-height: 120px;
+      }
+      .flow-caption h3 {
+        font-size: 15px;
+      }
+      .flow-caption p {
+        font-size: 13px;
+        max-width: 720px;
+      }
+      .format-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 22px;
+      }
+      .format {
+        border-top: 1px solid var(--line);
+        padding: 18px 0;
+      }
+      .format b {
+        font: 11px var(--mono);
+        display: inline-block;
+        border: 1px solid #4b5252;
+        border-radius: 5px;
+        padding: 5px 8px;
+        margin-bottom: 14px;
+        color: var(--ink);
+      }
+      .format h3 {
+        font-size: 14px;
+        margin-bottom: 7px;
+      }
+      .format p {
+        font-size: 12px;
+      }
+      .boundary {
+        padding: 18px 20px;
+        border-left: 2px solid #748864;
+        background: #d5e8a206;
+        margin-top: 15px;
+        font-size: 13px;
+      }
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+      }
+      .model-group {
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #171a1b;
+      }
+      .model-group h3 {
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+      .model-group code {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        padding: 7px 0;
+        border-top: 1px solid #ffffff07;
+      }
+      .model-caption {
+        display: flex;
+        gap: 28px;
+        font-size: 12px;
+        margin-top: 22px;
+      }
+      .model-caption p {
+        flex: 1;
+      }
+      .mock {
+        border: 1px solid #404646;
+        border-radius: 11px;
+        background: #212121;
+        overflow: hidden;
+      }
+      .mock-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 45px;
+        padding: 0 17px;
+        border-bottom: 1px solid #353535;
+        font-size: 11px;
+        color: #a8a8a8;
+      }
+      .mock-top .mock-controls {
+        letter-spacing: 10px;
+        color: #b7bcb6;
+      }
+      .mock-body {
+        display: grid;
+        grid-template-columns: 160px 1fr 230px;
+        min-height: 350px;
+      }
+      .mock-nav {
+        background: #181818;
+        border-right: 1px solid #353535;
+        padding: 20px 11px;
+        font-size: 11px;
+      }
+      .mock-brand {
+        color: #ececec;
+        font-weight: 500;
+        margin: 0 8px 25px;
+      }
+      .mock-nav span {
+        display: block;
+        padding: 9px;
+        border-radius: 6px;
+        color: #a8a8a8;
+      }
+      .mock-nav .selected {
+        background: #303030;
+        color: #ececec;
+      }
+      .mock-nav small {
+        font-size: 10px;
+        color: #a8a8a8;
+        display: block;
+        margin: 25px 9px 8px;
+      }
+      .mock-preview {
+        background: #282828;
+        min-width: 0;
+      }
+      .mock-preview-bar {
+        padding: 11px 15px;
+        background: #212121;
+        border-bottom: 1px solid #353535;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #bbb;
+      }
+      .paper {
+        background: #f9f9f6;
+        color: #333;
+        width: 72%;
+        max-width: 300px;
+        min-height: 260px;
+        margin: 23px auto 26px;
+        padding: 26px 23px;
+        box-shadow: 0 3px 15px #0003;
+      }
+      .paper-brand {
+        font-size: 10px;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+      }
+      .paper-title {
+        font-size: 12px;
+        font-weight: 600;
+        margin: 13px 0 15px;
+      }
+      .paper-label {
+        font-size: 8px;
+        color: #666;
+        display: block;
+        margin: 15px 0 8px;
+      }
+      .paper-line {
+        height: 3px;
+        background: #d2d4cf;
+        margin: 7px 0;
+        width: 100%;
+      }
+      .paper-line.short {
+        width: 65%;
+      }
+      .paper-annotation {
+        margin-top: 15px;
+        border: 1px solid #4673a0;
+        background: #d4e2ef40;
+        padding: 8px;
+        position: relative;
+      }
+      .paper-annotation:after {
+        content: "1";
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        color: #fff;
+        background: #426c95;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: grid;
+        place-items: center;
+        font: 8px var(--mono);
+      }
+      .mock-inspector {
+        padding: 15px;
+        border-left: 1px solid #353535;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .mock-tabs {
+        display: flex;
+        gap: 14px;
+        border-bottom: 1px solid #3a3a3a;
+        margin-bottom: 18px;
+      }
+      .mock-tabs button {
+        background: none;
+        color: #a8a8a8;
+        font-size: 10px;
+        padding: 0 0 11px;
+      }
+      .mock-tabs button[aria-selected="true"] {
+        color: #ececec;
+        border-bottom: 1px solid #ececec;
+      }
+      .mock-panel h4 {
+        font-size: 11px;
+        margin-bottom: 10px;
+      }
+      .mock-panel p {
+        font-size: 11px;
+        color: #b0b0b0;
+        line-height: 1.6;
+      }
+      .mock-panel code {
+        display: block;
+        color: #b0b0b0;
+        font-size: 10px;
+        margin: 10px 0;
+        overflow-wrap: anywhere;
+      }
+      .mock-composer {
+        border: 1px solid #454545;
+        border-radius: 12px;
+        background: #262626;
+        padding: 11px;
+        font-size: 10px;
+        color: #b3b3b3;
+        margin-top: auto;
+      }
+      .mock-compose-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 22px;
+      }
+      .mock-send {
+        background: #eaeaea;
+        color: #222;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+      }
+      .design-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin: 23px 0;
+      }
+      .design-metrics b {
+        font-size: 23px;
+        font-weight: 400;
+        letter-spacing: -0.6px;
+      }
+      .design-metrics b small {
+        font-size: 12px;
+        color: var(--quiet);
+        margin-left: 3px;
+      }
+      .design-metrics span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 6px;
+      }
+      .design-bottom {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin-top: 20px;
+      }
+      .design-bottom p {
+        font-size: 13px;
+      }
+      .palette {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 13px;
+      }
+      .swatch {
+        height: 24px;
+        width: 40px;
+        border-radius: 4px;
+        border: 1px solid #ffffff20;
+      }
+      .roadmap {
+        counter-reset: phase;
+      }
+      .phase {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        gap: 21px;
+        position: relative;
+      }
+      .phase:before {
+        content: "";
+        position: absolute;
+        left: 18px;
+        width: 1px;
+        background: var(--line);
+        top: 35px;
+        bottom: 0;
+      }
+      .phase:last-child:before {
+        display: none;
+      }
+      .phase-num {
+        width: 37px;
+        height: 37px;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font: 11px var(--mono);
+        color: var(--quiet);
+        background: var(--bg);
+        z-index: 1;
+      }
+      .phase:first-child .phase-num {
+        border-color: #9aad79;
+        color: var(--accent);
+      }
+      .phase details {
+        padding: 5px 0 26px;
+        margin-bottom: 17px;
+        border-bottom: 1px solid var(--line);
+      }
+      summary {
+        cursor: pointer;
+        list-style: none;
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+      .phase summary {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+      .phase summary h3 {
+        font-size: 17px;
+        letter-spacing: -0.25px;
+      }
+      .phase summary .phase-status {
+        font: 9px var(--mono);
+        color: var(--quiet);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px 7px;
+      }
+      .phase summary:after {
+        content: "+";
+        font: 17px var(--mono);
+        color: var(--quiet);
+        grid-column: 2;
+        grid-row: 1;
+        margin-left: 110px;
+      }
+      .phase summary .phase-status {
+        grid-column: 2;
+        grid-row: 1;
+        margin-right: 29px;
+      }
+      .phase details[open] summary:after {
+        content: "−";
+      }
+      .phase details > p {
+        font-size: 13px;
+        margin-top: 14px;
+        max-width: 720px;
+      }
+      .accept {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .accept span {
+        color: var(--accent);
+        font: 10px var(--mono);
+        display: block;
+        margin-bottom: 5px;
+      }
+      .decisions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      .decision-list h3 {
+        font-size: 15px;
+        margin-bottom: 19px;
+      }
+      .decision-list p {
+        font-size: 13px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 12px;
+      }
+      .decision-list .mark {
+        font: 11px var(--mono);
+        color: var(--accent);
+        padding-top: 3px;
+      }
+      .decision-list.pending .mark {
+        color: var(--amber);
+      }
+      .technical-head {
+        display: flex;
+        gap: 15px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+      .technical-head p {
+        font-size: 13px;
+      }
+      .technical-head button {
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .appendix details {
+        border-top: 1px solid var(--line);
+      }
+      .appendix details > summary {
+        font-size: 14px;
+        padding: 19px 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .appendix details > summary:after {
+        content: "+";
+        font: 16px var(--mono);
+        color: var(--quiet);
+      }
+      .appendix details[open] > summary:after {
+        content: "−";
+      }
+      .appendix-content {
+        padding: 5px 4px 26px;
+        max-width: 100%;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .appendix-content p {
+        margin: 12px 0;
+      }
+      .appendix-content h3 {
+        font-size: 16px;
+        color: var(--ink);
+        margin: 24px 0 12px;
+      }
+      .appendix-content h4 {
+        font-size: 14px;
+        color: var(--ink);
+        margin: 20px 0 10px;
+      }
+      .appendix-content ul,
+      .appendix-content ol {
+        padding-left: 22px;
+      }
+      .appendix-content li {
+        margin: 9px 0;
+      }
+      .appendix-content a {
+        color: var(--blue);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .appendix-content pre {
+        padding: 19px;
+        background: #191c1e;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: auto;
+        line-height: 1.8;
+        font-size: 11px;
+      }
+      .table-wrap {
+        max-width: 100%;
+        overflow: auto;
+        margin: 17px 0;
+      }
+      .appendix-content table {
+        border-collapse: collapse;
+        font-size: 12px;
+        width: 100%;
+        min-width: 500px;
+      }
+      .appendix-content th {
+        text-align: left;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .appendix-content td,
+      .appendix-content th {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      .appendix-content strong {
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .appendix-divider {
+        font: 10px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--quiet);
+        padding: 27px 4px 17px;
+      }
+      .source-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .source-grid a {
+        font-size: 12px;
+        padding: 13px 15px;
+        background: #191c1e;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .source-grid a span {
+        color: var(--quiet);
+      }
+      .sources-note {
+        font-size: 11px;
+        margin-top: 19px;
+      }
+      .footer {
+        padding: 25px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: var(--quiet);
+        font-size: 11px;
+      }
+      .back-top {
+        color: var(--muted);
+      }
+      @media (min-width: 1500px) {
+        .content {
+          padding: 0 65px;
+        }
+        .hero {
+          padding-top: 78px;
+        }
+      }
+      @media (max-width: 1150px) {
+        .rail {
+          width: 190px;
+          padding: 24px 14px;
+        }
+        .frame {
+          margin-left: 190px;
+        }
+        .content {
+          padding: 0 32px;
+        }
+        .topbar {
+          padding: 0 32px;
+        }
+        .stack {
+          gap: 22px;
+        }
+        .stack-row {
+          grid-template-columns: 35px 1fr;
+        }
+        .version {
+          grid-column: 2;
+          margin-top: -8px;
+        }
+        .mock-body {
+          grid-template-columns: 130px 1fr 200px;
+        }
+        .map-grid {
+          gap: 35px 21px;
+        }
+        .map-node {
+          padding: 15px;
+        }
+        .model-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .rail {
+          width: 168px;
+          padding: 24px 10px;
+        }
+        .brand {
+          font-size: 12px;
+        }
+        .brandmark {
+          width: 28px;
+          height: 28px;
+        }
+        .frame {
+          margin-left: 168px;
+        }
+        .content {
+          padding: 0 24px;
+        }
+        .topbar {
+          padding: 0 24px;
+        }
+        .hero h1 {
+          letter-spacing: -1.7px;
+        }
+        .section-heading {
+          display: block;
+        }
+        .section-heading > p {
+          padding-top: 14px;
+          max-width: 100%;
+        }
+        .section-heading .tag {
+          display: none;
+        }
+        .stack {
+          grid-template-columns: 1fr;
+        }
+        .stack-row {
+          grid-template-columns: 45px 1fr auto;
+        }
+        .version {
+          grid-column: auto;
+          margin-top: 0;
+        }
+        .map {
+          padding: 20px;
+        }
+        .map-grid {
+          gap: 28px 15px;
+        }
+        .map-node strong {
+          font-size: 13px;
+        }
+        .map-node small {
+          font-size: 10px;
+        }
+        .node-detail {
+          grid-template-columns: 130px 1fr;
+        }
+        .network-note p {
+          font-size: 11px;
+        }
+        .format-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .flow-strip {
+          grid-template-columns: repeat(5, 1fr);
+        }
+        .flow-stage {
+          padding: 16px 10px;
+        }
+        .flow-stage strong {
+          font-size: 11px;
+        }
+        .flow-stage small {
+          font-size: 10px;
+        }
+        .mock-body {
+          grid-template-columns: 110px 1fr;
+        }
+        .mock-inspector {
+          grid-column: 1/-1;
+          border-left: 0;
+          border-top: 1px solid #353535;
+          min-height: 170px;
+        }
+        .mock-composer {
+          display: none;
+        }
+        .mock-panel {
+          min-height: 65px;
+        }
+        .design-bottom {
+          grid-template-columns: 1fr;
+        }
+        .source-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 680px) {
+        html {
+          scroll-padding-top: 74px;
+        }
+        .rail {
+          display: none;
+          top: 58px;
+          width: 240px;
+          padding: 25px;
+          box-shadow: 20px 0 45px #0008;
+        }
+        .rail.is-open {
+          display: flex;
+        }
+        .rail-label {
+          margin-top: 30px;
+        }
+        .frame {
+          margin-left: 0;
+        }
+        .topbar {
+          height: 58px;
+          padding: 0 19px;
+        }
+        .mobile-menu {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border: 1px solid var(--line);
+          border-radius: 6px;
+          margin-right: 9px;
+          background: none;
+          font-size: 16px;
+        }
+        .crumb {
+          display: flex;
+          align-items: center;
+        }
+        .crumb span {
+          margin: 0 7px;
+        }
+        .crumb .parent {
+          display: none;
+        }
+        .toolbar-actions {
+          gap: 13px;
+        }
+        .toolbar-actions .pill {
+          display: none;
+        }
+        .content {
+          padding: 0 21px;
+        }
+        .hero {
+          padding: 40px 0 35px;
+        }
+        .hero h1 {
+          font-size: 42px;
+          letter-spacing: -1.8px;
+          line-height: 1.12;
+          margin: 22px 0;
+        }
+        .intro {
+          font-size: 15px;
+        }
+        .meta-row {
+          font-size: 10px;
+          gap: 15px;
+          margin-top: 25px;
+        }
+        .decision {
+          padding: 16px;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: 28px;
+        }
+        .decision .label {
+          width: 100%;
+        }
+        .decision p {
+          font-size: 12px;
+          max-width: 100%;
+        }
+        .decision code {
+          font-size: 11px;
+        }
+        .decision .check {
+          display: none;
+        }
+        .section {
+          padding: 34px 0 37px;
+        }
+        .section h2 {
+          font-size: 25px;
+        }
+        .section-heading {
+          margin-bottom: 24px;
+        }
+        .map-header {
+          padding: 13px 15px;
+          font-size: 10px;
+        }
+        .map-header span:last-child {
+          display: none;
+        }
+        .map-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .map-node {
+          min-height: 112px;
+        }
+        .map-node .node-label {
+          font-size: 8px;
+        }
+        .map-node small {
+          font-size: 11px;
+        }
+        .map-node strong {
+          font-size: 13px;
+        }
+        .map-wires {
+          display: none;
+        }
+        #node-client {
+          grid-column: 1;
+          grid-row: 2;
+        }
+        #node-web {
+          grid-column: 2;
+          grid-row: 2;
+        }
+        #node-convex {
+          grid-column: 1;
+          grid-row: 3;
+        }
+        #node-worker {
+          grid-column: 2;
+          grid-row: 3;
+        }
+        #node-render {
+          grid-column: 1;
+          grid-row: 4;
+        }
+        #node-files {
+          grid-column: 2;
+          grid-row: 4;
+        }
+        #node-agent {
+          grid-column: 1/3;
+          grid-row: 5;
+          min-height: 90px;
+        }
+        .network-note {
+          grid-column: 1/3;
+          grid-row: 1;
+          padding: 0 0 9px;
+        }
+        .network-note p {
+          font-size: 12px;
+          max-width: none;
+        }
+        .map {
+          padding: 17px;
+        }
+        .node-detail {
+          padding: 19px;
+          grid-template-columns: 1fr;
+          gap: 11px;
+          min-height: 200px;
+        }
+        .node-detail .detail-cap {
+          display: inline-block;
+          margin: 0 10px 0 0;
+        }
+        .node-detail p {
+          font-size: 12px;
+        }
+        .stack-row {
+          grid-template-columns: 38px 1fr;
+        }
+        .version {
+          grid-column: 2;
+          margin-top: -8px;
+        }
+        .compatibility {
+          display: block;
+        }
+        .compatibility span {
+          display: block;
+          margin-bottom: 9px;
+        }
+        .repo {
+          padding: 19px;
+        }
+        .repo pre {
+          font-size: 11px;
+        }
+        .flow-strip {
+          grid-template-columns: 1fr;
+          border-radius: 9px;
+        }
+        .flow-stage {
+          display: grid;
+          grid-template-columns: 28px 1fr auto;
+          align-items: center;
+          gap: 7px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 14px 16px;
+          min-height: 55px;
+        }
+        .flow-stage:last-child {
+          border-bottom: 0;
+        }
+        .flow-stage .count {
+          margin: 0;
+        }
+        .flow-stage strong {
+          font-size: 12px;
+        }
+        .flow-stage small {
+          margin: 0;
+          font-size: 10px;
+        }
+        .flow-caption {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          min-height: 190px;
+        }
+        .format-grid {
+          gap: 18px;
+        }
+        .model-grid {
+          gap: 12px;
+        }
+        .model-group {
+          padding: 15px;
+        }
+        .model-group code {
+          font-size: 10px;
+        }
+        .model-caption {
+          display: block;
+        }
+        .model-caption p + p {
+          margin-top: 15px;
+        }
+        .mock-top {
+          font-size: 10px;
+        }
+        .mock-top .mock-controls {
+          display: none;
+        }
+        .mock-body {
+          grid-template-columns: 90px 1fr;
+        }
+        .mock-nav {
+          padding: 16px 6px;
+          font-size: 10px;
+        }
+        .mock-brand {
+          font-size: 9px;
+        }
+        .mock-nav span {
+          padding: 8px 6px;
+        }
+        .paper {
+          width: 82%;
+          padding: 20px 15px;
+          min-height: 235px;
+        }
+        .mock-preview-bar {
+          font-size: 9px;
+          padding: 11px 9px;
+        }
+        .mock-preview-bar span:last-child {
+          display: none;
+        }
+        .mock-inspector {
+          padding: 17px;
+        }
+        .mock-tabs button {
+          font-size: 12px;
+          padding: 6px 0 11px;
+        }
+        .mock-panel p {
+          font-size: 12px;
+        }
+        .design-metrics {
+          grid-template-columns: 1fr 1fr;
+          row-gap: 22px;
+        }
+        .phase {
+          grid-template-columns: 34px 1fr;
+          gap: 13px;
+        }
+        .phase-num {
+          width: 31px;
+          height: 31px;
+        }
+        .phase:before {
+          left: 15px;
+          top: 30px;
+        }
+        .phase summary h3 {
+          font-size: 15px;
+        }
+        .phase summary .phase-status {
+          display: none;
+        }
+        .phase summary:after {
+          margin-left: 0;
+        }
+        .decisions {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        .technical-head {
+          display: block;
+        }
+        .technical-head button {
+          margin-top: 12px;
+        }
+        .source-grid {
+          grid-template-columns: 1fr;
+        }
+        .footer {
+          display: block;
+        }
+        .footer .back-top {
+          display: inline-block;
+          margin-top: 14px;
+        }
+        .appendix details > summary {
+          font-size: 13px;
+          gap: 14px;
+        }
+        .appendix-content pre {
+          font-size: 10px;
+        }
+      }
+      @media (pointer: coarse) {
+        .nav a,
+        .quiet-button,
+        .mock-tabs button,
+        .source-grid a {
+          min-height: 44px;
+        }
+        .mock-tabs {
+          gap: 24px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          transition: none !important;
+        }
+      }
+      @media print {
+        :root {
+          --bg: #fff;
+          --surface: #f1f2f0;
+          --raised: #e9ece8;
+          --line: #d2d6d0;
+          --ink: #161b16;
+          --muted: #444b43;
+          --quiet: #535e50;
+          --accent: #405425;
+          --blue: #2a5071;
+        }
+        body {
+          background: #fff;
+          color: #111;
+        }
+        .map-node,
+        .map-node[aria-pressed="true"],
+        .node-detail,
+        .repo,
+        .model-group {
+          background: #f2f4f0;
+          color: #161b16;
+        }
+        .mock {
+          color: #ececec;
+        }
+        .compatibility,
+        .boundary {
+          background: #f3f4ef;
+        }
+        .rail,
+        .topbar,
+        .back-top,
+        .technical-head button {
+          display: none;
+        }
+        .frame {
+          margin: 0;
+        }
+        .content {
+          max-width: none;
+          padding: 0 15px;
+        }
+        p,
+        .appendix-content {
+          color: #333;
+        }
+        .hero {
+          padding-top: 25px;
+        }
+        .hero h1 {
+          color: #111;
+          font-size: 38px;
+        }
+        .hero h1 em {
+          color: #405425;
+        }
+        .section {
+          break-inside: avoid;
+        }
+        .map-wrap,
+        .mock,
+        .repo,
+        .flow-strip {
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+        .appendix details {
+          break-inside: avoid;
+        }
+        .appendix-content {
+          font-size: 11px;
+        }
+        .source-grid a {
+          color: #111;
+        }
+        .decision {
+          color: #111;
+        }
+        .decision p {
+          color: #222;
+        }
+        .footer {
+          color: #555;
+        }
+      }
+
+      .runtime-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-top: 24px;
+        overflow: hidden;
+      }
+      .runtime-strip > div {
+        padding: 20px;
+        border-right: 1px solid var(--line);
+      }
+      .runtime-strip > div:last-child {
+        border-right: 0;
+      }
+      .runtime-strip span,
+      .choice-label {
+        display: block;
+        font: 10px var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 11px;
+      }
+      .runtime-strip h3 {
+        font-size: 15px;
+        margin-bottom: 9px;
+      }
+      .runtime-strip p {
+        font-size: 12px;
+      }
+      .architecture-choice {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 30px;
+        padding: 26px;
+        border: 1px solid #d5e8a230;
+        border-radius: 12px;
+        background: #d5e8a207;
+      }
+      .architecture-choice h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+      .architecture-choice p {
+        font-size: 13px;
+        max-width: 620px;
+      }
+      .feature-tags {
+        display: flex;
+        align-content: center;
+        justify-content: flex-end;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
+      .feature-tags span {
+        font: 11px var(--mono);
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--muted);
+      }
+      .dependency-map {
+        display: grid;
+        grid-template-columns: 1fr 22px 1fr 22px 1fr;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .dependency-map > b {
+        color: var(--quiet);
+        font: 22px var(--mono);
+        text-align: center;
+      }
+      .dependency-layer {
+        height: 100%;
+        padding: 22px 19px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--surface);
+      }
+      .dependency-layer span {
+        font: 9px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--quiet);
+      }
+      .dependency-layer h3 {
+        font-size: 16px;
+        margin: 13px 0 10px;
+      }
+      .dependency-layer p {
+        font-size: 12px;
+      }
+      .dependency-layer.core {
+        border-color: #697b51;
+        background: #d5e8a20a;
+      }
+      .dependency-layer.core span {
+        color: var(--accent);
+      }
+      .effect-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        align-items: start;
+        margin: 39px 0 25px;
+      }
+      .effect-heading h3 {
+        font-size: 21px;
+        max-width: 300px;
+      }
+      .effect-heading p {
+        font-size: 13px;
+        max-width: 490px;
+      }
+      .effect-principles {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+      .effect-principles > div {
+        border-top: 1px solid var(--line);
+        padding-top: 17px;
+      }
+      .effect-principles span {
+        font: 10px var(--mono);
+        color: var(--quiet);
+      }
+      .effect-principles h4 {
+        font-size: 15px;
+        margin: 13px 0 10px;
+      }
+      .effect-principles p {
+        font-size: 12px;
+      }
+      .code-study {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+        gap: 31px;
+      }
+      .code-window {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #171b1c;
+        overflow: hidden;
+      }
+      .code-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 19px;
+        font: 10px var(--mono);
+        color: var(--quiet);
+      }
+      .code-title span:last-child {
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .code-window pre {
+        margin: 0;
+        padding: 23px 20px;
+        overflow: auto;
+        font-size: 11px;
+        line-height: 1.9;
+        color: #d6ddcc;
+        tab-size: 2;
+      }
+      .code-window pre code {
+        font-size: inherit;
+      }
+      .code-window > p {
+        font-size: 11px;
+        border-top: 1px solid var(--line);
+        padding: 16px 20px;
+      }
+      .code-notes {
+        padding-top: 10px;
+      }
+      .code-notes h3 {
+        font-size: 26px;
+        line-height: 1.25;
+        letter-spacing: -0.5px;
+      }
+      .code-notes ol {
+        list-style: none;
+        padding: 0;
+        margin: 23px 0;
+        counter-reset: code-note;
+      }
+      .code-notes li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 20px;
+        counter-increment: code-note;
+      }
+      .code-notes li:before {
+        content: counter(code-note, decimal-leading-zero);
+        font: 10px var(--mono);
+        color: var(--quiet);
+        position: absolute;
+        left: 0;
+        top: 3px;
+      }
+      .code-notes b {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .code-notes p {
+        font-size: 12px;
+        margin-top: 5px;
+      }
+      .guide-link {
+        font-size: 12px;
+        color: var(--accent);
+      }
+      .durability {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 38px;
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-top: 30px;
+        background: var(--surface);
+      }
+      .durability h3 {
+        font-size: 20px;
+        margin-bottom: 13px;
+      }
+      .durability p {
+        font-size: 13px;
+      }
+      .durability ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 18px;
+      }
+      .durability li {
+        padding-left: 18px;
+        border-left: 2px solid #657754;
+      }
+      .durability b {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+      .durability li span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      @media (max-width: 1050px) {
+        .code-study {
+          grid-template-columns: 1fr;
+        }
+        .code-notes ol {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 22px;
+        }
+        .code-notes li {
+          margin: 0;
+        }
+        .code-notes h3 br {
+          display: none;
+        }
+        .code-window pre {
+          font-size: 12px;
+        }
+        .dependency-map {
+          gap: 8px;
+        }
+        .dependency-layer {
+          padding: 17px 14px;
+        }
+        .dependency-layer h3 {
+          font-size: 14px;
+        }
+        .runtime-strip > div {
+          padding: 17px 14px;
+        }
+      }
+      @media (max-width: 680px) {
+        .runtime-strip,
+        .architecture-choice,
+        .effect-principles,
+        .durability {
+          grid-template-columns: 1fr;
+        }
+        .runtime-strip > div {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 18px;
+        }
+        .runtime-strip > div:last-child {
+          border-bottom: 0;
+        }
+        .architecture-choice {
+          padding: 21px;
+          gap: 22px;
+        }
+        .feature-tags {
+          justify-content: flex-start;
+        }
+        .dependency-map {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .dependency-map > b {
+          transform: rotate(90deg);
+          line-height: 1;
+        }
+        .dependency-layer {
+          padding: 20px;
+        }
+        .dependency-layer h3 {
+          font-size: 16px;
+        }
+        .effect-heading {
+          display: block;
+        }
+        .effect-heading p {
+          margin-top: 13px;
+        }
+        .effect-principles {
+          gap: 20px;
+        }
+        .code-notes ol {
+          grid-template-columns: 1fr;
+        }
+        .code-title {
+          font-size: 9px;
+          padding: 14px;
+        }
+        .code-window pre {
+          font-size: 10px;
+          padding: 19px 15px;
+        }
+        .durability {
+          gap: 26px;
+          padding: 21px;
+        }
+        .code-notes h3 {
+          font-size: 22px;
+        }
+        .rail {
+          overflow-y: auto;
+        }
+        .rail-bottom {
+          padding-top: 22px;
+        }
+      }
+      @media print {
+        .architecture-choice,
+        .dependency-layer,
+        .dependency-layer.core,
+        .code-window,
+        .durability,
+        .feature-tags span {
+          background: #f1f2ef;
+          color: #161b16;
+        }
+        .code-window pre {
+          color: #161b16;
+        }
+        .code-study,
+        .durability {
+          break-inside: avoid;
+        }
+      }
+
+      .atom-plan {
+        margin-top: 36px;
+        padding-top: 3px;
+        border-top: 1px solid var(--line);
+      }
+      .atom-path {
+        display: grid;
+        grid-template-columns: 1fr 20px 1fr 20px 1fr;
+        gap: 14px;
+        align-items: center;
+      }
+      .atom-path > div {
+        height: 100%;
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .atom-path .atom-owner {
+        border-color: #889b69;
+        background: #d5e8a20c;
+      }
+      .atom-path span {
+        display: block;
+        font: 9px var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--quiet);
+        margin-bottom: 10px;
+      }
+      .atom-path b {
+        display: block;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .atom-path small {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .atom-path i {
+        text-align: center;
+        color: var(--quiet);
+        font-style: normal;
+      }
+      .atom-ownership {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 27px;
+        margin-top: 24px;
+      }
+      .atom-ownership h4 {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .atom-ownership p {
+        font-size: 12px;
+      }
+      .atom-note {
+        display: flex;
+        gap: 24px;
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        margin-top: 23px;
+      }
+      .atom-note > span {
+        font: 10px var(--mono);
+        white-space: nowrap;
+        color: var(--accent);
+        padding-top: 4px;
+      }
+      .atom-note p {
+        font-size: 12px;
+      }
+      @media (max-width: 680px) {
+        .atom-path,
+        .atom-ownership {
+          grid-template-columns: 1fr;
+        }
+        .atom-path i {
+          transform: rotate(90deg);
+        }
+        .atom-ownership {
+          gap: 21px;
+        }
+        .atom-note {
+          display: block;
+        }
+        .atom-note p {
+          margin-top: 9px;
+        }
+      }
+      @media print {
+        .atom-path > div,
+        .atom-path .atom-owner {
+          background: #f1f2ef;
+        }
+      }
+
+      .setup-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 26px;
+      }
+      .setup-grid article {
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+        min-width: 0;
+      }
+      .setup-label {
+        font: 10px var(--mono);
+        color: var(--quiet);
+        display: block;
+        margin-bottom: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+      }
+      .setup-grid h3 {
+        font-size: 20px;
+        letter-spacing: -0.4px;
+        margin-bottom: 12px;
+      }
+      .setup-link,
+      .setup-value {
+        font-size: 11px;
+        color: var(--accent);
+        display: block;
+        margin-bottom: 13px;
+        overflow-wrap: anywhere;
+      }
+      .setup-grid > article > code {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        min-height: 38px;
+      }
+      .setup-grid p {
+        font-size: 12px;
+        margin-top: 13px;
+      }
+      .drive-path {
+        display: grid;
+        grid-template-columns: 1fr 20px 1fr;
+        gap: 16px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-top: 29px;
+        padding: 22px;
+      }
+      .drive-path > div {
+        min-width: 0;
+      }
+      .drive-path small {
+        display: block;
+        font: 9px var(--mono);
+        color: var(--quiet);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .drive-path strong {
+        display: block;
+        font-size: 15px;
+        font-weight: 500;
+        margin: 7px 0;
+      }
+      .drive-path span {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .drive-path > b {
+        font-weight: 400;
+        color: var(--quiet);
+      }
+      .drive-active strong {
+        color: var(--accent);
+      }
+      .motion-contract {
+        display: grid;
+        grid-template-columns: 1fr 0.9fr;
+        gap: 45px;
+        margin-top: 35px;
+        padding-top: 30px;
+        border-top: 1px solid var(--line);
+      }
+      .motion-copy h3 {
+        font-size: 23px;
+        letter-spacing: -0.5px;
+        margin: 10px 0 14px;
+      }
+      .motion-copy p {
+        font-size: 12px;
+      }
+      .motion-timings {
+        display: flex;
+        gap: 30px;
+        margin: 22px 0;
+      }
+      .motion-timings b {
+        font: 20px var(--mono);
+        font-weight: 400;
+        color: var(--accent);
+        display: block;
+      }
+      .motion-timings small {
+        font-size: 10px;
+        color: var(--quiet);
+      }
+      .motion-timings span {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .motion-copy .motion-access {
+        color: var(--quiet);
+        font-size: 11px;
+      }
+      .motion-preview {
+        height: 175px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #1c2023;
+        position: relative;
+        overflow: hidden;
+      }
+      .motion-page {
+        position: absolute;
+        left: 21%;
+        top: 18px;
+        width: 47%;
+        height: 150px;
+        padding: 24px 16px;
+        background: #edf0ea;
+        box-shadow: 0 2px 10px #0003;
+      }
+      .motion-page i {
+        height: 3px;
+        display: block;
+        background: #c6cdc4;
+        margin-bottom: 11px;
+      }
+      .motion-page i:first-child {
+        width: 60%;
+        background: #939f90;
+        margin-bottom: 21px;
+      }
+      .motion-pane {
+        position: absolute;
+        right: 0;
+        inset-block: 0;
+        width: 42%;
+        padding: 15px;
+        background: #16191b;
+        border-left: 1px solid #3a4541;
+        transform: translateX(14px);
+        opacity: 0;
+        transition:
+          transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity 180ms ease-out;
+      }
+      .motion-pane > span {
+        display: block;
+        font-size: 10px;
+        color: var(--accent);
+        margin-bottom: 20px;
+      }
+      .motion-pane > i {
+        display: block;
+        width: 95%;
+        height: 3px;
+        background: #3d4a44;
+        margin-bottom: 8px;
+      }
+      .motion-pane > i:nth-child(3) {
+        width: 73%;
+      }
+      .motion-pane > div {
+        font-size: 8px;
+        color: var(--quiet);
+        position: absolute;
+        bottom: 12px;
+        left: 10px;
+        right: 10px;
+        padding: 10px 8px;
+        border: 1px solid #38423c;
+        border-radius: 8px;
+      }
+      .motion-preview[data-open="true"] .motion-pane {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      .motion-button {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        min-height: 44px;
+        padding: 12px 0;
+        background: transparent;
+        color: var(--accent);
+        font-size: 12px;
+      }
+      .motion-study > p {
+        font-size: 10px;
+        color: var(--quiet);
+      }
+      @media (max-width: 900px) {
+        .setup-grid {
+          gap: 19px;
+        }
+        .setup-grid h3 {
+          font-size: 18px;
+        }
+        .drive-path {
+          padding: 18px;
+          gap: 10px;
+        }
+        .motion-contract {
+          gap: 25px;
+        }
+      }
+      @media (max-width: 680px) {
+        .setup-grid,
+        .motion-contract {
+          grid-template-columns: 1fr;
+        }
+        .setup-grid {
+          gap: 24px;
+        }
+        .setup-grid > article > code {
+          min-height: 0;
+        }
+        .drive-path {
+          grid-template-columns: 1fr;
+          gap: 13px;
+        }
+        .drive-path > b {
+          transform: rotate(90deg);
+          justify-self: start;
+        }
+        .motion-contract {
+          gap: 25px;
+        }
+        .motion-timings {
+          gap: 28px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .motion-pane {
+          transition: none;
+          transform: none;
+        }
+      }
+      @media print {
+        .motion-preview,
+        .drive-path {
+          background: #f1f2ef;
+        }
+        .motion-pane {
+          transform: none;
+          opacity: 1;
+          background: #f1f2ef;
+        }
+        .motion-button {
+          display: none;
+        }
+        .motion-contract {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to plan</a>
+    <aside class="rail" id="rail">
+      <a class="brand" href="#overview"
+        ><span class="brandmark">HA</span
+        ><span>HA Workspace<small>Architecture &amp; design</small></span></a
+      >
+      <div class="rail-label">The plan</div>
+      <nav class="nav" aria-label="Plan sections">
+        <a href="#overview" aria-current="true"><span>00</span>Overview</a>
+        <a href="#foundation-setup"><span>↳</span>Setup decisions</a>
+        <a href="#architecture"><span>01</span>System map</a>
+        <a href="#stack"><span>02</span>Stack &amp; structure</a>
+        <a href="#effect-architecture"><span>03</span>Effect architecture</a>
+        <a href="#workflow"><span>04</span>Document workflow</a>
+        <a href="#data"><span>05</span>Data model</a>
+        <a href="#interface"><span>06</span>Interface</a>
+        <a href="#roadmap"><span>07</span>Build sequence</a>
+        <a href="#details"><span>08</span>Engineering notes</a>
+      </nav>
+      <div class="rail-bottom">
+        <strong><span class="dot"></span>Local hosting confirmed</strong>Convex on your machine
+        <div class="rule"></div>
+        Foundation in progress<br />Updated September 8, 2026
+      </div>
+    </aside>
+    <div class="frame">
+      <header class="topbar">
+        <div class="crumb">
+          <button
+            class="mobile-menu"
+            aria-label="Open plan navigation"
+            aria-expanded="false"
+            aria-controls="rail"
+          >
+            ☰</button
+          ><span class="parent">HA Consulting</span><span class="parent">/</span
+          ><b>Workspace plan</b>
+        </div>
+        <div class="toolbar-actions">
+          <span class="pill">Foundation · v3</span
+          ><button class="quiet-button" id="print">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              aria-hidden="true"
+            >
+              <path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z" /></svg
+            >Print plan
+          </button>
+        </div>
+      </header>
+      <main class="content" id="main">
+        <section class="hero" id="overview" aria-labelledby="title">
+          <div class="eyebrow">Personal software / HA Consulting</div>
+          <h1>A workspace for your files.<br /><em>A faster way to review.</em></h1>
+          <p class="intro">
+            Keep company files and templates in one place. Open a document, point to what needs
+            changing, and review the next version without repeating the background.
+          </p>
+          <div class="meta-row">
+            <span><i></i>Desktop + iPhone</span><span><i></i>Private access through Tailscale</span
+            ><span><i></i>Foundation in progress</span>
+          </div>
+          <div class="decision">
+            <span class="label">Confirmed decision</span>
+            <p>Use the existing local Convex setup.<code>/home/akh/LocalServices/Convex</code></p>
+            <span class="check" aria-hidden="true">✓</span>
+          </div>
+        </section>
+
+        <section class="section" id="foundation-setup">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Setup / In progress</span>
+              <h2>A real foundation to build on</h2>
+            </div>
+            <p>
+              The code, local data, and configuration now have a home. Workflow features and live
+              integration remain the next build gates.
+            </p>
+          </div>
+          <div class="setup-grid">
+            <article>
+              <span class="setup-label">Private repository</span>
+              <h3>ha-workspace</h3>
+              <a
+                class="setup-link"
+                href="https://github.com/alexmikeagent/ha-workspace"
+                target="_blank"
+                rel="noopener"
+                >alexmikeagent / ha-workspace ↗</a
+              ><code>/home/akh/Projects/ha-workspace</code>
+              <p>
+                Modern shadcn Start shell with Effect Atom. Source checks and 25 tests pass; the
+                configured build awaits Doppler reauthentication.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Data foundation</span>
+              <h3>2,867 files copied</h3>
+              <span class="setup-value">1,275,661,520 bytes · SHA-256 verified</span
+              ><code>/home/akh/Projects/ha-workspace-data</code>
+              <p>
+                The standalone copy matches the local mirror at copy time. Source contents were
+                preserved; no delete option was used.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Environment &amp; secrets</span>
+              <h3>Doppler</h3>
+              <span class="setup-value">OmarchySys76 / ha-workspace</span><code>dev_personal</code>
+              <p>
+                Runtime injection with <code>doppler run --no-fallback</code>. CLI reauthentication
+                is still pending.
+              </p>
+            </article>
+          </div>
+          <div class="drive-path" aria-label="Local Drive copy responsibilities">
+            <div>
+              <small>Original selected mirror</small><strong>GoogleDrive</strong
+              ><span>Preserved unchanged</span>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div class="drive-active">
+              <small>Initial app provider</small><strong>fake-drive</strong
+              ><span>New revisions stay here</span>
+            </div>
+          </div>
+          <p class="footnote">
+            The copy covers the selected local mirror at <code>/home/akh/GoogleDrive</code>. It has
+            not been compared with a full cloud Drive inventory. Failed-sync artifacts and Windows
+            shortcuts remain preserved as files. Private source documents and file manifests stay
+            outside Git. The standalone copy stays independent of live sync: preserve sync metadata
+            in the snapshot and exclude it from app use.
+          </p>
+        </section>
+
+        <section class="section" id="architecture">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">01 / Architecture</span>
+              <h2>Where each part runs</h2>
+            </div>
+            <p>
+              Convex tracks the work. A local worker handles files and document tools. Select a
+              component to see its job.
+            </p>
+          </div>
+          <div class="map-wrap">
+            <div class="map-header">
+              <span>HA Workspace / system map</span><span>Planned components, not live status</span>
+            </div>
+            <div class="map">
+              <svg class="map-wires" aria-hidden="true">
+                <defs>
+                  <marker
+                    id="arrow"
+                    viewBox="0 0 10 10"
+                    refX="9"
+                    refY="5"
+                    markerWidth="5"
+                    markerHeight="5"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M0 0 10 5 0 10" fill="#69776a" />
+                  </marker>
+                </defs>
+                <g id="wires"></g>
+              </svg>
+              <div class="map-grid">
+                <button class="map-node" id="node-client" data-node="client" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Your devices</span
+                  ><strong>Desktop &amp; iPhone</strong><small>Browse, comment, review</small>
+                </button>
+                <div class="network-note">
+                  <h3>Private access through Tailscale</h3>
+                  <p>
+                    The web app and Convex API need reachable HTTPS endpoints. File tools stay on
+                    the local machine.
+                  </p>
+                </div>
+                <button class="map-node" id="node-web" data-node="web" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Application</span
+                  ><strong>TanStack Start</strong><small>shadcn + Tailwind interface</small>
+                </button>
+                <button class="map-node" id="node-convex" data-node="convex" aria-pressed="true">
+                  <span class="node-corner">↗</span><span class="node-label">Local backend</span
+                  ><strong>Convex + Confect</strong><small>State, history, subscriptions</small>
+                </button>
+                <button class="map-node" id="node-worker" data-node="worker" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Local process</span
+                  ><strong>Effect on Bun</strong><small>Claim jobs, run tools, save results</small>
+                </button>
+                <button class="map-node" id="node-render" data-node="render" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Worker capability</span
+                  ><strong>Document tools</strong><small>Generate, check, render</small>
+                </button>
+                <button class="map-node" id="node-files" data-node="files" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Local storage</span
+                  ><strong>Files &amp; revisions</strong
+                  ><small>Originals, previews, immutable copies</small>
+                </button>
+                <button class="map-node" id="node-agent" data-node="agent" aria-pressed="false">
+                  <span class="node-corner">↗</span><span class="node-label">Runtime adapter</span
+                  ><strong>Codex</strong><small>Task context and requested changes</small>
+                </button>
+              </div>
+            </div>
+            <div class="node-detail" aria-live="polite">
+              <div>
+                <span class="detail-cap" id="node-type">Local backend</span>
+                <h3 id="node-title">Convex + Confect</h3>
+              </div>
+              <p id="node-description">
+                Convex stores file metadata, task state, comments, and revision history. Confect
+                connects those functions to Effect schemas. The existing service directory is
+                confirmed; its endpoints and running configuration still need inspection.
+              </p>
+            </div>
+          </div>
+          <p class="footnote">
+            Connections show responsibilities. The document tools are part of the worker; they do
+            not run in the browser or inside a Convex mutation.
+          </p>
+        </section>
+
+        <section class="section" id="stack">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">02 / Foundation</span>
+              <h2>A small Bun monorepo</h2>
+            </div>
+            <p>
+              Bun runs the application processes. Feature packages share domain rules and Effect use
+              cases; Convex keeps its own runtime.
+            </p>
+          </div>
+          <div class="stack">
+            <div class="stack-list">
+              <div class="stack-row">
+                <div class="stack-logo">B</div>
+                <div>
+                  <h3>Bun · stable Rust release</h3>
+                  <p>
+                    Package management, workspaces, and the target web/worker runtime. Application
+                    code stays TypeScript.
+                  </p>
+                </div>
+                <span class="version">1.4.2</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">V+</div>
+                <div>
+                  <h3>Vite+</h3>
+                  <p>Dev server, builds, Oxlint, Oxfmt, type checks, tests, and workspace tasks.</p>
+                </div>
+                <span class="version">0.3.0</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">T</div>
+                <div>
+                  <h3>TanStack Start</h3>
+                  <p>Routes and the server shell. Start from shadcn's monorepo template.</p>
+                </div>
+                <span class="version">1.168.50</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">/</div>
+                <div>
+                  <h3>shadcn + Tailwind</h3>
+                  <p>Accessible components with shared colors, spacing, and typography.</p>
+                </div>
+                <span class="version">4.21.0 / 4.3.3</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">C</div>
+                <div>
+                  <h3>Convex</h3>
+                  <p>Local application state with updates pushed to your open views.</p>
+                </div>
+                <span class="version">1.45.0</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">A</div>
+                <div>
+                  <h3>Effect Atom</h3>
+                  <p>
+                    Shared UI state, typed commands, derived values, and live data streams. One
+                    session registry.
+                  </p>
+                </div>
+                <span class="version">4.0.0-rc.112</span>
+              </div>
+              <div class="stack-row">
+                <div class="stack-logo">E</div>
+                <div>
+                  <h3>Effect + Confect</h3>
+                  <p>
+                    Effect use cases, backend functions, file tools, and agent workflows. Confect
+                    supplies the typed Convex boundary.
+                  </p>
+                </div>
+                <span class="version">v4 RC / v10 next</span>
+              </div>
+            </div>
+            <div class="repo">
+              <div class="repo-title"><span>ha-workspace/</span><span>Bun workspaces</span></div>
+              <pre><span class="dir">apps/</span>
+  web/          <span class="comment"># Start + shadcn</span>
+  worker/       <span class="comment"># Effect on Bun</span>
+
+<span class="dir">packages/</span>
+  ui/           <span class="comment"># components + tokens</span>
+  domain/       <span class="comment"># schemas + rules</span>
+  application/  <span class="comment"># use cases + ports</span>
+  backend/      <span class="comment"># Confect + Convex</span>
+  documents/    <span class="comment"># format adapters</span>
+
+<span class="dir">tests/e2e/</span>
+<span class="dir">docs/</span>
+vite.config.ts
+package.json    <span class="comment"># workspaces + catalogs</span>
+bun.lock</pre>
+              <p class="repo-note">
+                Code lives at <code>/home/akh/Projects/ha-workspace</code>. The verified fake Drive
+                lives in the adjacent private data directory and connects through an Effect storage
+                adapter.
+              </p>
+            </div>
+          </div>
+          <div class="runtime-strip" aria-label="Runtime responsibilities">
+            <div>
+              <span>Application</span>
+              <h3>Bun 1.4.2</h3>
+              <p>
+                Web server + Effect worker.<br />One <code>bun.lock</code>, explicit workspace
+                dependencies.
+              </p>
+            </div>
+            <div>
+              <span>Development tools</span>
+              <h3>Vite+ + Node</h3>
+              <p>
+                Lint, format, test, build, codegen.<br />Node 24.20.0; pinned alongside Bun in
+                <code>mise.toml</code>.
+              </p>
+            </div>
+            <div>
+              <span>Backend</span>
+              <h3>Local Convex</h3>
+              <p>Its own function runtime.<br />Deterministic transactions and durable state.</p>
+            </div>
+          </div>
+          <div class="compatibility">
+            <span>Verified baseline</span>
+            <p>
+              Bun <code>1.4.2</code> is the latest stable release checked for this plan, following
+              the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
+              Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
+              declares Node tooling. Vite+ source checks and 25 tests pass. The final configured
+              build and full Bun integration remain to be verified.
+              <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
+                >Bun release notes ↗</a
+              >
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="effect-architecture">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">03 / Architecture decision</span>
+              <h2>One product. Clear boundaries.</h2>
+            </div>
+            <p>
+              Adopt a hexagonal modular monolith, organized by feature. Keep document rules
+              independent of the tools that execute them.
+            </p>
+          </div>
+          <div class="architecture-choice">
+            <div>
+              <span class="choice-label">Adopted</span>
+              <h3>Ports and adapters</h3>
+              <p>
+                We can test a report correction with fake services, then run the same use case
+                against local Convex and real document tools. The web app and worker stay in one
+                codebase and release line.
+              </p>
+            </div>
+            <div class="feature-tags" aria-label="Feature modules">
+              <span>Catalog</span><span>Review</span><span>HA policies</span
+              ><span>Instructions</span><span>Jobs</span>
+            </div>
+          </div>
+          <div
+            class="dependency-map"
+            aria-label="Code dependencies point inward from adapters to application to domain"
+          >
+            <div class="dependency-layer">
+              <span>Outside / adapters</span>
+              <h3>React · Convex · Bun</h3>
+              <p>Translate external APIs into focused Effect services.</p>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div class="dependency-layer">
+              <span>Application / ports</span>
+              <h3>Effect use cases</h3>
+              <p>Request a revision, choose a template, publish a ready file.</p>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div class="dependency-layer core">
+              <span>Inside / domain</span>
+              <h3>Schemas &amp; rules</h3>
+              <p>Client evidence, revision policies, and valid state transitions.</p>
+            </div>
+          </div>
+          <p class="footnote">
+            Arrows show code dependencies. Composition roots supply live Layers; core modules cannot
+            import React, Bun, or Confect implementations.
+            <a
+              href="https://alistair.cockburn.us/hexagonal-architecture"
+              target="_blank"
+              rel="noopener"
+              >Architecture reference ↗</a
+            >
+          </p>
+          <div class="effect-heading">
+            <h3>Effect throughout the application</h3>
+            <p>
+              Every authored use case and side-effecting capability returns an Effect. Pure rules
+              and JSX stay straightforward TypeScript.
+            </p>
+          </div>
+          <div class="effect-principles">
+            <div>
+              <span>01 / Explicit capabilities</span>
+              <h4>Services, with small interfaces</h4>
+              <p>
+                Use <code>Context.Service</code> and explicit Layers. Depend on operations such as
+                <code>commitValidatedRevision</code>; keep transaction rules visible.
+              </p>
+            </div>
+            <div>
+              <span>02 / Honest failures</span>
+              <h4>Schemas and typed errors</h4>
+              <p>
+                Decode input once. A stale revision, missing fact, or locked file has a distinct
+                error and a useful response in the interface.
+              </p>
+            </div>
+            <div>
+              <span>03 / Owned lifetimes</span>
+              <h4>Scopes from start to finish</h4>
+              <p>
+                Bound concurrency and retries. A job owns its processes, streams, and temporary
+                files; cancellation closes their scope.
+              </p>
+            </div>
+          </div>
+          <div class="code-study">
+            <div class="code-window">
+              <div class="code-title">
+                <span>documents / requestRevision.ts</span><span>RC.112 · checked</span>
+              </div>
+              <pre
+                tabindex="0"
+                aria-label="Typechecked Effect v4 RC use-case example"
+              ><code>{{EFFECT_SAMPLE}}</code></pre>
+              <p>
+                Illustrative API check with a fake service. Strict typecheck and Node execution
+                passed; application integration is still to be built.
+              </p>
+            </div>
+            <div class="code-notes">
+              <span class="choice-label">The coding standard</span>
+              <h3>Small functions.<br />Visible contracts.</h3>
+              <ol>
+                <li>
+                  <b>Decode at entry</b>
+                  <p>
+                    <code>Schema.decodeUnknownEffect</code> turns untrusted input into a checked
+                    command.
+                  </p>
+                </li>
+                <li>
+                  <b>Name the operation</b>
+                  <p>
+                    <code>Effect.fn</code> keeps the use case readable and gives tracing a stable
+                    name.
+                  </p>
+                </li>
+                <li>
+                  <b>Ask for a capability</b>
+                  <p>
+                    The service exposes its success and expected failure. Tests supply a fake Layer.
+                  </p>
+                </li>
+                <li>
+                  <b>Run at the boundary</b>
+                  <p>
+                    One session-owned Atom registry and runtime; request-owned SSR identity; one
+                    scoped worker entry point.
+                  </p>
+                </li>
+              </ol>
+              <a class="guide-link" href="#details">Full conventions and acceptance tests ↓</a>
+            </div>
+          </div>
+          <div class="atom-plan" id="atom-state">
+            <div class="effect-heading">
+              <h3>State, the Effect way</h3>
+              <p>
+                Use Atom for the workspace state graph. The same runtime connects UI commands to our
+                Effect use cases and reads Confect's live streams.
+              </p>
+            </div>
+            <div class="atom-path" aria-label="Reactive data path">
+              <div>
+                <span>Views</span><b>React hooks</b><small>Read and update feature atoms</small>
+              </div>
+              <i aria-hidden="true">↔</i>
+              <div class="atom-owner">
+                <span>UI state owner</span><b>Effect Atom</b
+                ><small>One registry per authenticated session</small>
+              </div>
+              <i aria-hidden="true">↔</i>
+              <div>
+                <span>Live transport</span><b>Confect → Convex</b
+                ><small>One scoped WebSocket client</small>
+              </div>
+            </div>
+            <div class="atom-ownership">
+              <div>
+                <h4>Local &amp; derived atoms</h4>
+                <p>
+                  Inspector tabs, annotations, zoom, draft text, panel preferences, and whether a
+                  command can be submitted.
+                </p>
+              </div>
+              <div>
+                <h4>Runtime function atoms</h4>
+                <p>
+                  Request a revision, save instructions, or cancel a job. Pending, success, and
+                  typed failures stay visible.
+                </p>
+              </div>
+              <div>
+                <h4>Live read atoms</h4>
+                <p>
+                  Files, comments, and durable job progress. Preserve typed query errors as stream
+                  values so later updates can recover.
+                </p>
+              </div>
+            </div>
+            <div class="atom-note">
+              <span>Lifecycle matters</span>
+              <p>
+                Save drafts through an Effect IndexedDB adapter with visible save status. Tear down
+                the old session on logout. Router URLs own shareable filters; Convex owns durable
+                records. A command acknowledgement and a completed render are separate states.
+              </p>
+            </div>
+            <p class="footnote">
+              Pin <code>@effect/atom-react@4.0.0-rc.112</code> with React 19. Import core reactivity
+              from <code>effect/unstable/reactivity</code>.
+              <a
+                href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/atom/react/README.md"
+                target="_blank"
+                rel="noopener"
+                >Pinned React bindings ↗</a
+              >
+            </p>
+          </div>
+          <div class="durability">
+            <div>
+              <span class="choice-label">Execution and recovery</span>
+              <h3>Fibers execute. Convex remembers.</h3>
+              <p>
+                Persist requests, leases, cancellation, and publication intents. Retries must
+                survive a process restart without changing the meaning of the request.
+              </p>
+            </div>
+            <ol>
+              <li>
+                <b>Request</b
+                ><span
+                  >Authorize + validate base version + deduplicate + enqueue, in one mutation.</span
+                >
+              </li>
+              <li>
+                <b>Commit</b
+                ><span
+                  >Check base version, cancellation, lease expiry, and attempt token before
+                  advancing the visible revision.</span
+                >
+              </li>
+              <li>
+                <b>Publish</b
+                ><span
+                  >Write an already committed revision to a new filename. Verify the hash on replay;
+                  never replace conflicting bytes.</span
+                >
+              </li>
+            </ol>
+          </div>
+          <p class="footnote">
+            Atom is the reactive UI layer. A single Confect WebSocket client supplies live data and
+            typed commands. The checked Atom adapter shared subscriptions, recovered after typed
+            errors, and disposed resources in isolated registry tests. Live integration remains a
+            foundation check.
+          </p>
+        </section>
+
+        <section class="section" id="workflow">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">04 / The review loop</span>
+              <h2>From a file to its next revision</h2>
+            </div>
+            <p>
+              Your comments stay with the version you reviewed. A correction creates a new document
+              and a new preview.
+            </p>
+          </div>
+          <div class="flow-strip" aria-label="Document workflow stages">
+            <button class="flow-stage" data-step="0" aria-pressed="true">
+              <span class="count">01</span><strong>Choose a file</strong
+              ><small>Company &amp; template</small>
+            </button>
+            <button class="flow-stage" data-step="1" aria-pressed="false">
+              <span class="count">02</span><strong>Fill the gaps</strong
+              ><small>One question batch</small>
+            </button>
+            <button class="flow-stage" data-step="2" aria-pressed="false">
+              <span class="count">03</span><strong>Generate &amp; check</strong
+              ><small>Local tools</small>
+            </button>
+            <button class="flow-stage" data-step="3" aria-pressed="false">
+              <span class="count">04</span><strong>Review in place</strong
+              ><small>Preview &amp; annotate</small>
+            </button>
+            <button class="flow-stage" data-step="4" aria-pressed="false">
+              <span class="count">05</span><strong>Save a revision</strong
+              ><small>Keep the history</small>
+            </button>
+          </div>
+          <div class="flow-caption" aria-live="polite">
+            <h3 id="step-title">Choose the right source</h3>
+            <p id="step-description">
+              Open a company file or start from a template. The task records its company, project,
+              and operation: a completed document, an intentionally blank draft, a limited copy, or
+              a revision.
+            </p>
+          </div>
+          <div class="format-grid">
+            <div class="format">
+              <b>DOCX</b>
+              <h3>Word documents</h3>
+              <p>
+                Page previews from local conversion. Comments point to a page, region, or known
+                template field.
+              </p>
+            </div>
+            <div class="format">
+              <b>XLSX</b>
+              <h3>Excel workbooks</h3>
+              <p>
+                A read-only sheet grid. Comments identify the sheet and cell range; cached values
+                are labeled.
+              </p>
+            </div>
+            <div class="format">
+              <b>PDF</b>
+              <h3>PDF files</h3>
+              <p>
+                Page navigation and text selection where available, with comments tied to the source
+                revision.
+              </p>
+            </div>
+            <div class="format">
+              <b>PPTX</b>
+              <h3>PowerPoint decks</h3>
+              <p>
+                Rendered slides and thumbnails. Comments identify a slide and the selected area.
+              </p>
+            </div>
+          </div>
+          <p class="boundary">
+            Start with previews and requested revisions. Full Office editing in the browser is a
+            separate decision; each format needs a real-file rendering test.
+          </p>
+        </section>
+
+        <section class="section" id="data">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">05 / Durable context</span>
+              <h2>Keep the facts with the work</h2>
+            </div>
+            <p>
+              Store the chosen template, source facts, and instruction versions so a later
+              correction can start from the same context.
+            </p>
+          </div>
+          <div class="model-grid">
+            <div class="model-group">
+              <h3>Company context</h3>
+              <code>users</code><code>companies · projects</code><code>templates</code
+              ><code>templateBindings</code>
+            </div>
+            <div class="model-group">
+              <h3>Documents</h3>
+              <code>files</code><code>fileVersions</code><code>previews</code><code>comments</code>
+            </div>
+            <div class="model-group">
+              <h3>Work in progress</h3>
+              <code>tasks</code><code>contextSnapshots</code><code>jobs</code><code>jobEvents</code>
+            </div>
+            <div class="model-group">
+              <h3>Agent instructions</h3>
+              <code>instructionFiles</code><code>instructionVersions</code
+              ><code>draft / active version</code><code>source hash</code>
+            </div>
+          </div>
+          <div class="model-caption">
+            <p>
+              Convex owns durable state and transactions. Effect owns application operations across
+              the browser, backend, and Bun worker.
+            </p>
+            <p>
+              A comment belongs to one file version. A running task keeps its instruction snapshot
+              even if you edit the skill.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="interface">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">06 / Interface direction</span>
+              <h2>Familiar controls, room to read</h2>
+            </div>
+            <p>
+              The wireframe guides the workflow. Build a modern visual system with clear hierarchy,
+              quiet controls, and motion that helps you follow a change. Keep the document central.
+            </p>
+          </div>
+          <div
+            class="mock"
+            aria-label="Illustrative desktop layout, not the implemented application"
+          >
+            <div class="mock-top">
+              <span>HA Consulting / Reports / DSAI</span><span class="mock-controls">↓ ··· ▥</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-nav">
+                <div class="mock-brand">HA Consulting</div>
+                <span>Companies</span><span class="selected">Reports</span><span>Invoices</span
+                ><span>Templates</span><small>Recent files</small><span>DSAI</span><span>IAD5</span>
+              </div>
+              <div class="mock-preview">
+                <div class="mock-preview-bar">
+                  <span>Version 1 · Page 1</span><span>Fit page · Annotate</span>
+                </div>
+                <div class="paper">
+                  <div class="paper-brand">HA CONSULTING</div>
+                  <div class="paper-title">Daily field report</div>
+                  <span class="paper-label">PROJECT DETAILS</span>
+                  <div class="paper-line"></div>
+                  <div class="paper-line short"></div>
+                  <span class="paper-label">OBSERVATIONS</span>
+                  <div class="paper-annotation">
+                    <div class="paper-line"></div>
+                    <div class="paper-line"></div>
+                    <div class="paper-line short"></div>
+                  </div>
+                  <span class="paper-label">LAYOUT STUDY</span>
+                </div>
+              </div>
+              <div class="mock-inspector">
+                <div class="mock-tabs" role="tablist" aria-label="Inspector example">
+                  <button
+                    id="tab-review"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="mock-review"
+                  >
+                    Review</button
+                  ><button
+                    id="tab-context"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="mock-context"
+                    tabindex="-1"
+                  >
+                    Context</button
+                  ><button
+                    id="tab-agent"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="mock-agent"
+                    tabindex="-1"
+                  >
+                    Agent
+                  </button>
+                </div>
+                <div
+                  class="mock-panel"
+                  id="mock-review"
+                  role="tabpanel"
+                  aria-labelledby="tab-review"
+                >
+                  <h4>Page 1 · Observations</h4>
+                  <p>
+                    Select an area and describe the change. The comment stays attached to this
+                    revision.
+                  </p>
+                </div>
+                <div
+                  class="mock-panel"
+                  id="mock-context"
+                  role="tabpanel"
+                  aria-labelledby="tab-context"
+                  hidden
+                >
+                  <h4>Context for this task</h4>
+                  <p>
+                    Company, template, visit facts, and corrections, with their sources available
+                    for review.
+                  </p>
+                </div>
+                <div
+                  class="mock-panel"
+                  id="mock-agent"
+                  role="tabpanel"
+                  aria-labelledby="tab-agent"
+                  hidden
+                >
+                  <h4>Project instructions</h4>
+                  <code>AGENTS.md</code><code>ha-field-report/SKILL.md</code>
+                  <p>Preview or edit a draft. Apply it to subsequent runs.</p>
+                </div>
+                <div class="mock-composer" aria-hidden="true">
+                  Describe the change…
+                  <div class="mock-compose-bottom">
+                    <span>+</span><span class="mock-send">↑</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="footnote">
+            Layout study. Inspector tabs are interactive; the document is a diagram of the proposed
+            review surface.
+          </p>
+          <div class="design-metrics">
+            <div>
+              <b>248<small>px</small></b
+              ><span>Proposed sidebar width</span>
+            </div>
+            <div>
+              <b>14<small>px</small></b
+              ><span>Base text</span>
+            </div>
+            <div>
+              <b>4<small>px</small></b
+              ><span>Spacing unit</span>
+            </div>
+            <div>
+              <b>44<small>px</small></b
+              ><span>Proposed touch targets</span>
+            </div>
+          </div>
+          <div class="design-bottom">
+            <div class="design-note">
+              <div class="palette" aria-label="Proposed neutral palette">
+                <span class="swatch" style="background: #111416" title="Sidebar #111416"></span
+                ><span class="swatch" style="background: #16191b" title="Main #16191b"></span
+                ><span class="swatch" style="background: #1c2023" title="Preview #1c2023"></span
+                ><span class="swatch" style="background: #282f31" title="Selected #282f31"></span
+                ><span class="swatch" style="background: #edf1ed" title="Text #edf1ed"></span>
+              </div>
+              <p>
+                Use system fonts, one outline icon set, and semantic color tokens. Group related
+                controls with spacing and fine dividers. The finished interface has its own visual
+                system.
+              </p>
+            </div>
+            <p>
+              On iPhone, show one main surface. Navigation opens in a drawer, and the inspector
+              becomes a full-height panel. Scrolling stays normal until you enter annotation mode.
+            </p>
+          </div>
+          <div class="motion-contract">
+            <div class="motion-copy">
+              <span class="choice-label">Interaction direction</span>
+              <h3>Quiet motion. Clear feedback.</h3>
+              <p>
+                A panel should explain where more detail lives. A saved state should confirm the
+                action. Keep the document position, selection, and draft stable throughout.
+              </p>
+              <div class="motion-timings">
+                <div>
+                  <b>100–140<small> ms</small></b
+                  ><span>Control feedback</span>
+                </div>
+                <div>
+                  <b>180–220<small> ms</small></b
+                  ><span>Panels &amp; sheets</span>
+                </div>
+              </div>
+              <p class="motion-access">
+                Reduced motion removes travel. Keyboard focus and status text always work without
+                animation.
+              </p>
+            </div>
+            <div class="motion-study">
+              <div class="motion-preview" id="motion-preview" data-open="false" aria-hidden="true">
+                <div class="motion-page"><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="motion-pane">
+                  <span>Review</span><i></i><i></i><i></i>
+                  <div>Describe the change…</div>
+                </div>
+              </div>
+              <button
+                id="motion-toggle"
+                class="motion-button"
+                aria-pressed="false"
+                aria-describedby="motion-explanation"
+              >
+                Preview panel motion <span aria-hidden="true">↗</span>
+              </button>
+              <p id="motion-explanation">
+                A layout study using a short transform and fade. Your reduced-motion preference is
+                respected.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="roadmap">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">07 / Build sequence</span>
+              <h2>Prove the review loop first</h2>
+            </div>
+            <p>
+              Start with a working path from company files to a revised preview. Expand after the
+              stack and document tools pass their checks.
+            </p>
+          </div>
+          <div class="roadmap">
+            <div class="phase">
+              <div class="phase-num">01</div>
+              <details open>
+                <summary>
+                  <h3>Connect the foundation</h3>
+                  <span class="phase-status">In progress</span>
+                </summary>
+                <p>
+                  The private repository and shadcn Start scaffold are in place; its baseline build
+                  passed. Bun 1.4.2 and Node 24.20.0 are pinned. Source checks and 25 tests pass.
+                  Verify Doppler injection, the configured build, and local Convex through Effect
+                  ports.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>Atom live queries and typed commands work in two isolated
+                  sessions; equivalent reads share a subscription, and declared query errors can
+                  recover. Vite+ checks and Node-based codegen pass. The production Start server
+                  runs on Bun; a Bun worker streams files, cancels its child process, and shuts down
+                  cleanly.
+                </div>
+              </details>
+            </div>
+            <div class="phase">
+              <div class="phase-num">02</div>
+              <details>
+                <summary>
+                  <h3>Build the workspace shell</h3>
+                  <span class="phase-status">Planned</span>
+                </summary>
+                <p>
+                  Add Companies, Reports, Invoices, and Templates. Use the wireframe journeys to
+                  build a clean file route, resizable inspector, and phone layout with progressive
+                  disclosure and restrained motion.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>Navigation and filtered lists work with the fake Drive,
+                  keyboard controls are usable, and light/dark layouts stay clear with long
+                  filenames. Motion respects reduced-motion preferences and preserves focus.
+                </div>
+              </details>
+            </div>
+            <div class="phase">
+              <div class="phase-num">03</div>
+              <details>
+                <summary>
+                  <h3>Preview real files</h3>
+                  <span class="phase-status">Planned</span>
+                </summary>
+                <p>
+                  Index the verified fake Drive and select representative Word, Excel, PDF, and
+                  PowerPoint files. Render previews and save comments against a specific revision.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>You can open a file from iPhone, annotate it, reload, and
+                  find the same comment in the same place.
+                </div>
+              </details>
+            </div>
+            <div class="phase">
+              <div class="phase-num">04</div>
+              <details>
+                <summary>
+                  <h3>Complete one report workflow</h3>
+                  <span class="phase-status">Planned</span>
+                </summary>
+                <p>
+                  Choose the right template, ask for missing facts, generate a report, and check it.
+                  Apply an observation correction and save a new revision.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>General and Dulles rules hold. Stale revisions and expired
+                  leases fail; duplicate requests reuse one job. Cancellation closes resources.
+                  Publication replays safely from a committed revision and respects Word locks.
+                </div>
+              </details>
+            </div>
+            <div class="phase">
+              <div class="phase-num">05</div>
+              <details>
+                <summary>
+                  <h3>Connect the agent and skills</h3>
+                  <span class="phase-status">Planned</span>
+                </summary>
+                <p>
+                  Add streamed agent progress and the Markdown instruction editor. Keep saved drafts
+                  separate from the instructions used by an active task.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>An applied instruction edit changes the next run, a current
+                  run keeps its snapshot, and conflicting source edits are visible.
+                </div>
+              </details>
+            </div>
+            <div class="phase">
+              <div class="phase-num">06</div>
+              <details>
+                <summary>
+                  <h3>Expand the workflows</h3>
+                  <span class="phase-status">Planned</span>
+                </summary>
+                <p>
+                  Add invoice generation with client-specific evidence, richer sheet and slide
+                  changes, a separately verified cloud Drive adapter, and operating documentation.
+                </p>
+                <div class="accept">
+                  <span>Ready when</span>Backups restore on a separate instance and the added
+                  document workflows pass their own content and layout checks.
+                </div>
+              </details>
+            </div>
+          </div>
+          <div class="decisions">
+            <div class="decision-list">
+              <h3>Decided</h3>
+              <p><span class="mark">✓</span>Local Convex at the existing service directory</p>
+              <p><span class="mark">✓</span>Bun 1.4.2 stable, Vite+, shadcn and TanStack Start</p>
+              <p>
+                <span class="mark">✓</span>Effect use cases and side effects, with Atom for UI state
+              </p>
+              <p><span class="mark">✓</span>Hexagonal modular monolith, organized by feature</p>
+              <p><span class="mark">✓</span>Modern UI, with the wireframe as a workflow guide</p>
+              <p><span class="mark">✓</span>Private GitHub repo and local fake Drive</p>
+              <p><span class="mark">✓</span>Doppler owns application config and secrets</p>
+            </div>
+            <div class="decision-list pending">
+              <h3>Still to choose</h3>
+              <p><span class="mark">○</span>Local Convex deployment and live integration</p>
+              <p><span class="mark">○</span>How the owner signs in to the application</p>
+              <p>
+                <span class="mark">○</span>Whether full Office editing belongs in a later version
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="details">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">08 / Engineering notes</span>
+              <h2>The details behind the diagrams</h2>
+            </div>
+          </div>
+          <div class="technical-head">
+            <p>
+              Architecture, Effect coding standards, test requirements, and the retained HA document
+              rules.
+            </p>
+            <button class="quiet-button" id="expand-notes" aria-expanded="false">
+              Expand all notes +
+            </button>
+          </div>
+          <div class="appendix">{{APPENDIX}}</div>
+        </section>
+        <section class="section" id="sources">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Reference</span>
+              <h2>Sources &amp; evidence</h2>
+            </div>
+          </div>
+          <div class="source-grid">
+            <a href="https://github.com/alexmikeagent/ha-workspace" target="_blank" rel="noopener"
+              >Private project repository <span>↗</span></a
+            ><a
+              href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/atom/react/README.md"
+              target="_blank"
+              rel="noopener"
+              >Effect Atom / React bindings <span>↗</span></a
+            ><a href="https://bun.com/blog/bun-v1.4" target="_blank" rel="noopener"
+              >Bun 1.4 / Rust rewrite <span>↗</span></a
+            ><a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
+              >Bun 1.4.2 / stable <span>↗</span></a
+            ><a href="https://viteplus.dev/guide/install" target="_blank" rel="noopener"
+              >Vite+ with Bun <span>↗</span></a
+            ><a
+              href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/Schema.ts"
+              target="_blank"
+              rel="noopener"
+              >Effect RC.112 / pinned source <span>↗</span></a
+            ><a href="https://confect.dev/v10/clients/js/websocket" target="_blank" rel="noopener"
+              >Confect JS / streams and commands <span>↗</span></a
+            ><a
+              href="https://alistair.cockburn.us/hexagonal-architecture"
+              target="_blank"
+              rel="noopener"
+              >Hexagonal architecture <span>↗</span></a
+            ><a
+              href="https://ui.shadcn.com/docs/installation/tanstack"
+              target="_blank"
+              rel="noopener"
+              >shadcn + TanStack Start <span>↗</span></a
+            ><a href="https://viteplus.dev/guide/migrate" target="_blank" rel="noopener"
+              >Vite+ migration <span>↗</span></a
+            ><a
+              href="https://confect.dev/v10/concepts/project-structure"
+              target="_blank"
+              rel="noopener"
+              >Confect v10 <span>↗</span></a
+            ><a href="https://docs.convex.dev/self-hosting" target="_blank" rel="noopener"
+              >Local Convex <span>↗</span></a
+            ><a href="https://learn.chatgpt.com/docs/app-server" target="_blank" rel="noopener"
+              >Codex app-server <span>↗</span></a
+            ><a
+              href="https://tailscale.com/docs/features/tailscale-serve"
+              target="_blank"
+              rel="noopener"
+              >Tailscale Serve <span>↗</span></a
+            >
+          </div>
+          <p class="sources-note">
+            Versions were researched on September 8, 2026. The Effect and Atom samples passed strict
+            typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
+            session isolation, and cleanup under Node. The Start scaffold baseline build passed.
+            Vite+ source checks and 25 tests pass. Doppler CLI injection, the configured production
+            build, and live Bun/Confect/Convex integration remain foundation gates. The verified
+            local copy summary stays in the private data directory; no source documents are included
+            in this plan. Descriptions were edited using the published
+            <a
+              href="https://github.com/blader/humanizer/blob/main/SKILL.md"
+              target="_blank"
+              rel="noopener"
+              >Humanizer skill</a
+            >.
+          </p>
+        </section>
+        <footer class="footer">
+          <span>HA Consulting · September 8, 2026 · Planning document</span
+          ><a class="back-top" href="#overview">Back to overview ↑</a>
+        </footer>
+      </main>
+    </div>
+    <script>
+      ;(() => {
+        const motionButton = document.getElementById("motion-toggle"),
+          motionPreview = document.getElementById("motion-preview")
+        motionButton.addEventListener("click", () => {
+          const open = motionPreview.dataset.open !== "true"
+          motionPreview.dataset.open = String(open)
+          motionButton.setAttribute("aria-pressed", String(open))
+          motionButton.firstChild.textContent = open
+            ? "Close panel preview "
+            : "Preview panel motion "
+        })
+        const nodeData = {
+          client: [
+            "Your devices",
+            "Desktop & iPhone",
+            "Use the browser to find files, review previews, and submit corrections. Tailscale provides private access. App sign-in and ownership checks still apply.",
+          ],
+          web: [
+            "Application",
+            "TanStack Start",
+            "The web app owns navigation, file lists, and the preview workspace. shadcn supplies the interface components. An Atom registry owns shared UI state and command results. A single Confect WebSocket client feeds live streams into atoms; drafts persist through an Effect storage adapter.",
+          ],
+          convex: [
+            "Local backend",
+            "Convex + Confect",
+            "Convex stores file metadata, task state, comments, and revision history. Confect connects those functions to Effect schemas. The existing service directory is confirmed; its endpoints and running configuration still need inspection.",
+          ],
+          worker: [
+            "Local process",
+            "Effect on Bun",
+            "The worker claims queued jobs with a lease, runs document tools in a job-owned directory, and records results. It checks cancellation and revision conflicts before committing a new version. Retries must be safe to repeat.",
+          ],
+          render: [
+            "Worker capability",
+            "Document tools",
+            "Retained generation and rendering tools produce the actual files and their previews. DOCX compatibility checks run before rendering. Word locks, namespace rules, and the approved HA templates remain part of the workflow.",
+          ],
+          files: [
+            "Local storage",
+            "Files & revisions",
+            "Use the verified fake-drive working copy as the initial provider. The original local mirror stays outside its write authority. This is the sole standalone data copy. Convex keeps IDs, hashes, and metadata. A later cloud adapter uses the same Effect ports after a separate cloud inventory check.",
+          ],
+          agent: [
+            "Runtime adapter",
+            "Codex",
+            "A worker-owned adapter supplies task context and handles requested changes. Codex app-server over stdio is the candidate integration and needs a prototype test. Existing desktop history is not assumed to carry over.",
+          ],
+        }
+        document.querySelectorAll("[data-node]").forEach((b) =>
+          b.addEventListener("click", () => {
+            document
+              .querySelectorAll("[data-node]")
+              .forEach((x) => x.setAttribute("aria-pressed", String(x === b)))
+            const d = nodeData[b.dataset.node]
+            document.getElementById("node-type").textContent = d[0]
+            document.getElementById("node-title").textContent = d[1]
+            document.getElementById("node-description").textContent = d[2]
+          }),
+        )
+        const steps = [
+          [
+            "Choose the right source",
+            "Open a company file or start from a template. The task records its company, project, and operation: a completed document, an intentionally blank draft, a limited copy, or a revision.",
+          ],
+          [
+            "Ask only what is missing",
+            "Reuse known facts and prior answers. Ask one batch of material questions for this operation. A correction applies to the current task unless you explicitly change a company default.",
+          ],
+          [
+            "Run the local tools",
+            "Freeze the chosen template and context, queue a job, and generate a candidate in its own directory. Check DOCX compatibility before rendering, then verify the document content and layout.",
+          ],
+          [
+            "Comment on the version you see",
+            "Select a page region, text, slide, or cell range and describe the change. Comments keep their original version anchor. If pagination changes, carry an anchor forward only when its new location can be established.",
+          ],
+          [
+            "Commit a new revision",
+            "Save the ready document and its preview as an immutable version. Keep the previous revision and review history. Publication uses a new filename; stale or cancelled attempts cannot replace the visible result.",
+          ],
+        ]
+        document.querySelectorAll("[data-step]").forEach((b) =>
+          b.addEventListener("click", () => {
+            document
+              .querySelectorAll("[data-step]")
+              .forEach((x) => x.setAttribute("aria-pressed", String(x === b)))
+            const d = steps[Number(b.dataset.step)]
+            document.getElementById("step-title").textContent = d[0]
+            document.getElementById("step-description").textContent = d[1]
+          }),
+        )
+        const tabs = [...document.querySelectorAll(".mock-tabs button")]
+        function activateTab(b) {
+          tabs.forEach((x) => {
+            const active = x === b
+            x.setAttribute("aria-selected", String(active))
+            x.tabIndex = active ? 0 : -1
+            document.getElementById(x.getAttribute("aria-controls")).hidden = !active
+          })
+        }
+        tabs.forEach((b, i) => {
+          b.addEventListener("click", () => activateTab(b))
+          b.addEventListener("keydown", (e) => {
+            let index
+            if (e.key === "ArrowRight") index = (i + 1) % tabs.length
+            else if (e.key === "ArrowLeft") index = (i + tabs.length - 1) % tabs.length
+            else if (e.key === "Home") index = 0
+            else if (e.key === "End") index = tabs.length - 1
+            else return
+            e.preventDefault()
+            activateTab(tabs[index])
+            tabs[index].focus()
+          })
+        })
+        const rail = document.getElementById("rail"),
+          menu = document.querySelector(".mobile-menu")
+        function closeMenu() {
+          rail.classList.remove("is-open")
+          menu.setAttribute("aria-expanded", "false")
+          menu.setAttribute("aria-label", "Open plan navigation")
+        }
+        menu.addEventListener("click", () => {
+          const expanded = rail.classList.toggle("is-open")
+          menu.setAttribute("aria-expanded", String(expanded))
+          menu.setAttribute(
+            "aria-label",
+            expanded ? "Close plan navigation" : "Open plan navigation",
+          )
+        })
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && rail.classList.contains("is-open")) {
+            closeMenu()
+            menu.focus()
+          }
+        })
+        document.querySelectorAll(".nav a").forEach((a) => a.addEventListener("click", closeMenu))
+        document.addEventListener("click", (e) => {
+          if (!rail.contains(e.target) && !menu.contains(e.target)) closeMenu()
+        })
+        const links = [...document.querySelectorAll(".nav a")],
+          sections = links.map((a) => document.querySelector(a.getAttribute("href")))
+        function updateNav() {
+          let selected = sections[0]
+          for (const s of sections) if (s.getBoundingClientRect().top <= 150) selected = s
+          links.forEach((a) =>
+            a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + selected.id)),
+          )
+        }
+        document.addEventListener("scroll", updateNav, { passive: true })
+        updateNav()
+        const notes = [...document.querySelectorAll(".appendix details")],
+          expand = document.getElementById("expand-notes")
+        function syncExpand() {
+          const all = notes.every((d) => d.open)
+          expand.setAttribute("aria-expanded", String(all))
+          expand.textContent = all ? "Collapse all notes −" : "Expand all notes +"
+        }
+        expand.addEventListener("click", () => {
+          const open = !notes.every((d) => d.open)
+          notes.forEach((d) => (d.open = open))
+          syncExpand()
+        })
+        notes.forEach((d) => d.addEventListener("toggle", syncExpand))
+        let printState = []
+        window.addEventListener("beforeprint", () => {
+          printState = [...document.querySelectorAll("details")].map((d) => [d, d.open])
+          printState.forEach(([d]) => (d.open = true))
+        })
+        window.addEventListener("afterprint", () =>
+          printState.forEach(([d, open]) => (d.open = open)),
+        )
+        document.getElementById("print").addEventListener("click", () => window.print())
+        const map = document.querySelector(".map"),
+          wires = document.getElementById("wires")
+        function drawWires() {
+          wires.replaceChildren()
+          if (window.innerWidth <= 680) return
+          const r = map.getBoundingClientRect()
+          const box = (id) => {
+            const n = document.getElementById("node-" + id).getBoundingClientRect()
+            return { x: n.x - r.x, y: n.y - r.y, w: n.width, h: n.height }
+          }
+          function edge(a, b, sideA, sideB, both = false, route) {
+            const s = box(a),
+              t = box(b)
+            const pos = (n, side) =>
+              side === "r"
+                ? [n.x + n.w, n.y + n.h / 2]
+                : side === "l"
+                  ? [n.x, n.y + n.h / 2]
+                  : side === "b"
+                    ? [n.x + n.w / 2, n.y + n.h]
+                    : [n.x + n.w / 2, n.y]
+            const [x1, y1] = pos(s, sideA),
+              [x2, y2] = pos(t, sideB)
+            let d
+            if (route === "outer") {
+              const y = Math.max(s.y + s.h, t.y + t.h) + 18
+              d = `M${x1},${y1} H${r.width - 8} V${y} H${x2} V${y2}`
+            } else if (sideA === "b" && sideB === "t")
+              d = `M${x1},${y1} C${x1},${(y1 + y2) / 2} ${x2},${(y1 + y2) / 2} ${x2},${y2}`
+            else d = `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`
+            const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            p.setAttribute("d", d)
+            p.setAttribute("fill", "none")
+            p.setAttribute("stroke", "#69776a")
+            p.setAttribute("stroke-width", "1.2")
+            p.setAttribute("marker-end", "url(#arrow)")
+            if (both) p.setAttribute("marker-start", "url(#arrow)")
+            wires.append(p)
+          }
+          edge("client", "web", "b", "t")
+          edge("client", "convex", "b", "t")
+          edge("web", "convex", "r", "l", true)
+          edge("convex", "worker", "r", "l", true)
+          edge("worker", "agent", "b", "t", true)
+          edge("worker", "files", "b", "t", true)
+          edge("worker", "render", "r", "b", false, "outer")
+          edge("render", "web", "t", "b")
+        }
+        new ResizeObserver(drawWires).observe(map)
+        drawWires()
+      })()
+    </script>
+  </body>
+</html>

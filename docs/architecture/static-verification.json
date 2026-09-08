@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-09-08T05:54:42.516690+00:00",
+  "htmlGenerated": true,
+  "uniqueIds": 39,
+  "localAnchorsValid": 14,
+  "embeddedJavaScriptSyntaxValid": true,
+  "oneStandaloneCopyPolicy": true,
+  "originalPlanningSourcesUnchanged": "Verified before documentation edits; see source-artifacts.json.",
+  "browserVerification": "Not completed. Integrated browser URL policy blocked the local file preview; no alternate browser or server workaround was used.",
+  "applicationSourceChecks": "Vite+ formatting, lint, and types passed; 25 tests passed.",
+  "runtimeVerification": "Configured production build and startup await Doppler CLI reauthentication."
+}

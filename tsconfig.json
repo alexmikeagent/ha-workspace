@@ -3,7 +3,13 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM"],
     "skipLibCheck": true,
-    "strict": true
-  }
+    "strict": true,
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true
+  },
+  "include": ["vite.config.ts", "tools/**/*.ts"]
 }

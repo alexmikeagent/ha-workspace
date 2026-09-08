@@ -1,0 +1,3 @@
+setup:
+  - project: ha-workspace
+    config: dev_personal

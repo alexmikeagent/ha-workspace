@@ -1,0 +1,22 @@
+{
+  "copiedFrom": "/home/akh/GoogleDrive/HA_Consulting_Work/.codex-architecture-ha-workspace-01a07ee7",
+  "copiedAt": "2026-09-08",
+  "sourceSha256": {
+    "ARCHITECTURE.md": "b1c1ec39e1c1171c34777c822a3cf03a509279007b751f8b520f356625c5965b",
+    "DESIGN.md": "256ae35213ab773d77e8a6d00b44c948dba5a2e5e5d6781b646a86a231412131",
+    "EFFECT_GUIDE.md": "c8ea125189d62fa6aafb3d26f5feb253260fc56c69a9bc2c1da9a6dc72cae2f9",
+    "ATOM-VERIFICATION.md": "c534d93381dd706b43f5c56249ec141579000b35fc7a5f3797abe74c1ea37340",
+    "effect-example-verification.md": "b30f9b0bf2d97ff7c8211e74d7a9dc26fad855a3a1ff0fc80a8c5ce06906674a",
+    "effect-example.mts": "6857b6366081a76d33c5d6f0772652bf7a8658fdd0abaa75fe0ea1b3c20f42d0",
+    "atom-auth.mts": "247fcdc822a7d508d90e1af7e06a1b059b7e74cf84a424fbdcfcd527c5514afc",
+    "atom-behavior.mts": "9d431cb204338bb5719df89c03836566cad1f754609b1d1606653559311c1c90",
+    "atom-bridge.mts": "bb49b3a77c3613eb3d11c2f89c1e0dbab73df9f1de0966c0d186af95b1e241cf",
+    "atom-react-sample.tsx": "9955505f1095535867d83e94331b8e6ff018bb66e8be1a1ee19705889bc5aa12",
+    "dependency-evidence.json": "0256de417d80230c3a010cbe22a11e6cf47b0ffece9e13ec28178fa5403c1c63",
+    "design-evidence.json": "79feb7fedf9595ac797524b8181f658c9e7a4d9525589a3f1308369de38c23fd",
+    "plan.template.html": "78304742a4d56858a5d9280a634afd73f115b54cf4f8e1bb937cfd6e37bedf9f",
+    "build_plan.py": "e83679999338a5ba737c35b14f12094647862ea877adcf81b01386eb11159a3c",
+    "verify_plan.cjs": "dd948f23777f2a890c956871a8f2730affcf70524d8bfc86a0ecc822c9135939"
+  },
+  "note": "Historical planning sources copied without editing the originals. Source version checks are planning evidence; installed versions and live integration are established by the repository build."
+}

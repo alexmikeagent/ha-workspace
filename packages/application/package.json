@@ -1,0 +1,13 @@
+{
+  "name": "@ha/application",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@ha/domain": "workspace:*",
+    "effect": "4.0.0-rc.112"
+  }
+}
