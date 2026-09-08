@@ -1,71 +1,105 @@
-import { createFileRoute, Link } from "@tanstack/react-router"
-import { useAtom, useAtomValue } from "@effect/atom-react"
+import { useEffect } from "react"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { useAtom, useAtomMount, useAtomRefresh, useAtomValue } from "@effect/atom-react"
 import { AsyncResult } from "effect/unstable/reactivity"
+import type { Catalog, FileDetails, WorkspaceFile } from "@ha/domain/workspace"
 import {
-  Building2,
-  FileText,
-  ReceiptText,
-  Layers2,
-  PanelRight,
-  Menu,
-  ArrowUpRight,
-  ChevronRight,
-  FolderOpen,
-  FileCheck2,
-  MessageSquare,
-  Sparkles,
-  ShieldCheck,
-  CircleDashed,
-  Settings2,
-  HardDrive,
+  ArrowLeft,
   ArrowRight,
+  Building2,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileText,
+  FolderClosed,
+  HardDrive,
+  Image as ImageIcon,
+  Layers2,
+  Menu,
+  PanelLeft,
+  PanelLeftClose,
+  PanelRight,
+  ReceiptText,
+  Search,
+  ShieldCheck,
+  Sparkles,
   X,
 } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/ui/components/sheet"
 import {
+  desktopSidebarOpenAtom,
+  filePageAtom,
+  formatDate,
+  formatSize,
   inspectorOpenAtom,
   inspectorTabAtom,
   sidebarOpenAtom,
+  sortAtom,
+  validateWorkspaceSearch,
+  type WorkspaceSearch,
   type WorkspaceSection,
 } from "@/features/workspace/state"
-import { workspaceFiles } from "@/features/workspace/catalog"
+import {
+  catalogKey,
+  versionUrl,
+  workspaceCatalog,
+  workspaceFile,
+  workspaceRuntime,
+} from "@/features/workspace/catalog"
+import {
+  ContextPanel,
+  DocumentPreview,
+  errorOf,
+  LoadingRows,
+  Notice,
+  ReviewPanel,
+  valueOf,
+} from "@/features/workspace/document"
 
 const sections = [
   {
     id: "companies",
     label: "Companies",
     icon: Building2,
-    description: "Your companies and their project files.",
+    description: "Company context, project files, and the details that connect them.",
   },
   {
     id: "reports",
     label: "Reports",
     icon: FileText,
-    description: "Field notes, finished reports, and everything between.",
+    description: "Field observations and finished reports, together with their source files.",
   },
   {
     id: "invoices",
     label: "Invoices",
     icon: ReceiptText,
-    description: "Client invoices with the source facts close at hand.",
+    description: "Find an invoice and keep its company and project within reach.",
   },
   {
     id: "templates",
     label: "Templates",
     icon: Layers2,
-    description: "The right starting point for each company and project.",
+    description: "Browse the retained references behind your reports and invoices.",
   },
 ] as const
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): { section: WorkspaceSection } => ({
-    section: sections.find((item) => item.id === search.section)?.id ?? "companies",
-  }),
+  ssr: false,
+  validateSearch: validateWorkspaceSearch,
   component: Workspace,
 })
 
-function Navigation({ section, close }: { section: WorkspaceSection; close?: () => void }) {
+function Navigation({
+  section,
+  catalog,
+  close,
+}: {
+  section: WorkspaceSection
+  catalog?: Catalog
+  close?: () => void
+}) {
   return (
     <>
       <div className="workspace-brand">
@@ -94,21 +128,26 @@ function Navigation({ section, close }: { section: WorkspaceSection; close?: () 
           </Link>
         ))}
       </nav>
-      <div className="sidebar-note">
-        <div className="mini-orbit">
-          <HardDrive size={18} />
+      <div className="sidebar-collections">
+        <div className="nav-group-label">CONNECTED SOURCE</div>
+        <div className="source-row">
+          <HardDrive size={17} />
+          <div>
+            <strong>Local Drive</strong>
+            <span>
+              {catalog
+                ? `${catalog.fileCount.toLocaleString()} indexed files`
+                : "Connecting to your files…"}
+            </span>
+          </div>
         </div>
-        <strong>A local beginning</strong>
-        <p>Your first workspace will use a separate copy of your files.</p>
-        <span>
-          Import is the next step <ArrowUpRight size={13} />
-        </span>
+        <p>Your working copy. Changes in the original Drive stay separate.</p>
       </div>
       <div className="sidebar-footer">
         <div className="profile-avatar">HA</div>
         <div>
           <strong>HA Consulting</strong>
-          <span>Foundation preview</span>
+          <span>Local owner session</span>
         </div>
         <ShieldCheck size={17} />
       </div>
@@ -117,26 +156,82 @@ function Navigation({ section, close }: { section: WorkspaceSection; close?: () 
 }
 
 function Workspace() {
-  const { section } = Route.useSearch()
-  const current = sections.find((item) => item.id === section) ?? sections[0]
+  const search = Route.useSearch()
+  const current = sections.find((item) => item.id === search.section) ?? sections[0]
   const [mobileOpen, setMobileOpen] = useAtom(sidebarOpenAtom)
+  const [desktopOpen, setDesktopOpen] = useAtom(desktopSidebarOpenAtom)
   const [inspectorOpen, setInspectorOpen] = useAtom(inspectorOpenAtom)
-  const [tab, setTab] = useAtom(inspectorTabAtom)
-  const catalog = useAtomValue(workspaceFiles(section))
+  useAtomMount(workspaceRuntime)
+  const state = useAtomValue(workspaceCatalog(catalogKey(search)))
+  const catalog = valueOf(state)
+  const company = catalog?.companies.find((item) => item.id === search.company)
+  const project = catalog?.projects.find((item) => item.id === search.project)
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.altKey ||
+        event.shiftKey ||
+        !(event.metaKey || event.ctrlKey) ||
+        event.key.toLowerCase() !== "b"
+      )
+        return
+      if (
+        event.target instanceof HTMLElement &&
+        event.target.closest("input,textarea,select,[contenteditable='true']")
+      )
+        return
+      event.preventDefault()
+      if (window.matchMedia("(max-width: 760px)").matches) setMobileOpen((open) => !open)
+      else setDesktopOpen((open) => !open)
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [setDesktopOpen, setMobileOpen])
 
   return (
-    <div className="workspace-shell">
+    <div
+      className={`workspace-shell connected-shell ${search.file ? "has-document" : "has-catalog"}`}
+      data-sidebar={desktopOpen ? "expanded" : "collapsed"}
+    >
       <a href="#workspace-main" className="skip-link">
         Skip to workspace
       </a>
-      <aside className="desktop-sidebar">
-        <Navigation section={section} />
+      <div className="sidebar-toggle-wrap">
+        <Button
+          className="desktop-sidebar-toggle"
+          variant="ghost"
+          size="icon"
+          onClick={() => setDesktopOpen(!desktopOpen)}
+          aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
+          aria-expanded={desktopOpen}
+          aria-controls="desktop-navigation"
+          aria-keyshortcuts="Control+B Meta+B"
+          aria-describedby="sidebar-toggle-tip"
+        >
+          {desktopOpen ? <PanelLeftClose /> : <PanelLeft />}
+        </Button>
+        <span id="sidebar-toggle-tip" role="tooltip">
+          {desktopOpen ? "Collapse" : "Expand"} sidebar <kbd>Ctrl / ⌘ B</kbd>
+        </span>
+      </div>
+      <aside id="desktop-navigation" className="desktop-sidebar" inert={!desktopOpen}>
+        <div className="sidebar-inner">
+          <Navigation section={search.section} catalog={catalog} />
+        </div>
       </aside>
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="mobile-sidebar">
           <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
-          <SheetDescription className="sr-only">Choose a workspace section.</SheetDescription>
-          <Navigation section={section} close={() => setMobileOpen(false)} />
+          <SheetDescription className="sr-only">
+            Browse companies, reports, invoices, and templates.
+          </SheetDescription>
+          <Navigation
+            section={search.section}
+            catalog={catalog}
+            close={() => setMobileOpen(false)}
+          />
         </SheetContent>
       </Sheet>
       <div className="workspace-body">
@@ -151,229 +246,655 @@ function Workspace() {
             >
               <Menu />
             </Button>
-            <span className="breadcrumb-home">Workspace</span>
-            <ChevronRight size={14} />
-            <strong>{current.label}</strong>
+            <Link to="/" search={{ section: search.section }} className="breadcrumb-home">
+              {current.label}
+            </Link>
+            {company && (
+              <>
+                <ChevronRight size={13} />
+                <Link to="/" search={{ section: search.section, company: company.id }}>
+                  {company.name}
+                </Link>
+              </>
+            )}
+            {project && (
+              <>
+                <ChevronRight size={13} />
+                <span>{project.name}</span>
+              </>
+            )}
+            {search.file && (
+              <>
+                <ChevronRight size={13} />
+                <strong>Document</strong>
+              </>
+            )}
           </div>
           <div className="topbar-actions">
-            <span className="preview-label">
-              <span />
-              Foundation preview
+            <span className="connection-label">
+              <span className={AsyncResult.isFailure(state) ? "status-dot issue" : "status-dot"} />
+              {AsyncResult.isFailure(state)
+                ? "Connection interrupted"
+                : catalog
+                  ? "Local workspace"
+                  : "Connecting…"}
             </span>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setInspectorOpen(!inspectorOpen)}
-              aria-label={inspectorOpen ? "Close workspace context" : "Open workspace context"}
+              aria-label={inspectorOpen ? "Close inspector" : "Open inspector"}
               aria-expanded={inspectorOpen}
             >
               <PanelRight />
             </Button>
           </div>
         </header>
-        <div className="workspace-columns">
-          <main id="workspace-main" className="workspace-main" key={section}>
-            <div className="page-heading">
-              <div>
-                <span className="eyebrow">YOUR WORK, TOGETHER</span>
-                <h1>{current.label}</h1>
-                <p>{current.description}</p>
-              </div>
-              <span className="section-icon">
-                <current.icon size={23} />
-              </span>
-            </div>
-            <section className="welcome-panel" aria-label="Workspace introduction">
-              <div className="welcome-copy">
-                <span className="small-tag">
-                  <span />A fresh workspace
-                </span>
-                <h2>
-                  Less searching.
-                  <br />
-                  <span>More room to work.</span>
-                </h2>
-                <p>
-                  Keep each file with its company, review changes in place, and carry the right
-                  context into the next task.
-                </p>
-                <Button
-                  className="context-button"
-                  onClick={() => {
-                    setInspectorOpen(true)
-                    setTab("context")
-                  }}
-                >
-                  View workspace setup <ArrowRight size={16} />
-                </Button>
-              </div>
-              <div className="file-art" aria-hidden="true">
-                <div className="art-halo" />
-                <div className="art-file back">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div className="art-file front">
-                  <div className="art-file-header">
-                    <FileText size={20} />
-                    <span>FIELD REPORT</span>
-                  </div>
-                  <div className="art-title" />
-                  <div className="art-line long" />
-                  <div className="art-line" />
-                  <div className="art-grid">
-                    <span />
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <div className="art-foot">
-                    <span />
-                    <FileCheck2 size={17} />
-                  </div>
-                </div>
-                <div className="art-comment">
-                  <MessageSquare size={15} />
-                  <span>Every detail, in context</span>
-                </div>
-              </div>
-            </section>
-            <div className="list-heading">
-              <div>
-                <h2>
-                  {section === "companies"
-                    ? "Your companies"
-                    : `Your ${current.label.toLowerCase()}`}
-                </h2>
-                <span>Waiting for the first import</span>
-              </div>
-              <span className="quiet-count">—</span>
-            </div>
-            <section className="empty-catalog" aria-live="polite">
-              <span className="empty-icon">
-                <FolderOpen size={27} />
-              </span>
-              <h3>
-                {AsyncResult.isInitial(catalog)
-                  ? "Preparing your workspace…"
-                  : "Ready for your files"}
-              </h3>
-              <p>
-                The interface is ready to explore. Your local copy will appear here once the catalog
-                is connected.
-              </p>
-              <span className="empty-status">
-                <CircleDashed size={14} />
-                Catalog connection pending
-              </span>
-            </section>
-            <div className="principles">
-              <span>
-                <ShieldCheck size={15} />
-                Originals stay separate
-              </span>
-              <span>
-                <Layers2 size={15} />
-                Changes become revisions
-              </span>
-              <span>
-                <MessageSquare size={15} />
-                Context stays with the file
-              </span>
-            </div>
-          </main>
-          {inspectorOpen && (
-            <aside className="workspace-inspector" aria-label="Workspace context">
-              <div className="inspector-heading">
-                <span>
-                  <Settings2 size={15} />
-                  Workspace context
-                </span>
-                <Button
-                  className="inspector-close"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Close context"
-                  onClick={() => setInspectorOpen(false)}
-                >
-                  <X />
-                </Button>
-              </div>
-              <fieldset className="inspector-tabs" aria-label="Context view">
-                {(["review", "context", "agent"] as const).map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => setTab(item)}
-                    aria-pressed={tab === item}
-                    className={tab === item ? "selected" : ""}
-                  >
-                    {item[0].toUpperCase() + item.slice(1)}
-                  </button>
-                ))}
-              </fieldset>
-              {tab === "context" ? (
-                <div className="inspector-content">
-                  <span className="inspector-symbol">
-                    <HardDrive size={23} />
+        {search.file ? (
+          <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
+        ) : (
+          <div className="workspace-columns">
+            <main id="workspace-main" className="workspace-main catalog-main">
+              <div className="page-heading">
+                <div>
+                  <span className="eyebrow">
+                    {company ? "COMPANY WORKSPACE" : "YOUR WORK, CONNECTED"}
                   </span>
-                  <h2>A thoughtful foundation</h2>
-                  <p>A small first step toward a workspace built around your files.</p>
-                  <ol className="setup-list">
-                    <li>
-                      <span className="step-number complete">01</span>
-                      <div>
-                        <strong>Explore the workspace</strong>
-                        <p>Navigation, layout, and context panels are ready.</p>
-                        <span className="step-label">Available now</span>
-                      </div>
-                    </li>
-                    <li>
-                      <span className="step-number">02</span>
-                      <div>
-                        <strong>Connect the local catalog</strong>
-                        <p>Read company files from the separate working copy.</p>
-                        <span className="step-label muted">Next implementation</span>
-                      </div>
-                    </li>
-                    <li>
-                      <span className="step-number">03</span>
-                      <div>
-                        <strong>Review the first document</strong>
-                        <p>Open a preview, add a comment, and create a new revision.</p>
-                        <span className="step-label muted">Planned</span>
-                      </div>
-                    </li>
-                  </ol>
-                  <div className="inspector-note">
-                    <ShieldCheck size={17} />
-                    <p>This preview has no document write actions.</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="inspector-content panel-empty">
-                  <span className="inspector-symbol">
-                    {tab === "review" ? <MessageSquare size={23} /> : <Sparkles size={23} />}
-                  </span>
-                  <h2>{tab === "review" ? "A place for the details" : "Help, with context"}</h2>
+                  <h1>{project?.name ?? company?.name ?? current.label}</h1>
                   <p>
-                    {tab === "review"
-                      ? "Open a document after import to review its pages and leave a precise comment."
-                      : "Agent instructions and task context will live here. Agent execution is not connected yet."}
+                    {company
+                      ? `${company.fileCount.toLocaleString()} files across ${company.projectCount} ${company.projectCount === 1 ? "project" : "projects"}.`
+                      : current.description}
                   </p>
-                  <span className="empty-status">
-                    {tab === "review" ? "Document preview planned" : "Agent connection planned"}
-                  </span>
                 </div>
-              )}
-              <div className="inspector-bottom">
-                <span className="status-dot" />
-                Setup milestone <span>01 / 03</span>
+                <span className="section-icon">
+                  <current.icon size={23} />
+                </span>
               </div>
-            </aside>
+              {AsyncResult.isFailure(state) && (
+                <output className="connection-banner">
+                  {errorOf(state)}
+                  {catalog && " Showing the last available files."}
+                </output>
+              )}
+              <CatalogControls search={search} catalog={catalog} />
+              {catalog ? (
+                <CatalogContent search={search} catalog={catalog} />
+              ) : AsyncResult.isFailure(state) ? (
+                <ConnectionFailure search={search} />
+              ) : (
+                <LoadingRows />
+              )}
+            </main>
+            {inspectorOpen && <CatalogInspector catalog={catalog} />}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ConnectionFailure({ search }: { search: WorkspaceSearch }) {
+  const retry = useAtomRefresh(workspaceCatalog(catalogKey(search)))
+  const retryConnection = useAtomRefresh(workspaceRuntime)
+  return (
+    <Notice
+      title="Let's reconnect your workspace"
+      retry={() => {
+        retryConnection()
+        retry()
+      }}
+    >
+      The local service is not ready. Your copied files remain in place.
+    </Notice>
+  )
+}
+
+function CatalogControls({ search, catalog }: { search: WorkspaceSearch; catalog?: Catalog }) {
+  const navigate = useNavigate()
+  const [sort, setSort] = useAtom(sortAtom)
+  const projects =
+    catalog?.projects.filter((item) => !search.company || item.companyId === search.company) ?? []
+  return (
+    <div className="catalog-controls">
+      <search>
+        <form
+          className="catalog-search"
+          onSubmit={(event) => {
+            event.preventDefault()
+            const query = new FormData(event.currentTarget).get("search")
+            void navigate({
+              to: "/",
+              search: {
+                ...search,
+                q: typeof query === "string" && query.trim() ? query.trim() : undefined,
+              },
+            })
+          }}
+        >
+          <Search size={17} />
+          <label className="sr-only" htmlFor="catalog-search">
+            Search files and source context
+          </label>
+          <input
+            key={search.q ?? "empty"}
+            id="catalog-search"
+            name="search"
+            type="search"
+            placeholder="Search files and context…"
+            defaultValue={search.q ?? ""}
+            maxLength={300}
+          />
+          <button type="submit" aria-label="Search">
+            <ArrowRight size={16} />
+          </button>
+        </form>
+      </search>
+      <div className="filter-row">
+        <label>
+          <span className="sr-only">Company filter</span>
+          <select
+            aria-label="Filter by company"
+            value={search.company ?? ""}
+            onChange={(event) => {
+              void navigate({
+                to: "/",
+                search: { ...search, company: event.target.value || undefined, project: undefined },
+              })
+            }}
+          >
+            <option value="">All companies</option>
+            {catalog?.companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span className="sr-only">Project filter</span>
+          <select
+            aria-label="Filter by project"
+            value={search.project ?? ""}
+            onChange={(event) => {
+              void navigate({
+                to: "/",
+                search: { ...search, project: event.target.value || undefined },
+              })
+            }}
+          >
+            <option value="">All projects</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="sort-select">
+          <span className="sr-only">Sort files</span>
+          <select
+            aria-label="Sort files"
+            value={sort}
+            onChange={(event) => setSort(event.target.value === "name" ? "name" : "recent")}
+          >
+            <option value="recent">Recently modified</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </label>
+      </div>
+      {(search.q || search.company || search.project) && (
+        <div className="active-filters">
+          <span>{search.q ? `Results for “${search.q}”` : "Filtered view"}</span>
+          <Link to="/" search={{ section: search.section }}>
+            <X size={12} /> Clear filters
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CatalogContent({ search, catalog }: { search: WorkspaceSearch; catalog: Catalog }) {
+  const sort = useAtomValue(sortAtom)
+  const [page, setPage] = useAtom(filePageAtom(catalogKey(search)))
+  const sorted = [...catalog.files].sort((a, b) =>
+    sort === "name" ? a.name.localeCompare(b.name) : b.modifiedAt - a.modifiedAt,
+  )
+  const pageCount = Math.max(1, Math.ceil(sorted.length / 50))
+  const currentPage = Math.min(page, pageCount)
+  const visible = sorted.slice((currentPage - 1) * 50, currentPage * 50)
+  const showCompanies =
+    search.section === "companies" && !search.company && !search.project && !search.q
+  return (
+    <>
+      {showCompanies && catalog.companies.length > 0 && (
+        <section className="company-section" aria-label="Companies">
+          <div className="list-heading">
+            <h2>Your companies</h2>
+            <span>{catalog.companies.length} companies</span>
+          </div>
+          <div className="company-grid">
+            {catalog.companies.map((company) => (
+              <Link
+                to="/"
+                search={{ ...search, company: company.id }}
+                key={company.id}
+                className="company-card"
+              >
+                <div className="company-card-top">
+                  <span className="company-monogram">
+                    {company.name
+                      .split(/\s+/)
+                      .slice(0, 2)
+                      .map((word) => word[0])
+                      .join("")}
+                  </span>
+                  <ChevronRight size={17} />
+                </div>
+                <h3>{company.name}</h3>
+                <p>
+                  {company.projectCount} {company.projectCount === 1 ? "project" : "projects"}
+                  <span>·</span>
+                  {company.fileCount.toLocaleString()} files
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+      {search.company && !search.project && (
+        <section className="project-section" aria-label="Projects">
+          <div className="project-links">
+            {catalog.projects
+              .filter((project) => project.companyId === search.company)
+              .map((project) => (
+                <Link to="/" search={{ ...search, project: project.id }} key={project.id}>
+                  <FolderClosed size={15} />
+                  <span>{project.name}</span>
+                  <small>{project.fileCount}</small>
+                </Link>
+              ))}
+          </div>
+        </section>
+      )}
+      <div className="list-heading">
+        <h2>{search.section === "companies" ? "Files" : `Your ${search.section}`}</h2>
+        <span>
+          {catalog.matchedFileCount.toLocaleString()}{" "}
+          {catalog.matchedFileCount === 1 ? "file" : "files"}
+          {catalog.truncated ? ` · showing ${catalog.files.length}` : ""}
+        </span>
+      </div>
+      {visible.length ? (
+        <>
+          <div className="file-list">
+            <div className="file-list-labels" aria-hidden="true">
+              <span>Name</span>
+              <span>Modified</span>
+              <span>Size</span>
+              <span />
+            </div>
+            {visible.map((file) => (
+              <FileRow key={file.id} file={file} catalog={catalog} search={search} />
+            ))}
+          </div>
+          {catalog.truncated && (
+            <p className="result-limit">
+              This view shows the first {catalog.files.length} matches. Choose a company, project,
+              or search term to narrow it down.
+            </p>
           )}
+          <div className="list-pagination">
+            <span>
+              {(currentPage - 1) * 50 + 1}–{Math.min(currentPage * 50, sorted.length)} of{" "}
+              {sorted.length.toLocaleString()} shown
+            </span>
+            <div>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Previous page"
+                disabled={currentPage === 1}
+                onClick={() => setPage(currentPage - 1)}
+              >
+                <ChevronLeft />
+              </Button>
+              <span>
+                {currentPage} / {pageCount}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Next page"
+                disabled={currentPage === pageCount}
+                onClick={() => setPage(currentPage + 1)}
+              >
+                <ChevronRight />
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <Notice
+          title={
+            catalog.fileCount === 0
+              ? "Your first import is being prepared"
+              : "No files match this view"
+          }
+        >
+          {catalog.fileCount === 0
+            ? "Files will appear here as the local catalog finishes indexing."
+            : "Try a different company, project, or search term."}
+        </Notice>
+      )}
+    </>
+  )
+}
+
+function FileRow({
+  file,
+  catalog,
+  search,
+}: {
+  file: WorkspaceFile
+  catalog: Catalog
+  search: WorkspaceSearch
+}) {
+  const company = catalog.companies.find((item) => item.id === file.companyId)
+  const project = catalog.projects.find((item) => item.id === file.projectId)
+  const isImage = /^(jpe?g|png|gif|webp|heic)$/i.test(file.extension.replace(/^\./, ""))
+  return (
+    <Link
+      to="/"
+      search={{ ...search, file: file.id, version: undefined }}
+      className="file-row"
+      title={file.name}
+    >
+      <div className="file-identity">
+        <span className={`file-glyph ${isImage ? "photo" : file.category}`}>
+          {isImage ? (
+            <ImageIcon size={19} />
+          ) : file.category === "invoices" ? (
+            <ReceiptText size={19} />
+          ) : (
+            <FileText size={19} />
+          )}
+        </span>
+        <div>
+          <strong>{file.name}</strong>
+          <p>
+            {company?.name ?? "Unassigned company"}
+            {project && (
+              <>
+                <span> / </span>
+                {project.name}
+              </>
+            )}
+            <span className="format-badge">
+              {file.extension.replace(/^\./, "").toUpperCase() || "FILE"}
+            </span>
+          </p>
         </div>
       </div>
+      <time dateTime={new Date(file.modifiedAt).toISOString()}>{formatDate(file.modifiedAt)}</time>
+      <span className="file-size">{formatSize(file.size)}</span>
+      <ChevronRight size={15} />
+    </Link>
+  )
+}
+
+function CatalogInspector({ catalog }: { catalog?: Catalog }) {
+  const [, setInspectorOpen] = useAtom(inspectorOpenAtom)
+  return (
+    <aside className="workspace-inspector catalog-inspector" aria-label="Workspace context">
+      <div className="inspector-heading">
+        <span>Workspace context</span>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Close inspector"
+          onClick={() => setInspectorOpen(false)}
+        >
+          <X />
+        </Button>
+      </div>
+      <div className="file-context">
+        <div className="context-intro">
+          <HardDrive size={23} />
+          <h2>Your files, within reach.</h2>
+          <p>A separate working copy keeps the original Drive intact.</p>
+        </div>
+        <dl className="metadata-list">
+          <div>
+            <dt>Source</dt>
+            <dd>Local Drive copy</dd>
+          </div>
+          <div>
+            <dt>Indexed files</dt>
+            <dd>{catalog?.fileCount.toLocaleString() ?? "Connecting…"}</dd>
+          </div>
+          <div>
+            <dt>Companies</dt>
+            <dd>{catalog?.companies.length ?? "—"}</dd>
+          </div>
+          <div>
+            <dt>Projects</dt>
+            <dd>{catalog?.projects.length ?? "—"}</dd>
+          </div>
+          <div>
+            <dt>Last import</dt>
+            <dd>{catalog?.importedAt ? formatDate(catalog.importedAt) : "In progress"}</dd>
+          </div>
+        </dl>
+        <div className="context-help">
+          <span>
+            <Check size={14} /> Browse company and project files
+          </span>
+          <span>
+            <Check size={14} /> Preview a source document
+          </span>
+          <span>
+            <Check size={14} /> Keep comments with a version
+          </span>
+        </div>
+        <p className="context-inference">
+          Folder names inform the groupings. They do not establish contract terms or template
+          approval.
+        </p>
+      </div>
+      <div className="inspector-bottom">
+        <ShieldCheck size={13} />
+        Original files stay separate
+      </div>
+    </aside>
+  )
+}
+
+function FileWorkspace({
+  fileId,
+  search,
+  catalog,
+}: {
+  fileId: string
+  search: WorkspaceSearch
+  catalog?: Catalog
+}) {
+  const state = useAtomValue(workspaceFile(fileId))
+  const retry = useAtomRefresh(workspaceFile(fileId))
+  const details = valueOf(state)
+  return !details ? (
+    <main id="workspace-main" className="workspace-main">
+      <Link
+        className="back-to-files"
+        to="/"
+        search={{ ...search, file: undefined, version: undefined }}
+      >
+        <ArrowLeft size={15} />
+        Back to files
+      </Link>
+      {AsyncResult.isFailure(state) ? (
+        <Notice title="This document could not be opened" retry={retry}>
+          {errorOf(state)}
+        </Notice>
+      ) : (
+        <LoadingRows />
+      )}
+    </main>
+  ) : (
+    <ReadyFileWorkspace
+      details={details}
+      search={search}
+      catalog={catalog}
+      connectionError={AsyncResult.isFailure(state) ? errorOf(state) : undefined}
+    />
+  )
+}
+
+function ReadyFileWorkspace({
+  details,
+  search,
+  catalog,
+  connectionError,
+}: {
+  details: FileDetails
+  search: WorkspaceSearch
+  catalog?: Catalog
+  connectionError?: string
+}) {
+  const navigate = useNavigate()
+  const [inspectorOpen, setInspectorOpen] = useAtom(inspectorOpenAtom)
+  const [tab, setTab] = useAtom(inspectorTabAtom)
+  const version =
+    details.versions.find((item) => item.id === search.version) ??
+    details.versions.find((item) => item.id === details.file.currentVersionId) ??
+    details.versions[0]
+  if (!version)
+    return (
+      <main id="workspace-main" className="workspace-main">
+        <Notice title="This file has no indexed revision yet">
+          Try reopening it once indexing finishes.
+        </Notice>
+      </main>
+    )
+  const companyName = catalog?.companies.find((item) => item.id === details.file.companyId)?.name
+  const projectName = catalog?.projects.find((item) => item.id === details.file.projectId)?.name
+  return (
+    <div className="workspace-columns document-columns">
+      <main id="workspace-main" className="document-main">
+        <div className="document-heading">
+          <div>
+            <Link
+              className="back-to-files"
+              to="/"
+              search={{ ...search, file: undefined, version: undefined }}
+            >
+              <ArrowLeft size={14} />
+              Back to files
+            </Link>
+            <h1 title={details.file.name}>{details.file.name}</h1>
+            <p>
+              {companyName ?? "Unassigned company"}
+              {projectName && ` / ${projectName}`}
+            </p>
+          </div>
+          <Button asChild variant="outline">
+            <a href={versionUrl(details.file.id, version.id, "download")}>
+              <Download size={14} />
+              <span>Download</span>
+            </a>
+          </Button>
+        </div>
+        <div className="document-version-bar">
+          <label>
+            <span className="sr-only">Document version</span>
+            <select
+              aria-label="Document version"
+              value={version.id}
+              onChange={(event) => {
+                void navigate({ to: "/", search: { ...search, version: event.target.value } })
+              }}
+            >
+              {details.versions.map((item) => (
+                <option key={item.id} value={item.id}>
+                  Version {item.number}
+                  {item.id === details.file.currentVersionId ? " · Current" : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+          <span>
+            {formatDate(version.modifiedAt)}
+            <span>·</span>
+            {formatSize(version.size)}
+          </span>
+          <span className="version-status">
+            <Check size={12} />
+            {version.id === details.file.currentVersionId ? "Current version" : "Earlier version"}
+          </span>
+        </div>
+        {connectionError && (
+          <output className="connection-banner">
+            {connectionError} Showing the last available version.
+          </output>
+        )}
+        {search.version && search.version !== version.id && (
+          <output className="connection-banner">
+            The requested version is unavailable. Showing the current version.
+          </output>
+        )}
+        <DocumentPreview details={details} version={version} />
+      </main>
+      {inspectorOpen && (
+        <aside className="workspace-inspector document-inspector" aria-label="Document inspector">
+          <div className="inspector-heading">
+            <span>Document workspace</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Close inspector"
+              onClick={() => setInspectorOpen(false)}
+            >
+              <X />
+            </Button>
+          </div>
+          <fieldset className="inspector-tabs" aria-label="Inspector view">
+            {(["review", "context", "agent"] as const).map((item) => (
+              <button
+                key={item}
+                onClick={() => setTab(item)}
+                aria-pressed={tab === item}
+                className={tab === item ? "selected" : ""}
+              >
+                {item[0].toUpperCase() + item.slice(1)}
+              </button>
+            ))}
+          </fieldset>
+          {tab === "review" ? (
+            <ReviewPanel details={details} version={version} search={search} />
+          ) : tab === "context" ? (
+            <ContextPanel
+              details={details}
+              version={version}
+              companyName={companyName}
+              projectName={projectName}
+            />
+          ) : (
+            <div className="agent-availability">
+              <Sparkles size={24} />
+              <h2>Context comes first.</h2>
+              <p>
+                You can review source facts and leave versioned comments now. Document generation
+                and agent execution are not connected yet.
+              </p>
+              <Button variant="outline" onClick={() => setTab("context")}>
+                View source context
+                <ArrowRight size={14} />
+              </Button>
+            </div>
+          )}
+        </aside>
+      )}
     </div>
   )
 }

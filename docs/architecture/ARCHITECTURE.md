@@ -1,6 +1,6 @@
-# HA Workspace — architecture proposal
+# HA Workspace — architecture and delivery plan
 
-Status: foundation in progress, updated September 8, 2026 (America/New_York). The private repository, verified local fake Drive, and shadcn/TanStack Start scaffold are established. The baseline Start build passed. Vite+ formatting, lint, type checks, frozen installation, and 25 tests pass. The modern shell and Effect Atom state are implemented. The final configured build awaits Doppler reauthentication; full runtime integration and document workflows remain subject to the acceptance gates below.
+Status: connected local prototype, updated September 8, 2026. The authenticated catalog, Confect/Atom subscriptions, previews, source context, downloads, versioned comments, and bounded exact-text revision jobs are implemented. Doppler injection and the configured production build pass. Source checks, backend tests, browser checks, and real-document verification establish different parts of the result; see `SETUP.md` for their scope. AI execution, generated reports/invoices, full Office editing, and remote access remain future work.
 
 Based on the **HA Workflow App Wireframe** task (`01a07ea0-e62b-7351-9374-828b3122a949`) and its final local HTML prototype. Use the wireframe to understand the work: find a file, review it, request a correction, and inspect the next revision. The finished interface will use a modern visual system and clearer interaction design. Its exact layout, spacing, and motion are product decisions, guided by the workflow.
 
@@ -8,18 +8,19 @@ Based on the **HA Workflow App Wireframe** task (`01a07ea0-e62b-7351-9374-828b31
 
 Build a personal, browser-based workspace using **shadcn + TanStack Start + Tailwind**, **Vite+**, **Convex**, and **Effect v4 RC with Confect v10 prerelease**. Use a small Bun workspace monorepo because the application needs both a browser/server app and a local document worker. Adopt a **hexagonal modular monolith organized by feature**: domain rules and Effect use cases at the center, with Convex, Bun, React, file tools, and the agent runtime connected through explicit adapters.
 
-Hosting decision confirmed by the user on September 8, 2026: use the existing local Convex setup at `/home/akh/LocalServices/Convex`, alongside a local document worker, reached from desktop and iPhone through Tailscale. This local setup is the deployment target for the prototype.
+The user chose local hosting. Inspection of the existing `/home/akh/LocalServices/Convex` service led to an isolated HA instance: native Convex `ha-workspace-local` on `3220`/`3221`, with data under `/home/akh/Projects/ha-workspace-data/convex`. The existing service on `3210` was preserved. The Bun app serves loopback `4310`; development uses a separate API listener on `4312`. Tailscale and remote iPhone access remain deployment gates.
 
 ```mermaid
 flowchart LR
-  U[Desktop / iPhone] --> T[Tailscale HTTPS]
-  T --> W[TanStack Start web app]
-  T --> C[Convex API + live subscriptions]
+  U[Local browser] --> W[TanStack Start + Bun :4310]
+  W --> C[Confect + isolated Convex :3220]
+  I[iPhone / remote browser] -. planned .-> T[Tailscale HTTPS]
+  T -. future authenticated access .-> W
   W --> C
   C <--> E[Effect worker: claim jobs / report results]
   E <--> F[Managed originals + immutable revisions]
   E --> R[Document generation + rendering]
-  E <--> A[Codex runtime adapter]
+  E -. future .-> A[Agent runtime adapter]
   R --> P[PDF pages / slides / sheet data]
   P --> W
   F -. later storage adapter .-> G[Google Drive]
@@ -27,7 +28,17 @@ flowchart LR
 
 Arrows show logical responsibilities. File bytes go through authenticated upload/download endpoints; Convex records hold references and hashes. The browser receives no filesystem paths or worker/admin credentials.
 
-## Product boundaries
+## Current product slice
+
+The app reads a standalone copy of the consulting and inspection collections. Company/project groupings come from folder evidence, with ambiguous context kept explicit. All four navigation categories share file rows, filters, search, and the version workspace. Catalog queries cap returned matches and tell the view when to narrow a search.
+
+PDF and image previews use protected local content URLs. Word and PowerPoint convert locally to PDF; workbooks expose bounded read-only grids; text is displayed without executing markup. Extracted context is an excerpt from the source, not an AI summary or approved client fact. Comments remain attached to their source revision; important drafts persist through an Effect IndexedDB adapter.
+
+The first revision operation is deliberately precise: replace one exact match in DOCX, TXT, or Markdown. DOCX edits support uninterrupted body text; headers, fields, tracked changes, and cross-paragraph edits require another workflow. The worker preserves source bytes, validates the candidate, renders Word output, and commits a new immutable version through the durable queue. It does not infer changes from comments or generate new reports.
+
+## Target product boundaries
+
+The table below retains the broader product requirements. Page/rectangle/cell annotation, intake, new-document creation, and instruction editing are future features; they are not implied by the connected preview and exact-text revision slice.
 
 | Surface        | Required behavior                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------------------- |
@@ -39,15 +50,15 @@ Arrows show logical responsibilities. File bytes go through authenticated upload
 | Agent panel    | Project AGENTS.md and skill list; Markdown preview, editing, revision comparison, save/apply states     |
 | Intake         | Reuse known facts; ask one batch of missing material questions; preserve answers and scoped corrections |
 
-The first version previews DOCX, XLSX, PDF, and PPTX. Legacy DOC/XLS/PPT require a separately tested conversion path. Office files remain downloadable originals. Browser annotations and structured field edits create document revisions; arbitrary Word/Excel/PowerPoint editing is a separate capability decision.
+The connected preview path covers DOCX, XLSX, PDF, PPTX, supported images, and text. Legacy DOC/XLS/PPT require a separately tested conversion path. Office files remain downloadable originals. Current revisions use explicit find/replacement text. Page annotations and structured field edits remain planned; arbitrary Word/Excel/PowerPoint editing is a separate capability decision.
 
 See `EFFECT_GUIDE.md` for the adopted dependency rules, Effect v4 coding standard, transaction invariants, and acceptance tests. The visual plan includes these requirements in its engineering notes.
 
 ## Verified stack and version policy
 
-Registry values were checked directly during this planning session. These are candidate pins, not proof that the complete application compiles together. Bun 1.4.2 is the latest stable release verified on September 8, 2026. Bun 1.4.2 and Node 24.20.0 are now installed and pinned in the repository’s `mise.toml`. The other rows retain the researched compatibility baseline until the complete dependency/build checks are finished.
+Registry values were checked directly during this planning session. These pins are installed and have passed the configured build. Bun 1.4.2 is the latest stable release verified on September 8, 2026. Bun 1.4.2 and Node 24.20.0 are now installed and pinned in the repository’s `mise.toml`. The remaining rows record the researched baseline used by the connected application.
 
-| Package/tool          | Candidate                      | Planning consequence                                                                  |
+| Package/tool          | Pin                            | Planning consequence                                                                  |
 | --------------------- | ------------------------------ | ------------------------------------------------------------------------------------- |
 | Bun                   | 1.4.2 stable                   | Workspace package manager and target runtime for the web server and Effect worker     |
 | Node tooling          | 24.20.0, pinned in `mise.toml` | Vite+ and Confect toolchain compatibility; not the application worker runtime         |
@@ -90,7 +101,7 @@ Declare `"packageManager": "bun@1.4.2"`, use root `package.json` workspaces/cata
 | Convex queries/mutations                               | Convex’s own deterministic runtime                                                           |
 | Convex Node actions, if needed                         | Runtime supplied by the local Convex backend; inspect its version separately                 |
 
-Bun supports TanStack Start, but its example does not prove this complete Vite+/Confect monorepo works together. Run the production output on Bun, not just a successful development server. Vite+ manages Node separately; Bun package management does not switch every CLI’s execution runtime. Keep Node dependencies at that tooling boundary. [Bun Start guide](https://bun.com/guides/ecosystem/tanstack-start), [Vite+ environment](https://viteplus.dev/guide/env).
+The configured Start production output has been built and served on Bun. Keep checking that production entry point when updating the toolchain; a successful development server alone does not establish it. Vite+ manages Node separately; Bun package management does not switch every CLI’s execution runtime. Keep Node dependencies at that tooling boundary. [Bun Start guide](https://bun.com/guides/ecosystem/tanstack-start), [Vite+ environment](https://viteplus.dev/guide/env).
 
 Start Bun worker code through the Effect Bun runtime entry point. Keep `Bun.*`, raw `fetch`, process spawning and filesystem APIs inside adapters; prefer Effect platform services there. Use Vite+ for the existing test/build responsibilities instead of adding a second runner or bundler. Pin stable Bun upgrades deliberately and re-run the runtime checks before changing the lockfile.
 
@@ -101,8 +112,8 @@ ha-workspace/
   apps/
     web/                    # shadcn TanStack Start app
       src/routes/
-      src/features/         # companies, files, review, agent, intake
-    worker/                 # Effect Bun service, render/agent child processes
+      src/features/workspace/ # catalog, previews, drafts, comments, revisions
+    worker/                 # Effect Bun import, revision queue, dev process runner
   packages/
     ui/                     # generated shadcn components + HA shell + tokens
     domain/                 # Effect schemas, facts, pure policies, revision contracts
@@ -114,9 +125,8 @@ ha-workspace/
       confect/_generated/    # generated
       convex/               # Confect deploy output/config
     documents/              # format adapters and calls to retained render tools
-  tests/e2e/
   docs/                     # architecture, design, decisions, operating notes
-  package.json              # packageManager: bun@1.4.2, workspaces, catalogs
+  package.json              # packageManager: bun@1.4.2 and explicit workspaces
   bun.lock
   bunfig.toml
   vite.config.ts
@@ -132,11 +142,13 @@ Confect expects sibling `confect/` and `convex/` directories and generates deplo
 
 Work from `/home/akh/Projects/ha-workspace` with the private GitHub remote [alexmikeagent/ha-workspace](https://github.com/alexmikeagent/ha-workspace). Use small, coherent commits with a passing check at each meaningful boundary. Keep the main branch runnable; use focused branches for substantial feature work. Review the final diff, test behavior that can regress, and update operating notes when configuration or migrations change. Generated backend code and lockfiles follow one documented regeneration path. Private Drive documents and secret values are never repository fixtures.
 
-All application environment values and secrets belong to the new **Doppler `ha-workspace` project**, in workplace **OmarchySys76**, using **`dev_personal`** for this local environment. Runtime commands receive configuration through `doppler run --no-fallback`; do not create app `.env` files or export secret-value snapshots. Repository files may declare variable names, validation schemas, and non-secret project/config references. Doppler CLI authentication is pending reauthentication; project creation is not evidence that CLI injection already works.
+All application environment values and secrets belong to the new **Doppler `ha-workspace` project**, in workplace **OmarchySys76**, using **`dev_personal`** for this local environment. Runtime commands receive configuration through `doppler run --no-fallback`; do not create app `.env` files or export secret-value snapshots. Repository files may declare variable names, validation schemas, and non-secret project/config references. Doppler CLI authentication and runtime injection have been verified; the app, worker, deployment, and import commands use this configuration.
 
 Load injected values with Effect `Config` at each composition root, use redacted secret values, and fail startup with a safe explanation if required configuration is missing. Map only intentionally public configuration to the browser. Deployment/admin keys, service tokens, local filesystem roots, and renderer credentials stay on server/worker boundaries. CI should use its own identity/config; personal CLI credentials must not be reused as CI secrets. Authenticate and test the runtime injection before starting app processes.
 
 ## Data and state ownership
+
+The current Confect `workspace` API implements catalog, file details, versioned comments, revision requests, claims, status checks, completion, failure, and cancellation. Its deployed tables cover company/project/file/version metadata, comments, revision jobs, and import state. The richer schema below is the target model for intake and generation; tables such as instruction versions and template bindings are not implemented yet.
 
 Convex owns durable application state and transaction boundaries. Effect owns typed domain operations, dependency injection, error handling, cancellation, and worker orchestration. An Effect program is not by itself a durable queue.
 
@@ -158,9 +170,11 @@ TanStack Router owns navigation and URL filters. Atoms own shared workspace stat
 
 Index lists by owner/company/category and date, file versions by file, comments by version, and jobs by state/lease. Paginate lists and event history. Store date-only visit dates separately from UTC event timestamps. Represent money in integer minor units and keep rate evidence scoped to the client.
 
-Start with these API groups: `companies`, `files`, `templates`, `tasks`, `comments`, `jobs`, and `instructions`. File commands create an upload reservation, finalize a verified version, and return an authenticated preview/download reference. `tasks.prepare` reports missing fields; `tasks.start` records a context snapshot and enqueues work atomically. A revision request includes its base version and idempotency key.
+As intake and generation expand, split the current `workspace` API into focused groups: `companies`, `files`, `templates`, `tasks`, `comments`, `jobs`, and `instructions`. File commands create an upload reservation, finalize a verified version, and return an authenticated preview/download reference. `tasks.prepare` reports missing fields; `tasks.start` records a context snapshot and enqueues work atomically. A revision request includes its base version and idempotency key.
 
 ## Document and review pipeline
+
+The current import → preview → comment → exact-text revision path implements a bounded part of this pipeline. Template selection, fact intake, full generation, rich annotation, and a separate final-publication command remain future capabilities.
 
 1. Import or upload a source into managed storage. Verify extension/MIME, hash it, and record the selected company, project, and category.
 2. Resolve the task operation: new completed document, intentionally incomplete draft, limited copy, or revision. Ask only the questions material to that operation.
@@ -179,17 +193,18 @@ Convex queries/mutations stay deterministic and do no filesystem/process I/O. Ev
 
 ### Preview contract
 
-| Format   | First implementation                                                                                         | Annotation anchor                                                         |
-| -------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| DOCX     | Local office conversion to PDF/pages; retain original DOCX                                                   | Version + page + normalized rectangle; optional stable template field key |
-| PDF      | PDF.js viewer with text layer and page virtualization                                                        | Version + page + rectangle/text quote                                     |
-| PPTX     | Render slides locally; thumbnails and slide navigation                                                       | Version + slide identifier/index + normalized rectangle                   |
-| XLSX     | Read-only sheet grid with formatted values and bounded range loading; separate print preview where available | Version + sheet identity/name + cell/range                                |
-| Markdown | CodeMirror editor and sanitized rendered preview                                                             | Version + line range/text context                                         |
+| Format       | Connected behavior                                                                   | Remaining work                                                        |
+| ------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| DOCX         | Verified local conversion to PDF; source download; bounded exact-text body revisions | Template-field editing, page annotations, wider fidelity checks       |
+| PDF          | Browser PDF viewer served from an authenticated endpoint                             | PDF.js text/region anchors and page virtualization                    |
+| PPTX         | Local conversion to PDF                                                              | Slide thumbnails, slide-aware comments, editing                       |
+| XLSX         | Bounded read-only sheet grid                                                         | Cell anchors, richer formatting, independently verified recalculation |
+| Images       | Protected image preview with fit/zoom controls                                       | Region annotations and richer photo context                           |
+| TXT/Markdown | Plain readable text, source download, exact-text revisions                           | Editor, line anchors, sanitized rich Markdown view                    |
 
-PDF.js, CodeMirror, and sheet parsing/render libraries are proposed implementation candidates requiring a focused spike. Do not claim Office fidelity or spreadsheet recalculation before testing real samples. Spreadsheet previews distinguish cached values from recalculated values; macros/external links are never executed as part of viewing.
+Preview metadata and bytes remain bound to the selected file/version ID. Unsupported formats stay downloadable. The current grid and extracted text are bounded excerpts, not proof of recalculation or Office layout fidelity. Macro and external-resource validation runs before local Office conversion.
 
-Cache derived previews by source hash, renderer/tool version, and render options. A box annotation is meaningful only for its original revision. When pagination changes, retain the old anchor and mark it for review unless a stable field mapping proves a new location. Never silently transfer a comment to a different paragraph.
+Derived previews are stored outside Git under the private data root, keyed by source hash and the renderer version. Future annotation anchors must stay with their original revision when layout changes; never silently move a comment to a new paragraph or cell.
 
 ### HA invariants to enforce in code
 
@@ -197,7 +212,7 @@ The existing project AGENTS.md supplies the authority: immutable general report/
 
 Wrap the retained document tools before replacing them. On Windows use the specified safe renderer and its process-isolation behavior. Fail DOCX validation for undeclared Markup Compatibility namespaces. Rendering results do not authorize rewriting the source template to compensate for renderer differences.
 
-## Agent integration and editable instructions
+## Planned agent integration and editable instructions
 
 Add an `AgentRuntime` interface to the worker with start/resume, send correction, interrupt, and normalized event handling. Candidate implementation: Codex app-server over worker-owned stdio. Official documentation describes conversation, approval, authentication and streaming support; it also flags the app-server command/WebSocket transport as experimental. Treat integration as a prototype spike, pin its protocol version, and keep the adapter replaceable. [Codex app-server](https://learn.chatgpt.com/docs/app-server).
 
@@ -205,35 +220,33 @@ Map application tasks to runtime conversation IDs explicitly. Stream normalized 
 
 Give the agent a job directory and a frozen context bundle, with narrow tools for reading input versions, applying requested field changes, and creating a candidate revision. Deterministic file tools enforce publication rules regardless of agent prose.
 
-The Agent panel lists the active project instructions and relevant skill versions. Editing auto-saves a draft; an explicit Apply action activates it. Compare the source hash before replacing an allowlisted instruction file, preserve a recoverable prior version, and show conflicts instead of overwriting another edit. An active run retains its instruction snapshot; changes apply to subsequent runs. Skill assets/scripts are linked as package dependencies so a SKILL.md preview is not misrepresented as the entire skill.
+The future Agent panel will list active project instructions and relevant skill versions. The current panel states that execution and instruction editing are not connected. Editing auto-saves a draft; an explicit Apply action activates it. Compare the source hash before replacing an allowlisted instruction file, preserve a recoverable prior version, and show conflicts instead of overwriting another edit. An active run retains its instruction snapshot; changes apply to subsequent runs. Skill assets/scripts are linked as package dependencies so a SKILL.md preview is not misrepresented as the entire skill.
 
 ## Storage, access and deployment
 
-The initial provider is a local fake Drive populated from the selected local mirror at `/home/akh/GoogleDrive`. Its verified copy contains **2,867 files totaling 1,275,661,520 bytes**, with 989 directories. SHA-256 verification established that the copied file contents match and the source remained unchanged during copying. This is evidence about the selected local mirror; a complete cloud Drive inventory has not been established. Existing failed-sync files and 11 `.lnk` shortcuts are preserved as opaque files. The copy is a baseline snapshot taken while verification finished at `2026-09-08T05:34:31Z`; another task may change the live mirror afterward. The local verification record is `/home/akh/Projects/ha-workspace-data/manifests/verification.json`; private file manifests remain outside the repository.
+The provider reads `/home/akh/Projects/ha-workspace-data/fake-drive`, the sole standalone working copy. The latest verified input checkpoint contains 10,052 files totaling 4,062,865,634 bytes: 2,867 baseline files and 7,185 inspection files. That checkpoint's active catalog contains 7,225 files, 13 companies, and 55 projects. Copy totals include material deliberately excluded from application operations; app counts refer to indexed files.
 
-Keep one standalone copy: `/home/akh/Projects/ha-workspace-data/fake-drive` is the application's initial provider, as requested by the user. The adapter writes new revisions and publications only into the working provider's managed area. It must never delete, rename, or modify files in the original mirror. Resetting demo state is a separately invoked operation that creates a fresh working location; routine startup must not reset data. Content and sensitive file manifests stay outside Git. Keep the standalone copy outside Drive and never register it with FreeFileSync. Exclude `sync.ffs_lock`, `sync.ffs_db`, and `*.ffs_tmp` from catalog ingestion and active application use; retain their copied bytes inert in the snapshot. The prototype does not edit live sync configuration or participate in live synchronization.
+The source mirror was still receiving files: the final source scan saw 28 later arrivals. This checkpoint does not establish complete cloud Drive coverage. An independent copy/index comparison found all 7,225 eligible paths indexed, with no omissions or extra fixtures. The other 2,827 copied inputs are intentionally excluded operational, hidden, tool, or unsupported material. Private manifests under `ha-workspace-data/manifests` retain source hashes, copy evidence, and the current status pointer. Source documents and detailed filenames stay outside Git.
 
-Use stable application IDs for domain identity. The local provider maps them to validated relative paths under an allowlisted root and records hashes and import provenance. Reject path traversal and symlink escapes. Managed storage owns immutable originals/revisions; Convex owns their searchable metadata. Preserve source filenames and folder structure at import. A future cloud Drive adapter uses provider file IDs and revisions behind the same Effect ports, with explicit conflict detection and sync status. It requires a separate cloud inventory and connectivity check.
+The provider accepts IDs, resolves them to validated relative paths, rejects traversal/symlinks and out-of-root access, verifies hashes, and writes revisions to job-owned paths with exclusive creation. It never points at the original Drive, deletes its files, or writes back to live synchronization. Exclude `.ffs_lock`, `.ffs_db`, `.ffs_tmp`, owner locks, and opaque shortcuts from active operations. Preserve copied operational bytes as inert input data.
 
-Use `/home/akh/LocalServices/Convex` as the existing local Convex service location. Its directory was confirmed to exist during the plan update; its configuration and running status have not yet been inspected. Before wiring the app, read the service's applicable instructions and configuration, identify its client/API and HTTP-action endpoints, and determine the intended application deployment and persistent volumes. Reuse the existing service configuration and keep application source code in its own repository. Do not initialize over existing service data or assume that its database is empty.
+The isolated native Convex instance uses `3220` for the client API and `3221` for the site endpoint, with its own database and storage under the private sibling data root. The previous service at `/home/akh/LocalServices/Convex` on `3210` remains intact. The deploy command verifies the HA instance identity and rejects unrelated deployment settings before changing functions.
 
 Local Convex and the local worker keep application metadata and file services on the host/tailnet. The host must remain awake for access and processing; upgrades, backups, and recovery are part of the local operating plan.
 
-Convex supports self-hosting; Tailscale Serve supplies private HTTPS access. Expose the web app and Convex client API through tailnet endpoints with WebSocket support; configure generated file/action URLs for iPhone reachability. Keep deployment/dashboard ports private. Validate this in the first spike. [Convex self-hosting](https://docs.convex.dev/self-hosting), [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve).
+Convex supports self-hosting. Tailscale Serve is the planned private HTTPS entry point. Before remote use, expose the web app and Convex client API through tailnet endpoints with WebSocket support; configure generated file/action URLs for iPhone reachability. Keep deployment/dashboard ports private. Validate this in the first spike. [Convex self-hosting](https://docs.convex.dev/self-hosting), [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve).
 
-Use app authentication in addition to tailnet access: proposed single-owner session with a Convex-compatible token, plus a separate worker service identity. Final issuer choice is part of the hosting spike. Every public function verifies identity and ownership; the browser never receives a deploy/admin key. If exchanging Tailscale identity headers for a session, accept those headers only behind the trusted local proxy and validate origin/CSRF protections. Private hosting does not make model-provider requests offline.
+The current loopback owner session uses a signed RS256 JWT, an HttpOnly same-origin file cookie, and an in-memory Convex token. Workers use a separate service role. Remote access requires an identity boundary appropriate for the tailnet; automatic local session issuance must not be exposed as a remote sign-in system. Every public function verifies identity and ownership; the browser never receives a deploy/admin key. If exchanging Tailscale identity headers for a session, accept those headers only behind the trusted local proxy and validate origin/CSRF protections. Private hosting does not make model-provider requests offline.
 
 Use persistent local volumes outside Drive sync, backup metadata with referenced immutable files, and prove restore on a separate instance. Display worker offline, preview pending/failed, unsaved changes, and reconnecting states. Offline authoring and a full sync engine are deferred; retain local editor/composer drafts and use idempotent submissions after reconnection.
 
-## Build sequence and acceptance gates
+## Delivery sequence and remaining gates
 
-1. **Compatibility foundation:** inspect the existing local Convex setup at `/home/akh/LocalServices/Convex` and establish the app's deployment target without changing unrelated data. Scaffold shadcn Start, migrate to Vite+, add exact Effect/Confect pins, generate/deploy one table/query/mutation to the designated local deployment, and prove live updates in two browser sessions. Verify Atom query/command integration, one shared subscription, typed errors, reconnect, session cleanup, and React 19 peer compatibility. Confirm Bun 1.4.2, compatible Node tooling, local backend connectivity, auth, monorepo imports, lint/format/type checks, and a production Start server running on Bun. Run a Bun worker test that spawns and cancels a child process, handles large file streams, and shuts down cleanly. Validate codegen under the declared Node toolchain and confirm one exact Effect version across workspaces. Inspect one-copy dependency resolution. If Confect blocks progress, isolate the incompatibility in its adapter and report it. Any temporary vanilla Convex adapter must still execute shared Effect use cases and schema checks; it must not create a second Promise-based business layer or downgrade Effect.
-2. **Modern workspace shell:** implement navigation, filtered lists, file route, resizable preview/Agent panels, semantic light/dark tokens and phone layout. The wireframe defines workflow coverage. Use the verified fake Drive for real filenames and representative documents. Apply the typography, progressive disclosure, and restrained motion contract in `DESIGN.md`; test keyboard/touch flows and reduced motion.
-3. **Real preview loop:** index the fake Drive and import representative DOCX, PDF, XLSX, PPTX; select a file, preview it, attach a versioned comment, refresh/reopen, and confirm persistence. Prove private file access from iPhone.
-4. **One complete HA workflow:** resolve a report template, collect only missing facts, generate/verify/preview, apply an observation correction, and publish a new revision. Test the general and Dulles template rules, stale revisions, locks, failed rendering, worker restart and duplicate submissions.
-5. **Agent and instruction editing:** integrate the runtime adapter, context/progress display, Markdown drafts, hash-conflict handling and active instruction versions. Demonstrate that an edit changes the next run while preserving the current run's snapshot.
-6. **Expand:** invoice generation and client terms, richer sheet/slide changes, a separately verified cloud Drive adapter, backups/restore and operational polish.
+1. **Connected local foundation:** the pinned monorepo, Doppler injection, guarded isolated Convex deployment, authenticated Confect reads/commands, Bun server, and local import are implemented. Continue production-build, reconnect, resource-lifetime, and worker-recovery checks as the surface grows.
+2. **Modern workspace:** real company/project/file views, filters, search, versions, context, and T3-style fully collapsible navigation are connected. The desktop sidebar remembers its state through Effect Atom; Ctrl/Cmd+B, separate mobile navigation, and reduced motion are implemented. Local viewport checks are distinct from remote iPhone testing. Inspector resizing, broader keyboard navigation, and theme expansion remain design work.
+3. **Persistent review loop:** previews, downloads, versioned comments, saved drafts, exact-text revision requests, and durable job states are implemented. Validate representative files and changed-preview outcomes. Rich page/region/cell annotations are future work.
+4. **One generated HA report:** select the authorized template, ask only for missing facts, generate/verify/preview, apply a correction, and publish a new filename. Prove the general/Dulles exceptions and same-client authority rules in that workflow.
+5. **Agent and instruction editor:** connect the replaceable runtime adapter, stream durable progress, save/apply instruction versions, and preserve the active run's snapshot. Existing desktop history and credentials are not implicitly inherited.
+6. **Remote access and operations:** establish remote authentication and Tailscale URLs, test on a real iPhone, and prove backup/restore and restart recovery. Then expand invoice generation, sheet/slide editing, and a separately verified cloud provider.
 
-The first meaningful deliverable is a persistent **company → file → preview → comment → revised preview** slice, inside the modern workspace shell. All four file formats receive basic preview coverage before deep editing expands.
-
-Open choices: the owner authentication issuer, live local Convex deployment configuration, and whether future Office support includes full in-browser editing. The code location, private GitHub repository, local fake Drive, Doppler project, and local Convex service directory are settled. See `DESIGN.md` for the interface contract and `SETUP.md` for setup status.
+The architectural choice is settled: a feature-oriented hexagonal modular monolith, with Effect-native capabilities, Atom state, Convex transactions, and Bun execution. The remaining choices concern broader authoring, remote identity, agent integration, and operating policy. `SETUP.md` records current evidence; requirements for an unimplemented feature are not a completion claim.

@@ -8,7 +8,7 @@
   ],
   "type": "module",
   "scripts": {
-    "dev": "doppler run --no-fallback -- vp -C apps/web dev",
+    "dev": "doppler run --no-fallback -- bun apps/worker/src/dev.ts",
     "build": "doppler run --no-fallback -- vp -C apps/web build",
     "start": "doppler run --no-fallback -- bun apps/web/server.ts",
     "worker:check": "doppler run --no-fallback -- bun apps/worker/src/main.ts",
@@ -16,7 +16,12 @@
     "lint": "vp lint",
     "format": "vp fmt",
     "test": "vp test run",
-    "verify": "vp run check && vp run test && vp run build"
+    "verify": "vp run check && vp run test && vp run build",
+    "drive:import": "doppler run --no-fallback -- bun apps/worker/src/import-drive.ts",
+    "backend:start": "doppler run --no-fallback -- bun packages/backend/scripts/local-backend.ts",
+    "backend:deploy": "doppler run --no-fallback -- mise exec -- node packages/backend/scripts/deploy.ts",
+    "backend:verify": "doppler run --no-fallback -- bun packages/backend/scripts/verify-live.ts",
+    "worker": "doppler run --no-fallback -- bun apps/worker/src/revisions.ts"
   },
   "devDependencies": {
     "@effect/vitest": "4.0.0-rc.112",

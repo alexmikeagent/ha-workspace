@@ -1,0 +1,2 @@
+# Revision tests use only the XML validator; spreadsheet/PDF extractors are lazy imports.
+lxml==6.1.3

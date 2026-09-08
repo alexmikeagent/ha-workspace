@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "allowJs": true, "types": ["node"] },
+  "include": ["./**/*", "../confect/**/*.ts"],
+  "exclude": ["./_generated"]
+}

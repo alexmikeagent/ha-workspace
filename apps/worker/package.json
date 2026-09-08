@@ -4,10 +4,16 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@confect/js": "10.0.0-next.21",
     "@effect/platform-bun": "4.0.0-rc.112",
     "@ha/application": "workspace:*",
+    "@ha/backend": "workspace:*",
     "@ha/documents": "workspace:*",
     "@ha/domain": "workspace:*",
     "effect": "4.0.0-rc.112"
+  },
+  "devDependencies": {
+    "@confect/test": "10.0.0-next.21",
+    "convex-test": "0.0.56"
   }
 }

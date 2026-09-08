@@ -13,10 +13,13 @@
     "@ha/application": "workspace:*",
     "@ha/domain": "workspace:*",
     "convex": "1.45.0",
-    "effect": "4.0.0-rc.112"
+    "effect": "4.0.0-rc.112",
+    "jose": "6.2.12"
   },
   "devDependencies": {
     "@confect/cli": "10.0.0-next.21",
-    "@confect/test": "10.0.0-next.21"
+    "@confect/test": "10.0.0-next.21",
+    "convex-test": "0.0.56",
+    "typescript": "6.0.3"
   }
 }

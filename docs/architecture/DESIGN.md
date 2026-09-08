@@ -1,6 +1,6 @@
 # HA Workspace — interface contract
 
-Interface direction updated September 8, 2026. Build a modern, clear workspace for finding files, reviewing documents, and requesting changes. The wireframe guides the workflow. The finished product should feel deliberate and responsive on desktop and iPhone, with its own visual system and restrained animation.
+Interface direction updated September 8, 2026. The connected application supports company/project browsing, previews, versioned comments, and precise revision requests. Keep developing a modern, clear workspace around those real files. The wireframe guides the workflow. The finished product should feel deliberate and responsive on desktop and iPhone, with its own visual system and restrained animation.
 
 ## Reference and evidence
 
@@ -17,6 +17,18 @@ Use the existing `ha-codex-workroom.html` prototype as the functional reference.
 | Neutral palette entries | White, #f9f9f9, #f3f3f3, #ededed, #303030, #282828, #212121, #181818                        |
 
 These are historical source declarations, not measurements of the active window. They provide context for the initial plan; they are not a pixel-matching target. Use shadcn primitives, semantic tokens, and one coherent icon set. Evaluate the result with real files from the local fake Drive and the acceptance checks below.
+
+## Implemented sidebar and workspace behavior
+
+The current sidebar follows the [T3 Code layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [off-canvas sidebar behavior](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx). It fully collapses, leaving the top-left toggle available. A schema-backed Effect Atom preference remembers the open state. Ctrl/Cmd+B toggles it outside editable fields; the button has an accessible name, expanded state, shortcut hint, and tooltip. Mobile navigation uses an independent Sheet with its own focus handling.
+
+Desktop starts at 248px, with 224px on compact desktop layouts. Collapse changes the layout column over 220ms using `cubic-bezier(0.2, 0.8, 0.2, 1)`; contents fade over 140ms. The inspector enters over 180ms. Reduced-motion preferences remove those transitions. Hidden sidebar content is inert. The main scroll surface stays mounted while the sidebar changes.
+
+Company and project links show real indexed files. Search and filters live in the URL, and sort/page state belongs to atoms. A file opens its version chooser, download, and actual preview. The Context tab displays extracted source text and labels folder-based inference. Review holds versioned comments, saved drafts, and an explicit exact-text revision form for supported files. The Agent tab explains that execution is not connected; it contains no simulated actions.
+
+Integrated-browser checks covered the desktop toggle, persistence, keyboard shortcut, a real Word/PDF preview, source context, and the 390 × 844 mobile layout with navigation focus and search. That is a local viewport check; remote iPhone access remains a separate deployment gate.
+
+The remaining sections mix adopted design rules with targets for future authoring. Inspector resizing, rich annotations, light-theme expansion, intake, new report/invoice actions, and the instruction editor are not current capabilities.
 
 ## Shell geometry
 
@@ -137,7 +149,7 @@ Review light and dark screenshots at 1440×900, 1024×768, and a representative 
 
 Exercise keyboard navigation, focus restoration, Escape behavior, panel resizing, mobile selection, page zoom and comment positioning. Verify that opening the inspector does not create horizontal overflow, document text stays readable, and the keyboard does not hide Send. Check loading, empty, error, rendering, reconnecting, worker-offline, and instruction-conflict states using real labels.
 
-The shell is part of the foundation work. These remain acceptance requirements until checked in the implemented UI. The local HTML plan is an illustrative document, not evidence that application features are complete.
+The connected shell has passed the local checks listed above. Broader acceptance requirements remain until exercised in the implemented UI. The local HTML plan is an illustrative document, not evidence that application features are complete.
 
 ## Effect Atom state and command boundaries
 

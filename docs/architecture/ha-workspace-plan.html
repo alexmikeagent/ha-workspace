@@ -2629,7 +2629,7 @@
         <a href="#details"><span>08</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
-        <strong><span class="dot"></span>Local hosting confirmed</strong>Convex on your machine
+        <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
         Foundation in progress<br />Updated September 8, 2026
       </div>
@@ -2648,7 +2648,7 @@
           ><b>Workspace plan</b>
         </div>
         <div class="toolbar-actions">
-          <span class="pill">Foundation · v3</span
+          <span class="pill">Connected prototype · v4</span
           ><button class="quiet-button" id="print">
             <svg
               viewBox="0 0 24 24"
@@ -2671,12 +2671,16 @@
             changing, and review the next version without repeating the background.
           </p>
           <div class="meta-row">
-            <span><i></i>Desktop + iPhone</span><span><i></i>Private access through Tailscale</span
-            ><span><i></i>Foundation in progress</span>
+            <span><i></i>Local desktop + mobile layouts</span
+            ><span><i></i>Remote access planned</span><span><i></i>Review loop connected</span>
           </div>
           <div class="decision">
             <span class="label">Confirmed decision</span>
-            <p>Use the existing local Convex setup.<code>/home/akh/LocalServices/Convex</code></p>
+            <p>
+              Use isolated local Convex; preserve the existing service.<code
+                >HA backend :3220 · existing service :3210 unchanged</code
+              >
+            </p>
             <span class="check" aria-hidden="true">✓</span>
           </div>
         </section>
@@ -2684,12 +2688,12 @@
         <section class="section" id="foundation-setup">
           <div class="section-heading">
             <div>
-              <span class="section-number">Setup / In progress</span>
-              <h2>A real foundation to build on</h2>
+              <span class="section-number">Setup / Connected</span>
+              <h2>Your files are connected</h2>
             </div>
             <p>
-              The code, local data, and configuration now have a home. Workflow features and live
-              integration remain the next build gates.
+              Browse real company files, review a source, and request a precise correction. The
+              local services now carry the workflow from metadata to a new version.
             </p>
           </div>
           <div class="setup-grid">
@@ -2704,18 +2708,18 @@
                 >alexmikeagent / ha-workspace ↗</a
               ><code>/home/akh/Projects/ha-workspace</code>
               <p>
-                Modern shadcn Start shell with Effect Atom. Source checks and 25 tests pass; the
-                configured build awaits Doppler reauthentication.
+                Live Confect/Atom views, authenticated file access, and durable revision jobs. The
+                configured Bun build and source checks pass.
               </p>
             </article>
             <article>
-              <span class="setup-label">Data foundation</span>
-              <h3>2,867 files copied</h3>
-              <span class="setup-value">1,275,661,520 bytes · SHA-256 verified</span
+              <span class="setup-label">Verified input checkpoint</span>
+              <h3>10,052 files copied</h3>
+              <span class="setup-value">4,062,865,634 bytes · SHA-256 verified</span
               ><code>/home/akh/Projects/ha-workspace-data</code>
               <p>
-                The standalone copy matches the local mirror at copy time. Source contents were
-                preserved; no delete option was used.
+                The catalog indexes 7,225 active files across 13 companies and 55 projects. A later
+                source scan saw 28 arrivals; live mirror downloading was still active.
               </p>
             </article>
             <article>
@@ -2723,8 +2727,8 @@
               <h3>Doppler</h3>
               <span class="setup-value">OmarchySys76 / ha-workspace</span><code>dev_personal</code>
               <p>
-                Runtime injection with <code>doppler run --no-fallback</code>. CLI reauthentication
-                is still pending.
+                CLI authentication and runtime injection verified. All app commands use
+                <code>doppler run --no-fallback</code>; secrets stay out of Git.
               </p>
             </article>
           </div>
@@ -2761,7 +2765,8 @@
           </div>
           <div class="map-wrap">
             <div class="map-header">
-              <span>HA Workspace / system map</span><span>Planned components, not live status</span>
+              <span>HA Workspace / system map</span
+              ><span>Connected local services + marked future work</span>
             </div>
             <div class="map">
               <svg class="map-wires" aria-hidden="true">
@@ -2825,9 +2830,9 @@
                 <h3 id="node-title">Convex + Confect</h3>
               </div>
               <p id="node-description">
-                Convex stores file metadata, task state, comments, and revision history. Confect
-                connects those functions to Effect schemas. The existing service directory is
-                confirmed; its endpoints and running configuration still need inspection.
+                The isolated HA instance on 3220/3221 stores file metadata, comments, revisions, and
+                durable jobs. Confect supplies typed Effects and live streams. The existing service
+                on 3210 remains unchanged.
               </p>
             </div>
           </div>
@@ -2970,8 +2975,9 @@ bun.lock</pre>
               Bun <code>1.4.2</code> is the latest stable release checked for this plan, following
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
-              declares Node tooling. Vite+ source checks and 25 tests pass. The final configured
-              build and full Bun integration remain to be verified.
+              declares Node tooling. The configured production build passes. A recorded verification
+              pass includes 80 TypeScript tests under Doppler and 21 Python document-helper tests.
+              Default CI runs 79 TypeScript tests and skips one optional local-runtime check.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
                 >Bun release notes ↗</a
               >
@@ -3105,8 +3111,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
   return yield* requests.enqueue(command)
 })</code></pre>
               <p>
-                Illustrative API check with a fake service. Strict typecheck and Node execution
-                passed; application integration is still to be built.
+                Historical API check with a fake service. Strict typecheck and Node execution
+                passed. Current worker and browser verification are recorded in the engineering
+                notes.
               </p>
             </div>
             <div class="code-notes">
@@ -3244,8 +3251,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <p class="footnote">
             Atom is the reactive UI layer. A single Confect WebSocket client supplies live data and
             typed commands. The checked Atom adapter shared subscriptions, recovered after typed
-            errors, and disposed resources in isolated registry tests. Live integration remains a
-            foundation check.
+            errors, and disposed resources in isolated registry tests. The app now waits for local
+            authentication before mounting its live catalog, comment, and job streams.
           </p>
         </section>
 
@@ -3263,19 +3270,19 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <div class="flow-strip" aria-label="Document workflow stages">
             <button class="flow-stage" data-step="0" aria-pressed="true">
               <span class="count">01</span><strong>Choose a file</strong
-              ><small>Company &amp; template</small>
+              ><small>Company &amp; project</small>
             </button>
             <button class="flow-stage" data-step="1" aria-pressed="false">
-              <span class="count">02</span><strong>Fill the gaps</strong
-              ><small>One question batch</small>
+              <span class="count">02</span><strong>Read the context</strong
+              ><small>Source excerpts</small>
             </button>
             <button class="flow-stage" data-step="2" aria-pressed="false">
-              <span class="count">03</span><strong>Generate &amp; check</strong
-              ><small>Local tools</small>
+              <span class="count">03</span><strong>Request a change</strong
+              ><small>Exact text replacement</small>
             </button>
             <button class="flow-stage" data-step="3" aria-pressed="false">
               <span class="count">04</span><strong>Review in place</strong
-              ><small>Preview &amp; annotate</small>
+              ><small>Preview &amp; comment</small>
             </button>
             <button class="flow-stage" data-step="4" aria-pressed="false">
               <span class="count">05</span><strong>Save a revision</strong
@@ -3285,9 +3292,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <div class="flow-caption" aria-live="polite">
             <h3 id="step-title">Choose the right source</h3>
             <p id="step-description">
-              Open a company file or start from a template. The task records its company, project,
-              and operation: a completed document, an intentionally blank draft, a limited copy, or
-              a revision.
+              Open an indexed company or project file. Preview a specific version, read its source
+              context, and keep the original within reach.
             </p>
           </div>
           <div class="format-grid">
@@ -3295,16 +3301,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <b>DOCX</b>
               <h3>Word documents</h3>
               <p>
-                Page previews from local conversion. Comments point to a page, region, or known
-                template field.
+                PDF previews from local conversion. Comments stay with the file version; supported
+                body text can be revised with one exact replacement.
               </p>
             </div>
             <div class="format">
               <b>XLSX</b>
               <h3>Excel workbooks</h3>
               <p>
-                A read-only sheet grid. Comments identify the sheet and cell range; cached values
-                are labeled.
+                A bounded read-only sheet grid with cached formula values labeled. Cell-range
+                annotations and recalculation remain future work.
               </p>
             </div>
             <div class="format">
@@ -3319,13 +3325,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <b>PPTX</b>
               <h3>PowerPoint decks</h3>
               <p>
-                Rendered slides and thumbnails. Comments identify a slide and the selected area.
+                Slides converted to a PDF preview. Source downloads and versioned comments work;
+                slide-aware editing remains future work.
               </p>
             </div>
           </div>
           <p class="boundary">
-            Start with previews and requested revisions. Full Office editing in the browser is a
-            separate decision; each format needs a real-file rendering test.
+            Exact-text revisions support DOCX, TXT, and Markdown. They do not edit arbitrary Office
+            layouts or interpret natural-language comments. New report/invoice generation is still
+            planned.
           </p>
         </section>
 
@@ -3336,8 +3344,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <h2>Keep the facts with the work</h2>
             </div>
             <p>
-              Store the chosen template, source facts, and instruction versions so a later
-              correction can start from the same context.
+              Files, versions, comments, and revision jobs are connected. The broader model below
+              also shows planned template, intake, and instruction history.
             </p>
           </div>
           <div class="model-grid">
@@ -3366,8 +3374,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               the browser, backend, and Bun worker.
             </p>
             <p>
-              A comment belongs to one file version. A running task keeps its instruction snapshot
-              even if you edit the skill.
+              A comment belongs to one file version. Frozen instruction snapshots are a requirement
+              for the future agent workflow.
             </p>
           </div>
         </section>
@@ -3379,10 +3387,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <h2>Familiar controls, room to read</h2>
             </div>
             <p>
-              The wireframe guides the workflow. Build a modern visual system with clear hierarchy,
-              quiet controls, and motion that helps you follow a change. Keep the document central.
+              The wireframe guides the workflow. The connected app adds T3-style fully collapsible
+              navigation, quiet controls, persistent Atom state, and reduced-motion support.
             </p>
           </div>
+          <p class="footnote">
+            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
+            preference, and a separate mobile Sheet. The layout study below also illustrates future
+            annotations and instruction editing.
+          </p>
           <div
             class="mock"
             aria-label="Illustrative desktop layout, not the implemented application"
@@ -3592,21 +3605,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">01</div>
               <details open>
                 <summary>
-                  <h3>Connect the foundation</h3>
-                  <span class="phase-status">In progress</span>
+                  <h3>Connected local stack</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  The private repository and shadcn Start scaffold are in place; its baseline build
-                  passed. Bun 1.4.2 and Node 24.20.0 are pinned. Source checks and 25 tests pass.
-                  Verify Doppler injection, the configured build, and local Convex through Effect
-                  ports.
+                  Bun, Vite+, Start, Doppler, and the isolated Convex instance now work together.
+                  The authenticated Confect runtime supplies the real catalog and typed commands.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Atom live queries and typed commands work in two isolated
-                  sessions; equivalent reads share a subscription, and declared query errors can
-                  recover. Vite+ checks and Node-based codegen pass. The production Start server
-                  runs on Bun; a Bun worker streams files, cancels its child process, and shuts down
-                  cleanly.
+                  <span>Checked</span>Production build and source checks pass. Keep testing
+                  reconnects, session teardown, worker restart, and resource lifetimes as features
+                  grow.
                 </div>
               </details>
             </div>
@@ -3614,18 +3623,18 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">02</div>
               <details>
                 <summary>
-                  <h3>Build the workspace shell</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Modern company workspace</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  Add Companies, Reports, Invoices, and Templates. Use the wireframe journeys to
-                  build a clean file route, resizable inspector, and phone layout with progressive
-                  disclosure and restrained motion.
+                  Company/project files, category filters, search, sorting, versions, and source
+                  context share one clear workspace. The T3-inspired sidebar fully collapses and
+                  remembers its state.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Navigation and filtered lists work with the fake Drive,
-                  keyboard controls are usable, and light/dark layouts stay clear with long
-                  filenames. Motion respects reduced-motion preferences and preserves focus.
+                  <span>Checked</span>Desktop controls and the local 390 × 844 mobile viewport work.
+                  The mobile Sheet is independent; reduced-motion preferences remove panel travel.
+                  Remote iPhone use remains a separate gate.
                 </div>
               </details>
             </div>
@@ -3633,16 +3642,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">03</div>
               <details>
                 <summary>
-                  <h3>Preview real files</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Real previews and review</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  Index the verified fake Drive and select representative Word, Excel, PDF, and
-                  PowerPoint files. Render previews and save comments against a specific revision.
+                  Open real PDF, image, DOCX/PPTX, workbook, and text previews. Download originals,
+                  save versioned comments, and keep review drafts across reloads.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>You can open a file from iPhone, annotate it, reload, and
-                  find the same comment in the same place.
+                  <span>Checked</span>Browser checks covered a real three-page Word/PDF, a bounded
+                  workbook grid, extracted context, search results, and draft persistence. Rich
+                  page/cell annotations are still planned.
                 </div>
               </details>
             </div>
@@ -3650,17 +3660,18 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">04</div>
               <details>
                 <summary>
-                  <h3>Complete one report workflow</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Bounded document revisions</h3>
+                  <span class="phase-status">Implemented</span>
                 </summary>
                 <p>
-                  Choose the right template, ask for missing facts, generate a report, and check it.
-                  Apply an observation correction and save a new revision.
+                  Request one exact text replacement in DOCX, TXT, or Markdown. The worker creates
+                  new bytes, checks Word compatibility, renders the candidate, and commits through
+                  the durable queue.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>General and Dulles rules hold. Stale revisions and expired
-                  leases fail; duplicate requests reuse one job. Cancellation closes resources.
-                  Publication replays safely from a committed revision and respects Word locks.
+                  <span>Boundary</span>This is deterministic correction, not AI rewriting or full
+                  Office editing. Base versions, idempotency, cancellation, leases, and fencing
+                  remain enforced; broader recovery tests continue.
                 </div>
               </details>
             </div>
@@ -3668,16 +3679,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Connect the agent and skills</h3>
+                  <h3>Generate reports and connect skills</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add streamed agent progress and the Markdown instruction editor. Keep saved drafts
-                  separate from the instructions used by an active task.
+                  Add template-aware intake and generation with the general/Dulles rules, followed
+                  by a replaceable agent runtime and versioned instruction editor.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>An applied instruction edit changes the next run, a current
-                  run keeps its snapshot, and conflicting source edits are visible.
+                  <span>Ready when</span>Missing facts are collected once; client/template authority
+                  is verified; an active run keeps its snapshot; newly applied instructions affect
+                  the next run.
                 </div>
               </details>
             </div>
@@ -3685,16 +3697,18 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">06</div>
               <details>
                 <summary>
-                  <h3>Expand the workflows</h3>
+                  <h3>Remote access and broader authoring</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add invoice generation with client-specific evidence, richer sheet and slide
-                  changes, a separately verified cloud Drive adapter, and operating documentation.
+                  Establish remote identity and Tailscale access, verify a real iPhone, prove
+                  backup/restore, and then expand invoice, spreadsheet, slide, and cloud-provider
+                  workflows.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Backups restore on a separate instance and the added
-                  document workflows pass their own content and layout checks.
+                  <span>Ready when</span>Remote sessions and private files remain protected, backups
+                  restore separately, and every added document workflow passes its own content and
+                  layout checks.
                 </div>
               </details>
             </div>
@@ -3702,7 +3716,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <div class="decisions">
             <div class="decision-list">
               <h3>Decided</h3>
-              <p><span class="mark">✓</span>Local Convex at the existing service directory</p>
+              <p><span class="mark">✓</span>Isolated local Convex; existing service preserved</p>
               <p><span class="mark">✓</span>Bun 1.4.2 stable, Vite+, shadcn and TanStack Start</p>
               <p>
                 <span class="mark">✓</span>Effect use cases and side effects, with Atom for UI state
@@ -3713,9 +3727,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <p><span class="mark">✓</span>Doppler owns application config and secrets</p>
             </div>
             <div class="decision-list pending">
-              <h3>Still to choose</h3>
-              <p><span class="mark">○</span>Local Convex deployment and live integration</p>
-              <p><span class="mark">○</span>How the owner signs in to the application</p>
+              <h3>Still ahead</h3>
+              <p><span class="mark">○</span>Generated reports, invoices, and richer annotations</p>
+              <p><span class="mark">○</span>Remote owner identity and Tailscale access</p>
               <p>
                 <span class="mark">○</span>Whether full Office editing belongs in a later version
               </p>
@@ -3741,23 +3755,25 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           </div>
           <div class="appendix">
             <details>
-              <summary>Foundation / document context</summary>
+              <summary>Implementation / document context</summary>
               <div class="appendix-content">
                 <p>
-                  Updated September 8, 2026. This is a setup record and implementation plan.
-                  Application workflow features and the complete live runtime are still being built.
+                  Updated September 8, 2026. The local workspace is connected: real files,
+                  company/project views, previews, downloads, source context, versioned comments,
+                  and bounded revision jobs. The remaining work is to broaden document workflows and
+                  verify remote access, rather than connect an empty shell.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Foundation / Confirmed locations and services</summary>
+              <summary>Implementation / Locations and running boundaries</summary>
               <div class="appendix-content">
                 <div class="table-wrap">
                   <table>
                     <thead>
                       <tr>
                         <th scope="col">Item</th>
-                        <th scope="col">Current decision and status</th>
+                        <th scope="col">Current setup</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -3774,162 +3790,223 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                             target="_blank"
                             rel="noopener"
                             >alexmikeagent/ha-workspace</a
-                          >
-                          repository; GitHub CLI authenticated using the system keyring
+                          >; <code>gh</code> authenticated through the system keyring
                         </td>
                       </tr>
                       <tr>
                         <td>Runtime tools</td>
+                        <td>Bun 1.4.2 and Node 24.20.0, pinned in <code>mise.toml</code></td>
+                      </tr>
+                      <tr>
+                        <td>Web app</td>
                         <td>
-                          Bun 1.4.2 and Node 24.20.0 installed and pinned in <code>mise.toml</code>
+                          <code>127.0.0.1:4310</code>; production Bun serves the app and file API
                         </td>
                       </tr>
                       <tr>
-                        <td>Web foundation</td>
+                        <td>Development API</td>
                         <td>
-                          Modern shadcn/TanStack Start shell with Effect Atom; Vite+ source checks
-                          and 25 tests pass; configured build awaits Doppler reauthentication
+                          <code>127.0.0.1:4312</code>, behind Vite&#x27;s same-origin
+                          <code>/api</code> proxy
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>HA Convex</td>
+                        <td>
+                          Isolated native <code>ha-workspace-local</code> instance: API
+                          <code>3220</code>, site <code>3221</code>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Backend data</td>
+                        <td><code>/home/akh/Projects/ha-workspace-data/convex</code></td>
+                      </tr>
+                      <tr>
+                        <td>Existing Convex</td>
+                        <td>
+                          <code>/home/akh/LocalServices/Convex</code> on <code>3210</code>,
+                          preserved
                         </td>
                       </tr>
                       <tr>
                         <td>Fake Drive</td>
                         <td>
-                          <code>/home/akh/Projects/ha-workspace-data/fake-drive</code>, populated
-                          and SHA-256 verified
+                          <code>/home/akh/Projects/ha-workspace-data/fake-drive</code>, the sole
+                          working copy
                         </td>
                       </tr>
                       <tr>
                         <td>Original local mirror</td>
                         <td>
-                          <code>/home/akh/GoogleDrive</code>, preserved unchanged during copying
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Convex service</td>
-                        <td>
-                          <code>/home/akh/LocalServices/Convex</code>; no changes made to the
-                          existing service or its data
+                          <code>/home/akh/GoogleDrive</code>; never used as the app&#x27;s provider
                         </td>
                       </tr>
                       <tr>
                         <td>Doppler</td>
                         <td>
-                          New <code>ha-workspace</code> project in workplace
-                          <code>OmarchySys76</code>; local config <code>dev_personal</code>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Doppler CLI</td>
-                        <td>
-                          Reauthentication pending; runtime injection still needs confirmation
+                          <code>ha-workspace</code> / <code>dev_personal</code>, workplace
+                          <code>OmarchySys76</code>; CLI injection verified
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </details>
-            <details>
-              <summary>Foundation / What the data check proves</summary>
-              <div class="appendix-content">
                 <p>
-                  The copy contains 2,867 files in 989 directories, totaling 1,275,661,520 bytes.
-                  The working copy content hashes match the original source at copy time.
-                  Verification found no omitted or unstable files, no symlinks, and no hardlinks
-                  shared with the source. Copying did not use a delete option. The source stayed
-                  unchanged during the copy. Verification finished at
-                  <code>2026-09-08T05:34:31Z</code>. These are baseline snapshot facts; later live
-                  sync repair work can change the original mirror.
-                </p>
-                <p>
-                  This is a complete copy of the selected local mirror. It has not been compared
-                  with a current inventory of the entire cloud Google Drive. Failed-sync artifacts,
-                  11 Windows <code>.lnk</code> files, and 30 zero-byte files are preserved.
-                  Importing them does not imply that the application can preview them or resolve
-                  their cloud targets.
-                </p>
-                <p>
-                  The local summaries are
-                  <code>/home/akh/Projects/ha-workspace-data/manifests/verification.json</code> and
-                  <code>manifests/single-copy-verification.json</code>. Content listings and source
-                  documents stay in the private data directory and are not committed to Git. The
-                  user requested one standalone working copy. Application startup must not reset it
-                  or modify the original mirror. New writes use a managed area inside the working
-                  provider and must not replace existing files. Keep the standalone copy outside
-                  Drive and do not register it with FreeFileSync. Preserve copied
-                  <code>sync.ffs_lock</code>, <code>sync.ffs_db</code>, and
-                  <code>*.ffs_tmp</code> files, but exclude them from indexing and active use. This
-                  project does not change live sync configuration; a separate task owns that work.
+                  The app stays on loopback. The local owner session uses signed JWTs and
+                  same-origin file cookies. It does not establish remote or multiuser
+                  authentication. Browser tokens stay in memory; admin and signing credentials
+                  remain server-side.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Foundation / Configuration ownership</summary>
+              <summary>Implementation / Available now</summary>
               <div class="appendix-content">
                 <p>
-                  Doppler is the source of application environment values and secrets. Use
-                  <code>doppler run --no-fallback</code> to inject the selected project/config at
-                  runtime. Do not create app <code>.env</code> files, export secret files into the
-                  repository, or rely on stale fallback caches.
+                  The catalog groups copied files by company and project, with source-based
+                  classifications and truthful unassigned states. Reports, Invoices, and Templates
+                  filter the same catalog. Search, sort, and bounded list pagination work with those
+                  files. The latest live import contains 7,225 active files, 13 companies, and 55
+                  projects; later imports can change these counts.
                 </p>
                 <p>
-                  The local configuration contract includes <code>APP_ENV</code>,
-                  <code>VITE_APP_NAME</code>, <code>FAKE_DRIVE_ROOT</code>,
-                  <code>WORKSPACE_DATA_ROOT</code>, <code>HOST</code>, and <code>PORT</code>. The
-                  local web binding is <code>127.0.0.1:4310</code>. Server/worker configuration is
-                  decoded with Effect Config; only intentionally public values are passed to browser
-                  code. Future backend, worker-identity, and agent credentials belong to the same
-                  Doppler project with appropriate separate environment configurations.
+                  A file opens its version chooser, preview, original download, and source context.
+                  PDF and images are shown directly; DOCX/PPTX use local PDF conversion; workbooks
+                  have bounded read-only grids; supported text has a readable preview. Extraction is
+                  not an AI interpretation or contract approval. Missing, unsupported, locked,
+                  oversized, and failed previews keep their own states.
                 </p>
                 <p>
-                  Browser login and project creation do not establish a working CLI credential.
-                  Complete Doppler CLI reauthentication, verify the selected project/config, and run
-                  a value-redacted injection check before relying on the launch command. Do not
-                  print secret values in validation output.
+                  Comments are stored against a specific immutable version. Review and revision
+                  drafts persist in IndexedDB under the owner/file/version key, with saving and
+                  error feedback. A comment failure preserves the draft. Confect subscriptions
+                  update file versions, comments, and durable job status through the session&#x27;s
+                  Effect Atom runtime.
+                </p>
+                <p>
+                  For DOCX, TXT, and Markdown, a revision request can replace one exact match with
+                  explicit replacement text. Word edits stay within supported uninterrupted
+                  document-body text. They do not edit headers, fields, tracked changes, or
+                  paragraphs as a general Word editor. The worker writes a new candidate, validates
+                  it, renders Word candidates, and asks Convex to commit it. Base-version,
+                  cancellation, lease, and fencing checks keep stale attempts from advancing the
+                  visible version. Source files are never overwritten.
+                </p>
+                <p>
+                  The sidebar fully collapses off canvas and remembers its state through a
+                  schema-backed Atom preference. Its top-left button remains available; Ctrl/Cmd+B
+                  toggles it outside text inputs. Mobile navigation uses a separate Sheet.
+                  Reduced-motion settings remove panel travel and transitions. This behavior follows
+                  the
+                  <a
+                    href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
+                    target="_blank"
+                    rel="noopener"
+                    >T3 Code layout</a
+                  >
+                  and
+                  <a
+                    href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx"
+                    target="_blank"
+                    rel="noopener"
+                    >sidebar implementation</a
+                  >, adapted to the workspace&#x27;s own visual system.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Foundation / Remaining foundation gates</summary>
+              <summary>Implementation / What copying proves</summary>
               <div class="appendix-content">
-                <ol>
-                  <li>
-                    Verify the final configured production build after Doppler reauthentication.
-                    Vite+ migration, frozen-lockfile installation, source checks, and 25 tests have
-                    passed.
-                  </li>
-                  <li>
-                    Confirm Doppler CLI injection and startup configuration without local
-                    environment files.
-                  </li>
-                  <li>
-                    Inspect the existing local Convex service and choose the application deployment
-                    without overwriting unrelated data.
-                  </li>
-                  <li>
-                    Prove one authenticated live read and typed command through Confect, Effect, and
-                    Atom in two isolated browser sessions.
-                  </li>
-                  <li>
-                    Run the Start production output on Bun and prove worker file streaming,
-                    child-process cancellation, and cleanup.
-                  </li>
-                  <li>
-                    Connect the modern shell to the fake Drive provider, then complete one
-                    persistent file → preview → comment → revised preview path.
-                  </li>
-                </ol>
+                <p>
+                  The original baseline copied 2,867 files in 989 directories, totaling
+                  1,275,661,520 bytes. SHA-256 inventories matched at copy time, without modifying
+                  sources or sharing hardlinks. The user then added <code>HA inspection</code>. The
+                  latest checkpoint copied 7,185 inspection files, bringing the input total to
+                  10,052 files and 4,062,865,634 bytes. Captured substantive files passed SHA-256
+                  verification. A later source scan saw 28 arrivals beyond the checkpoint, so
+                  downloading was still active. Catch-up passes preserve newly arriving source files
+                  as live mirror repair continues. They do not delete destination content or
+                  register the working copy with a sync service.
+                </p>
+                <p>
+                  Baseline evidence remains in
+                  <code>ha-workspace-data/manifests/verification.json</code> and
+                  <code>manifests/single-copy-verification.json</code>. New copy records live
+                  alongside those private manifests. <code>inspection-current-status.json</code> is
+                  the current checkpoint pointer;
+                  <code>inspection-existing-copy-preserved-latest.json</code> records preservation
+                  of the earlier working copy. File listings and document contents do not belong in
+                  this repository. An independent audit matched all 7,225 eligible paths to the
+                  catalog, with no omissions or extra fixtures. The remaining 2,827 copied inputs
+                  are intentionally excluded operational, hidden, tool, or unsupported material.
+                  Current app counts therefore differ from total copied inputs.
+                </p>
+                <p>
+                  This is evidence about the selected local mirror. A complete, current cloud Drive
+                  inventory has not been established. Keep copied sync metadata inert, exclude
+                  <code>.ffs_lock</code>, <code>.ffs_db</code>, and <code>.ffs_tmp</code> paths from
+                  application operations, and treat <code>.lnk</code> shortcuts as opaque. Another
+                  task owns live synchronization. Application startup must neither reset the fake
+                  Drive nor modify the original mirror.
+                </p>
               </div>
             </details>
             <details>
-              <summary>Foundation / Interface direction</summary>
+              <summary>Implementation / Configuration and commands</summary>
               <div class="appendix-content">
                 <p>
-                  The wireframe is the workflow guide. The final application uses its own semantic
-                  tokens, readable hierarchy, consistent controls, and progressive disclosure.
-                  Motion is brief and useful: subtle feedback, short panel transitions, and stable
-                  document position. Reduced-motion preferences, keyboard access, and iPhone touch
-                  behavior are part of the acceptance contract in <code>DESIGN.md</code>.
+                  Doppler owns application settings and secrets. Every runtime command uses
+                  <code>doppler run --no-fallback</code>; app <code>.env</code> files and secret
+                  exports are not part of the setup. <code>doppler.yaml</code> contains
+                  project/config selection only. Backend deployment synchronizes public JWT
+                  verification settings from Doppler; it does not copy the private signing key to
+                  Convex or the browser.
+                </p>
+                <p>
+                  The root README lists the current key names.
+                  <code>bun run backend:start</code> starts the dedicated instance;
+                  <code>backend:deploy</code> guards the deployment target, generates Confect refs,
+                  and deploys. <code>drive:import</code> indexes the existing copy.
+                  <code>worker</code> runs the durable revision queue. <code>dev</code> owns Vite
+                  and the API process; <code>build</code> plus <code>start</code> uses the
+                  production Bun server. <code>worker:check</code> is a storage readiness check, not
+                  a job runner.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Implementation / Verification and remaining gates</summary>
+              <div class="appendix-content">
+                <p>
+                  The configured production build and Doppler injection have passed. Source checks
+                  and the expanding TypeScript suite cover domain, transport, authorization,
+                  storage, preview, and queue boundaries. All 80 TypeScript tests pass with Doppler
+                  supplying document-runtime paths, alongside 21 Python document-helper tests.
+                  Default CI passes 79 TypeScript tests and skips the one optional runtime
+                  integration test. Live backend checks establish authenticated reads and commands
+                  on the isolated instance. Integrated-browser checks confirmed desktop sidebar
+                  collapse/persistence and Ctrl/Cmd+B, a real three-page DOCX PDF preview,
+                  source-context extraction, mobile layout at 390 × 844, drawer
+                  focus/navigation/close, a search returning real files, a bounded workbook grid
+                  with labeled cached values, and an unsent review draft surviving a full reload. No
+                  real client comment or revision was created by that browser check. These local
+                  viewport checks do not establish remote iPhone access. The optional
+                  document-runtime test creates a synthetic DOCX, uses the actual worker logic with
+                  real Python and LibreOffice processes, and verifies the resulting PDF and
+                  corrected extracted text. Backend commit and replay run through isolated
+                  <code>convex-test</code> functions; the check preserves the source hash and
+                  existing comment anchors, avoids duplicate versions, and confirms staging cleanup.
+                  It creates no production records and changes no client documents. This establishes
+                  that bounded runtime path, while sustained reconnect and recovery behavior still
+                  need broader checks.
+                </p>
+                <p>
+                  Remaining gates include sustained reconnect/worker recovery, concurrent renderer
+                  stress, backup and restore, remote identity and Tailscale access, and real iPhone
+                  testing. Page/rectangle/cell annotations, automatic intake, template-based report
+                  and invoice generation, a skill/instruction editor, AI execution, and full Office
+                  authoring are not connected product features. Their architectural requirements
+                  remain in the plan without being presented as completed work.
                 </p>
               </div>
             </details>
@@ -3938,13 +4015,13 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <summary>Architecture / document context</summary>
               <div class="appendix-content">
                 <p>
-                  Status: foundation in progress, updated September 8, 2026 (America/New_York). The
-                  private repository, verified local fake Drive, and shadcn/TanStack Start scaffold
-                  are established. The baseline Start build passed. Vite+ formatting, lint, type
-                  checks, frozen installation, and 25 tests pass. The modern shell and Effect Atom
-                  state are implemented. The final configured build awaits Doppler reauthentication;
-                  full runtime integration and document workflows remain subject to the acceptance
-                  gates below.
+                  Status: connected local prototype, updated September 8, 2026. The authenticated
+                  catalog, Confect/Atom subscriptions, previews, source context, downloads,
+                  versioned comments, and bounded exact-text revision jobs are implemented. Doppler
+                  injection and the configured production build pass. Source checks, backend tests,
+                  browser checks, and real-document verification establish different parts of the
+                  result; see <code>SETUP.md</code> for their scope. AI execution, generated
+                  reports/invoices, full Office editing, and remote access remain future work.
                 </p>
                 <p>
                   Based on the <strong>HA Workflow App Wireframe</strong> task
@@ -3971,10 +4048,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   runtime connected through explicit adapters.
                 </p>
                 <p>
-                  Hosting decision confirmed by the user on September 8, 2026: use the existing
-                  local Convex setup at <code>/home/akh/LocalServices/Convex</code>, alongside a
-                  local document worker, reached from desktop and iPhone through Tailscale. This
-                  local setup is the deployment target for the prototype.
+                  The user chose local hosting. Inspection of the existing
+                  <code>/home/akh/LocalServices/Convex</code> service led to an isolated HA
+                  instance: native Convex <code>ha-workspace-local</code> on
+                  <code>3220</code>/<code>3221</code>, with data under
+                  <code>/home/akh/Projects/ha-workspace-data/convex</code>. The existing service on
+                  <code>3210</code> was preserved. The Bun app serves loopback <code>4310</code>;
+                  development uses a separate API listener on <code>4312</code>. Tailscale and
+                  remote iPhone access remain deployment gates.
                 </p>
                 <p>
                   The interactive system map above shows these components and their
@@ -3988,8 +4069,42 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               </div>
             </details>
             <details>
-              <summary>Architecture / Product boundaries</summary>
+              <summary>Architecture / Current product slice</summary>
               <div class="appendix-content">
+                <p>
+                  The app reads a standalone copy of the consulting and inspection collections.
+                  Company/project groupings come from folder evidence, with ambiguous context kept
+                  explicit. All four navigation categories share file rows, filters, search, and the
+                  version workspace. Catalog queries cap returned matches and tell the view when to
+                  narrow a search.
+                </p>
+                <p>
+                  PDF and image previews use protected local content URLs. Word and PowerPoint
+                  convert locally to PDF; workbooks expose bounded read-only grids; text is
+                  displayed without executing markup. Extracted context is an excerpt from the
+                  source, not an AI summary or approved client fact. Comments remain attached to
+                  their source revision; important drafts persist through an Effect IndexedDB
+                  adapter.
+                </p>
+                <p>
+                  The first revision operation is deliberately precise: replace one exact match in
+                  DOCX, TXT, or Markdown. DOCX edits support uninterrupted body text; headers,
+                  fields, tracked changes, and cross-paragraph edits require another workflow. The
+                  worker preserves source bytes, validates the candidate, renders Word output, and
+                  commits a new immutable version through the durable queue. It does not infer
+                  changes from comments or generate new reports.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Architecture / Target product boundaries</summary>
+              <div class="appendix-content">
+                <p>
+                  The table below retains the broader product requirements. Page/rectangle/cell
+                  annotation, intake, new-document creation, and instruction editing are future
+                  features; they are not implied by the connected preview and exact-text revision
+                  slice.
+                </p>
                 <div class="table-wrap">
                   <table>
                     <thead>
@@ -4047,10 +4162,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  The first version previews DOCX, XLSX, PDF, and PPTX. Legacy DOC/XLS/PPT require a
-                  separately tested conversion path. Office files remain downloadable originals.
-                  Browser annotations and structured field edits create document revisions;
-                  arbitrary Word/Excel/PowerPoint editing is a separate capability decision.
+                  The connected preview path covers DOCX, XLSX, PDF, PPTX, supported images, and
+                  text. Legacy DOC/XLS/PPT require a separately tested conversion path. Office files
+                  remain downloadable originals. Current revisions use explicit find/replacement
+                  text. Page annotations and structured field edits remain planned; arbitrary
+                  Word/Excel/PowerPoint editing is a separate capability decision.
                 </p>
                 <p>
                   See <code>EFFECT_GUIDE.md</code> for the adopted dependency rules, Effect v4
@@ -4063,19 +4179,18 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <summary>Architecture / Verified stack and version policy</summary>
               <div class="appendix-content">
                 <p>
-                  Registry values were checked directly during this planning session. These are
-                  candidate pins. The complete application still needs an installation and build
-                  test. Bun 1.4.2 is the latest stable release verified on September 8, 2026. Bun
-                  1.4.2 and Node 24.20.0 are now installed and pinned in the repository’s
-                  <code>mise.toml</code>. The other rows retain the researched compatibility
-                  baseline until the complete dependency/build checks are finished.
+                  Registry values were checked directly during this planning session. These pins are
+                  installed and have passed the configured build. Bun 1.4.2 is the latest stable
+                  release verified on September 8, 2026. Bun 1.4.2 and Node 24.20.0 are now
+                  installed and pinned in the repository’s <code>mise.toml</code>. The remaining
+                  rows record the researched baseline used by the connected application.
                 </p>
                 <div class="table-wrap">
                   <table>
                     <thead>
                       <tr>
                         <th scope="col">Package/tool</th>
-                        <th scope="col">Candidate</th>
+                        <th scope="col">Pin</th>
                         <th scope="col">Planning consequence</th>
                       </tr>
                     </thead>
@@ -4309,11 +4424,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  Bun supports TanStack Start, but its example does not prove this complete
-                  Vite+/Confect monorepo works together. Run the production output on Bun, not just
-                  a successful development server. Vite+ manages Node separately; Bun package
-                  management does not switch every CLI’s execution runtime. Keep Node dependencies
-                  at that tooling boundary.
+                  The configured Start production output has been built and served on Bun. Keep
+                  checking that production entry point when updating the toolchain; a successful
+                  development server alone does not establish it. Vite+ manages Node separately; Bun
+                  package management does not switch every CLI’s execution runtime. Keep Node
+                  dependencies at that tooling boundary.
                   <a
                     href="https://bun.com/guides/ecosystem/tanstack-start"
                     target="_blank"
@@ -4337,8 +4452,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
   apps/
     web/                    # shadcn TanStack Start app
       src/routes/
-      src/features/         # companies, files, review, agent, intake
-    worker/                 # Effect Bun service, render/agent child processes
+      src/features/workspace/ # catalog, previews, drafts, comments, revisions
+    worker/                 # Effect Bun import, revision queue, dev process runner
   packages/
     ui/                     # generated shadcn components + HA shell + tokens
     domain/                 # Effect schemas, facts, pure policies, revision contracts
@@ -4350,9 +4465,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
       confect/_generated/    # generated
       convex/               # Confect deploy output/config
     documents/              # format adapters and calls to retained render tools
-  tests/e2e/
   docs/                     # architecture, design, decisions, operating notes
-  package.json              # packageManager: bun@1.4.2, workspaces, catalogs
+  package.json              # packageManager: bun@1.4.2 and explicit workspaces
   bun.lock
   bunfig.toml
   vite.config.ts</code></pre>
@@ -4413,8 +4527,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   commands receive configuration through <code>doppler run --no-fallback</code>; do
                   not create app <code>.env</code> files or export secret-value snapshots.
                   Repository files may declare variable names, validation schemas, and non-secret
-                  project/config references. Doppler CLI authentication is pending reauthentication;
-                  project creation is not evidence that CLI injection already works.
+                  project/config references. Doppler CLI authentication and runtime injection have
+                  been verified; the app, worker, deployment, and import commands use this
+                  configuration.
                 </p>
                 <p>
                   Load injected values with Effect <code>Config</code> at each composition root, use
@@ -4430,6 +4545,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             <details>
               <summary>Architecture / Data and state ownership</summary>
               <div class="appendix-content">
+                <p>
+                  The current Confect <code>workspace</code> API implements catalog, file details,
+                  versioned comments, revision requests, claims, status checks, completion, failure,
+                  and cancellation. Its deployed tables cover company/project/file/version metadata,
+                  comments, revision jobs, and import state. The richer schema below is the target
+                  model for intake and generation; tables such as instruction versions and template
+                  bindings are not implemented yet.
+                </p>
                 <p>
                   Convex owns durable application state and transaction boundaries. Effect owns
                   typed domain operations, dependency injection, error handling, cancellation, and
@@ -4535,7 +4658,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   integer minor units and keep rate evidence scoped to the client.
                 </p>
                 <p>
-                  Start with these API groups: <code>companies</code>, <code>files</code>,
+                  As intake and generation expand, split the current <code>workspace</code> API into
+                  focused groups: <code>companies</code>, <code>files</code>,
                   <code>templates</code>, <code>tasks</code>, <code>comments</code>,
                   <code>jobs</code>, and <code>instructions</code>. File commands create an upload
                   reservation, finalize a verified version, and return an authenticated
@@ -4548,6 +4672,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             <details>
               <summary>Architecture / Document and review pipeline</summary>
               <div class="appendix-content">
+                <p>
+                  The current import → preview → comment → exact-text revision path implements a
+                  bounded part of this pipeline. Template selection, fact intake, full generation,
+                  rich annotation, and a separate final-publication command remain future
+                  capabilities.
+                </p>
                 <ol>
                   <li>
                     Import or upload a source into managed storage. Verify extension/MIME, hash it,
@@ -4618,57 +4748,60 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                     <thead>
                       <tr>
                         <th scope="col">Format</th>
-                        <th scope="col">First implementation</th>
-                        <th scope="col">Annotation anchor</th>
+                        <th scope="col">Connected behavior</th>
+                        <th scope="col">Remaining work</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td>DOCX</td>
-                        <td>Local office conversion to PDF/pages; retain original DOCX</td>
                         <td>
-                          Version + page + normalized rectangle; optional stable template field key
+                          Verified local conversion to PDF; source download; bounded exact-text body
+                          revisions
                         </td>
+                        <td>Template-field editing, page annotations, wider fidelity checks</td>
                       </tr>
                       <tr>
                         <td>PDF</td>
-                        <td>PDF.js viewer with text layer and page virtualization</td>
-                        <td>Version + page + rectangle/text quote</td>
+                        <td>Browser PDF viewer served from an authenticated endpoint</td>
+                        <td>PDF.js text/region anchors and page virtualization</td>
                       </tr>
                       <tr>
                         <td>PPTX</td>
-                        <td>Render slides locally; thumbnails and slide navigation</td>
-                        <td>Version + slide identifier/index + normalized rectangle</td>
+                        <td>Local conversion to PDF</td>
+                        <td>Slide thumbnails, slide-aware comments, editing</td>
                       </tr>
                       <tr>
                         <td>XLSX</td>
+                        <td>Bounded read-only sheet grid</td>
                         <td>
-                          Read-only sheet grid with formatted values and bounded range loading;
-                          separate print preview where available
+                          Cell anchors, richer formatting, independently verified recalculation
                         </td>
-                        <td>Version + sheet identity/name + cell/range</td>
                       </tr>
                       <tr>
-                        <td>Markdown</td>
-                        <td>CodeMirror editor and sanitized rendered preview</td>
-                        <td>Version + line range/text context</td>
+                        <td>Images</td>
+                        <td>Protected image preview with fit/zoom controls</td>
+                        <td>Region annotations and richer photo context</td>
+                      </tr>
+                      <tr>
+                        <td>TXT/Markdown</td>
+                        <td>Plain readable text, source download, exact-text revisions</td>
+                        <td>Editor, line anchors, sanitized rich Markdown view</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p>
-                  PDF.js, CodeMirror, and sheet parsing/render libraries are proposed implementation
-                  candidates requiring a focused spike. Test real files before relying on Office
-                  layout fidelity or spreadsheet recalculation. Spreadsheet previews distinguish
-                  cached values from recalculated values; macros/external links are never executed
-                  as part of viewing.
+                  Preview metadata and bytes remain bound to the selected file/version ID.
+                  Unsupported formats stay downloadable. The current grid and extracted text are
+                  bounded excerpts, not proof of recalculation or Office layout fidelity. Macro and
+                  external-resource validation runs before local Office conversion.
                 </p>
                 <p>
-                  Cache derived previews by source hash, renderer/tool version, and render options.
-                  A box annotation is meaningful only for its original revision. When pagination
-                  changes, retain the old anchor and mark it for review unless a stable field
-                  mapping proves a new location. Never silently transfer a comment to a different
-                  paragraph.
+                  Derived previews are stored outside Git under the private data root, keyed by
+                  source hash and the renderer version. Future annotation anchors must stay with
+                  their original revision when layout changes; never silently move a comment to a
+                  new paragraph or cell.
                 </p>
                 <h3>HA invariants to enforce in code</h3>
                 <p>
@@ -4688,7 +4821,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               </div>
             </details>
             <details>
-              <summary>Architecture / Agent integration and editable instructions</summary>
+              <summary>Architecture / Planned agent integration and editable instructions</summary>
               <div class="appendix-content">
                 <p>
                   Add an <code>AgentRuntime</code> interface to the worker with start/resume, send
@@ -4714,13 +4847,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   prose.
                 </p>
                 <p>
-                  The Agent panel lists the active project instructions and relevant skill versions.
-                  Editing auto-saves a draft; an explicit Apply action activates it. Compare the
-                  source hash before replacing an allowlisted instruction file, preserve a
-                  recoverable prior version, and show conflicts instead of overwriting another edit.
-                  An active run retains its instruction snapshot; changes apply to subsequent runs.
-                  Skill assets/scripts are linked as package dependencies so a SKILL.md preview is
-                  not misrepresented as the entire skill.
+                  The future Agent panel will list active project instructions and relevant skill
+                  versions. The current panel states that execution and instruction editing are not
+                  connected. Editing auto-saves a draft; an explicit Apply action activates it.
+                  Compare the source hash before replacing an allowlisted instruction file, preserve
+                  a recoverable prior version, and show conflicts instead of overwriting another
+                  edit. An active run retains its instruction snapshot; changes apply to subsequent
+                  runs. Skill assets/scripts are linked as package dependencies so a SKILL.md
+                  preview is not misrepresented as the entire skill.
                 </p>
               </div>
             </details>
@@ -4728,53 +4862,39 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <summary>Architecture / Storage, access and deployment</summary>
               <div class="appendix-content">
                 <p>
-                  The initial provider is a local fake Drive populated from the selected local
-                  mirror at <code>/home/akh/GoogleDrive</code>. Its verified copy contains
-                  <strong>2,867 files totaling 1,275,661,520 bytes</strong>, with 989 directories.
-                  SHA-256 verification established that the copied file contents match and the
-                  source remained unchanged during copying. This is evidence about the selected
-                  local mirror; a complete cloud Drive inventory has not been established. Existing
-                  failed-sync files and 11 <code>.lnk</code> shortcuts are preserved as opaque
-                  files. The copy is a baseline snapshot taken while verification finished at
-                  <code>2026-09-08T05:34:31Z</code>; another task may change the live mirror
-                  afterward. The local verification record is
-                  <code>/home/akh/Projects/ha-workspace-data/manifests/verification.json</code>;
-                  private file manifests remain outside the repository.
+                  The provider reads <code>/home/akh/Projects/ha-workspace-data/fake-drive</code>,
+                  the sole standalone working copy. The latest verified input checkpoint contains
+                  10,052 files totaling 4,062,865,634 bytes: 2,867 baseline files and 7,185
+                  inspection files. That checkpoint&#x27;s active catalog contains 7,225 files, 13
+                  companies, and 55 projects. Copy totals include material deliberately excluded
+                  from application operations; app counts refer to indexed files.
                 </p>
                 <p>
-                  Keep one standalone copy:
-                  <code>/home/akh/Projects/ha-workspace-data/fake-drive</code> is the
-                  application&#x27;s initial provider, as requested by the user. The adapter writes
-                  new revisions and publications only into the working provider&#x27;s managed area.
-                  It must never delete, rename, or modify files in the original mirror. Resetting
-                  demo state is a separately invoked operation that creates a fresh working
-                  location; routine startup must not reset data. Content and sensitive file
-                  manifests stay outside Git. Keep the standalone copy outside Drive and never
-                  register it with FreeFileSync. Exclude <code>sync.ffs_lock</code>,
-                  <code>sync.ffs_db</code>, and <code>*.ffs_tmp</code> from catalog ingestion and
-                  active application use; retain their copied bytes inert in the snapshot. The
-                  prototype does not edit live sync configuration or participate in live
-                  synchronization.
+                  The source mirror was still receiving files: the final source scan saw 28 later
+                  arrivals. This checkpoint does not establish complete cloud Drive coverage. An
+                  independent copy/index comparison found all 7,225 eligible paths indexed, with no
+                  omissions or extra fixtures. The other 2,827 copied inputs are intentionally
+                  excluded operational, hidden, tool, or unsupported material. Private manifests
+                  under <code>ha-workspace-data/manifests</code> retain source hashes, copy
+                  evidence, and the current status pointer. Source documents and detailed filenames
+                  stay outside Git.
                 </p>
                 <p>
-                  Use stable application IDs for domain identity. The local provider maps them to
-                  validated relative paths under an allowlisted root and records hashes and import
-                  provenance. Reject path traversal and symlink escapes. Managed storage owns
-                  immutable originals/revisions; Convex owns their searchable metadata. Preserve
-                  source filenames and folder structure at import. A future cloud Drive adapter uses
-                  provider file IDs and revisions behind the same Effect ports, with explicit
-                  conflict detection and sync status. It requires a separate cloud inventory and
-                  connectivity check.
+                  The provider accepts IDs, resolves them to validated relative paths, rejects
+                  traversal/symlinks and out-of-root access, verifies hashes, and writes revisions
+                  to job-owned paths with exclusive creation. It never points at the original Drive,
+                  deletes its files, or writes back to live synchronization. Exclude
+                  <code>.ffs_lock</code>, <code>.ffs_db</code>, <code>.ffs_tmp</code>, owner locks,
+                  and opaque shortcuts from active operations. Preserve copied operational bytes as
+                  inert input data.
                 </p>
                 <p>
-                  Use <code>/home/akh/LocalServices/Convex</code> as the existing local Convex
-                  service location. Its directory was confirmed to exist during the plan update; its
-                  configuration and running status have not yet been inspected. Before wiring the
-                  app, read the service&#x27;s applicable instructions and configuration, identify
-                  its client/API and HTTP-action endpoints, and determine the intended application
-                  deployment and persistent volumes. Reuse the existing service configuration and
-                  keep application source code in its own repository. Do not initialize over
-                  existing service data or assume that its database is empty.
+                  The isolated native Convex instance uses <code>3220</code> for the client API and
+                  <code>3221</code> for the site endpoint, with its own database and storage under
+                  the private sibling data root. The previous service at
+                  <code>/home/akh/LocalServices/Convex</code> on <code>3210</code> remains intact.
+                  The deploy command verifies the HA instance identity and rejects unrelated
+                  deployment settings before changing functions.
                 </p>
                 <p>
                   Local Convex and the local worker keep application metadata and file services on
@@ -4782,10 +4902,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   backups, and recovery are part of the local operating plan.
                 </p>
                 <p>
-                  Convex supports self-hosting; Tailscale Serve supplies private HTTPS access.
-                  Expose the web app and Convex client API through tailnet endpoints with WebSocket
-                  support; configure generated file/action URLs for iPhone reachability. Keep
-                  deployment/dashboard ports private. Validate this in the first spike.
+                  Convex supports self-hosting. Tailscale Serve is the planned private HTTPS entry
+                  point. Before remote use, expose the web app and Convex client API through tailnet
+                  endpoints with WebSocket support; configure generated file/action URLs for iPhone
+                  reachability. Keep deployment/dashboard ports private. Validate this in the first
+                  spike.
                   <a href="https://docs.convex.dev/self-hosting" target="_blank" rel="noopener"
                     >Convex self-hosting</a
                   >,
@@ -4797,13 +4918,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   >.
                 </p>
                 <p>
-                  Use app authentication in addition to tailnet access: proposed single-owner
-                  session with a Convex-compatible token, plus a separate worker service identity.
-                  Final issuer choice is part of the hosting spike. Every public function verifies
-                  identity and ownership; the browser never receives a deploy/admin key. If
-                  exchanging Tailscale identity headers for a session, accept those headers only
-                  behind the trusted local proxy and validate origin/CSRF protections. Private
-                  hosting does not make model-provider requests offline.
+                  The current loopback owner session uses a signed RS256 JWT, an HttpOnly
+                  same-origin file cookie, and an in-memory Convex token. Workers use a separate
+                  service role. Remote access requires an identity boundary appropriate for the
+                  tailnet; automatic local session issuance must not be exposed as a remote sign-in
+                  system. Every public function verifies identity and ownership; the browser never
+                  receives a deploy/admin key. If exchanging Tailscale identity headers for a
+                  session, accept those headers only behind the trusted local proxy and validate
+                  origin/CSRF protections. Private hosting does not make model-provider requests
+                  offline.
                 </p>
                 <p>
                   Use persistent local volumes outside Drive sync, backup metadata with referenced
@@ -4815,72 +4938,55 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               </div>
             </details>
             <details>
-              <summary>Architecture / Build sequence and acceptance gates</summary>
+              <summary>Architecture / Delivery sequence and remaining gates</summary>
               <div class="appendix-content">
                 <ol>
                   <li>
-                    <strong>Compatibility foundation:</strong> inspect the existing local Convex
-                    setup at <code>/home/akh/LocalServices/Convex</code> and establish the
-                    app&#x27;s deployment target without changing unrelated data. Scaffold shadcn
-                    Start, migrate to Vite+, add exact Effect/Confect pins, generate/deploy one
-                    table/query/mutation to the designated local deployment, and prove live updates
-                    in two browser sessions. Verify Atom query/command integration, one shared
-                    subscription, typed errors, reconnect, session cleanup, and React 19 peer
-                    compatibility. Confirm Bun 1.4.2, compatible Node tooling, local backend
-                    connectivity, auth, monorepo imports, lint/format/type checks, and a production
-                    Start server running on Bun. Run a Bun worker test that spawns and cancels a
-                    child process, handles large file streams, and shuts down cleanly. Validate
-                    codegen under the declared Node toolchain and confirm one exact Effect version
-                    across workspaces. Inspect one-copy dependency resolution. If Confect blocks
-                    progress, isolate the incompatibility in its adapter and report it. Any
-                    temporary vanilla Convex adapter must still execute shared Effect use cases and
-                    schema checks; it must not create a second Promise-based business layer or
-                    downgrade Effect.
+                    <strong>Connected local foundation:</strong> the pinned monorepo, Doppler
+                    injection, guarded isolated Convex deployment, authenticated Confect
+                    reads/commands, Bun server, and local import are implemented. Continue
+                    production-build, reconnect, resource-lifetime, and worker-recovery checks as
+                    the surface grows.
                   </li>
                   <li>
-                    <strong>Modern workspace shell:</strong> implement navigation, filtered lists,
-                    file route, resizable preview/Agent panels, semantic light/dark tokens and phone
-                    layout. The wireframe defines workflow coverage. Use the verified fake Drive for
-                    real filenames and representative documents. Apply the typography, progressive
-                    disclosure, and restrained motion contract in <code>DESIGN.md</code>; test
-                    keyboard/touch flows and reduced motion.
+                    <strong>Modern workspace:</strong> real company/project/file views, filters,
+                    search, versions, context, and T3-style fully collapsible navigation are
+                    connected. The desktop sidebar remembers its state through Effect Atom;
+                    Ctrl/Cmd+B, separate mobile navigation, and reduced motion are implemented.
+                    Local viewport checks are distinct from remote iPhone testing. Inspector
+                    resizing, broader keyboard navigation, and theme expansion remain design work.
                   </li>
                   <li>
-                    <strong>Real preview loop:</strong> index the fake Drive and import
-                    representative DOCX, PDF, XLSX, PPTX; select a file, preview it, attach a
-                    versioned comment, refresh/reopen, and confirm persistence. Prove private file
-                    access from iPhone.
+                    <strong>Persistent review loop:</strong> previews, downloads, versioned
+                    comments, saved drafts, exact-text revision requests, and durable job states are
+                    implemented. Validate representative files and changed-preview outcomes. Rich
+                    page/region/cell annotations are future work.
                   </li>
                   <li>
-                    <strong>One complete HA workflow:</strong> resolve a report template, collect
-                    only missing facts, generate/verify/preview, apply an observation correction,
-                    and publish a new revision. Test the general and Dulles template rules, stale
-                    revisions, locks, failed rendering, worker restart and duplicate submissions.
+                    <strong>One generated HA report:</strong> select the authorized template, ask
+                    only for missing facts, generate/verify/preview, apply a correction, and publish
+                    a new filename. Prove the general/Dulles exceptions and same-client authority
+                    rules in that workflow.
                   </li>
                   <li>
-                    <strong>Agent and instruction editing:</strong> integrate the runtime adapter,
-                    context/progress display, Markdown drafts, hash-conflict handling and active
-                    instruction versions. Demonstrate that an edit changes the next run while the
-                    current run keeps its snapshot.
+                    <strong>Agent and instruction editor:</strong> connect the replaceable runtime
+                    adapter, stream durable progress, save/apply instruction versions, and preserve
+                    the active run&#x27;s snapshot. Existing desktop history and credentials are not
+                    implicitly inherited.
                   </li>
                   <li>
-                    <strong>Expand:</strong> invoice generation and client terms, richer sheet/slide
-                    changes, a separately verified cloud Drive adapter, backups/restore and
-                    operational polish.
+                    <strong>Remote access and operations:</strong> establish remote authentication
+                    and Tailscale URLs, test on a real iPhone, and prove backup/restore and restart
+                    recovery. Then expand invoice generation, sheet/slide editing, and a separately
+                    verified cloud provider.
                   </li>
                 </ol>
                 <p>
-                  The first deliverable is a persistent
-                  <strong>company → file → preview → comment → revised preview</strong> slice,
-                  inside the modern workspace shell. All four file formats receive basic preview
-                  coverage before deep editing expands.
-                </p>
-                <p>
-                  Open choices: the owner authentication issuer, live local Convex deployment
-                  configuration, and whether future Office support includes full in-browser editing.
-                  The code location, private GitHub repository, local fake Drive, Doppler project,
-                  and local Convex service directory are settled. See <code>DESIGN.md</code> for the
-                  interface contract and <code>SETUP.md</code> for setup status.
+                  The architectural choice is settled: a feature-oriented hexagonal modular
+                  monolith, with Effect-native capabilities, Atom state, Convex transactions, and
+                  Bun execution. The remaining choices concern broader authoring, remote identity,
+                  agent integration, and operating policy. <code>SETUP.md</code> records current
+                  evidence; requirements for an unimplemented feature are not a completion claim.
                 </p>
               </div>
             </details>
@@ -4889,12 +4995,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <summary>Effect / document context</summary>
               <div class="appendix-content">
                 <p>
-                  Adopted for HA Workspace on September 8, 2026. These are implementation
-                  requirements. The repository, local data foundation, and shadcn/Start scaffold
-                  exist; the baseline Start build passed. Vite+ source checks and 25
-                  application/adapter tests pass. The final configured build awaits Doppler
-                  reauthentication; the linked code examples remain separate API checks. Feature
-                  completion and live integration are measured by the repository acceptance gates.
+                  Adopted for HA Workspace on September 8, 2026. The connected implementation uses
+                  Effect v4 RC, one authenticated Confect/Atom browser runtime, local file
+                  capabilities, and durable revision jobs. Doppler injection and the configured Bun
+                  production build pass. Current verification includes 80 TypeScript tests under
+                  Doppler and 21 Python document-helper tests. Default CI runs 79 TypeScript tests
+                  and skips the optional local-runtime test; <code>SETUP.md</code> separates
+                  runtime/browser evidence from source checks. The linked API probes remain
+                  historical examples, not substitutes for application tests.
                 </p>
               </div>
             </details>
@@ -5192,13 +5300,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   their own scoped execution model.
                 </p>
                 <p>
-                  Choose one scoped <code>@confect/js</code> WebSocket client as the browser
+                  The browser uses one scoped <code>@confect/js</code> WebSocket client as its
                   transport. Its typed commands and <code>reactiveQueryResult</code> streams become
                   application-service adapters. The Atom registry owns the reactive presentation
                   graph. Do not mount parallel Confect React query hooks, a second Convex client, or
                   a second query cache for the same data. Preserve Confect codecs and explicit typed
-                  query errors in the bridge. This integration is an architecture choice to verify
-                  in the foundation build.
+                  query errors in the bridge. This integration is implemented in
+                  <code>apps/web/src/features/workspace/catalog.ts</code>; the session layer waits
+                  for authentication confirmation before exposing live query streams.
                   <a
                     href="https://confect.dev/v10/clients/js/websocket.md"
                     target="_blank"
@@ -5281,6 +5390,51 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                     rel="noopener"
                     >Pinned Atom commands</a
                   >.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Effect / Current composition and deliberate limits</summary>
+              <div class="appendix-content">
+                <p>
+                  The client-only workspace route mounts the session registry and one Confect
+                  runtime. <code>/api/session</code> returns an in-memory owner token and the public
+                  local backend URL; the server also sets an HttpOnly same-origin cookie for preview
+                  and download requests. Authentication confirmation gates subscriptions. Typed
+                  result streams preserve the previous successful view after a recoverable failure.
+                  The local issuer is a loopback-only prototype; remote authentication is not solved
+                  by the presence of a JWT.
+                </p>
+                <p>
+                  The sidebar open preference uses <code>Atom.kvs</code> with a Boolean schema.
+                  Review and revision drafts use explicit IndexedDB Effects keyed by owner, file,
+                  and source version. Draft memory, saving acknowledgement, and write failure are
+                  distinct states. Autosave commands survive panel changes inside the session;
+                  credentials never enter that store. Canonical filter keys let equivalent catalog
+                  reads share their atom.
+                </p>
+                <p>
+                  Confect&#x27;s <code>workspace</code> functions own metadata, comments, and
+                  durable revision transitions on the isolated <code>3220</code> backend. The Bun
+                  worker claims one attempt, checks cancellation while it runs, creates a new
+                  candidate, validates and renders supported Word output, then commits with
+                  base-version/lease/fencing checks. Exact-text correction is a bounded
+                  deterministic operation. It does not turn natural-language comments into edits or
+                  implement AI task execution.
+                </p>
+                <p>
+                  The optional synthetic-document test composes actual worker logic with real
+                  Python/LibreOffice processes and isolated <code>convex-test</code> backend
+                  functions. It proves corrected DOCX/PDF output, preserved source hashes and
+                  comment anchors, idempotent commit replay, and staging cleanup without production
+                  records. It requires the Doppler-provided document-tool paths; the default source
+                  suite skips it when those runtimes are absent.
+                </p>
+                <p>
+                  The rules below also cover planned template generation, richer annotations,
+                  instructions, and final publication. Those contracts remain requirements; the
+                  existence of a shared Effect runtime does not mean every planned feature has been
+                  implemented.
                 </p>
               </div>
             </details>
@@ -5462,11 +5616,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   <code>doppler run --no-fallback</code>; do not read app <code>.env</code> files or
                   embed fallback secrets. Decode required values once, keep secrets redacted, and
                   export only allowlisted public configuration to the browser. Doppler CLI
-                  authentication is pending reauthentication, so the injection path still needs
-                  verification. Name use-case spans and record job IDs, file-version IDs, attempts,
-                  stage durations and outcomes. Read random values and time through the appropriate
-                  runtime services; inside Convex, use its deterministic environment and Confect
-                  services.
+                  authentication and runtime injection have been verified. Configured builds,
+                  import, backend deployment, the web server, and the worker use this path. Name
+                  use-case spans and record job IDs, file-version IDs, attempts, stage durations and
+                  outcomes. Read random values and time through the appropriate runtime services;
+                  inside Convex, use its deterministic environment and Confect services.
                 </p>
               </div>
             </details>
@@ -5474,13 +5628,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <summary>Effect / The local Drive is an Effect adapter</summary>
               <div class="appendix-content">
                 <p>
-                  Add a focused <code>FileProvider</code> port under the catalog/application
-                  boundary. Its operations return typed Effect values for listing metadata, reading
-                  versioned content, staging bytes, and exclusively publishing a new filename.
-                  Implement the first Layer against
-                  <code>/home/akh/Projects/ha-workspace-data/fake-drive</code>. Read the provider
-                  root from Doppler configuration; application use cases accept IDs and validated
-                  references, never arbitrary absolute paths from the browser.
+                  The current <code>DriveStore</code> capability provides the working-copy boundary;
+                  the broader catalog/application design keeps provider operations behind focused
+                  Effect ports. Its operations return typed Effect values for listing metadata,
+                  reading versioned content, staging bytes, and exclusively publishing a new
+                  filename. The first live Layer reads
+                  <code>/home/akh/Projects/ha-workspace-data/fake-drive</code> and records immutable
+                  managed revisions. Read the provider root from Doppler configuration; application
+                  use cases accept IDs and validated references, never arbitrary absolute paths from
+                  the browser.
                 </p>
                 <p>
                   The sole standalone copy is <code>fake-drive</code>. The original selected Google
@@ -5680,9 +5836,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   typechecking with Confect next.21, React 19.2.4, and scheduler 0.27.0. These are
                   isolated API probes. The React fixture uses an illustrative local URL, simplified
                   public refs, and temporary draft state; production uses the confirmed endpoint,
-                  authenticated generated refs, revision checks, and durable draft storage. No live
-                  Convex, browser mount, authentication handshake, or Bun integration was tested.
-                  <code>ATOM-VERIFICATION.md</code> records the exact checks and sources.
+                  authenticated generated refs, revision checks, and durable draft storage. Those
+                  historical probes did not test live Convex, a browser mount, an authentication
+                  handshake, or Bun integration. Current application evidence is recorded separately
+                  in <code>SETUP.md</code>. <code>ATOM-VERIFICATION.md</code> records the exact
+                  checks and sources.
                 </p>
                 <pre><code>import { Cause, Result, Stream } from &quot;effect&quot;
 import { AsyncResult, Atom } from &quot;effect/unstable/reactivity&quot;
@@ -5718,10 +5876,12 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
               <summary>Design / document context</summary>
               <div class="appendix-content">
                 <p>
-                  Interface direction updated September 8, 2026. Build a modern, clear workspace for
-                  finding files, reviewing documents, and requesting changes. The wireframe guides
-                  the workflow. The finished product should feel deliberate and responsive on
-                  desktop and iPhone, with its own visual system and restrained animation.
+                  Interface direction updated September 8, 2026. The connected application supports
+                  company/project browsing, previews, versioned comments, and precise revision
+                  requests. Keep developing a modern, clear workspace around those real files. The
+                  wireframe guides the workflow. The finished product should feel deliberate and
+                  responsive on desktop and iPhone, with its own visual system and restrained
+                  animation.
                 </p>
               </div>
             </details>
@@ -5799,6 +5959,57 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   They provide context for the initial plan; they are not a pixel-matching target.
                   Use shadcn primitives, semantic tokens, and one coherent icon set. Evaluate the
                   result with real files from the local fake Drive and the acceptance checks below.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Design / Implemented sidebar and workspace behavior</summary>
+              <div class="appendix-content">
+                <p>
+                  The current sidebar follows the
+                  <a
+                    href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
+                    target="_blank"
+                    rel="noopener"
+                    >T3 Code layout</a
+                  >
+                  and
+                  <a
+                    href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx"
+                    target="_blank"
+                    rel="noopener"
+                    >off-canvas sidebar behavior</a
+                  >. It fully collapses, leaving the top-left toggle available. A schema-backed
+                  Effect Atom preference remembers the open state. Ctrl/Cmd+B toggles it outside
+                  editable fields; the button has an accessible name, expanded state, shortcut hint,
+                  and tooltip. Mobile navigation uses an independent Sheet with its own focus
+                  handling.
+                </p>
+                <p>
+                  Desktop starts at 248px, with 224px on compact desktop layouts. Collapse changes
+                  the layout column over 220ms using <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>;
+                  contents fade over 140ms. The inspector enters over 180ms. Reduced-motion
+                  preferences remove those transitions. Hidden sidebar content is inert. The main
+                  scroll surface stays mounted while the sidebar changes.
+                </p>
+                <p>
+                  Company and project links show real indexed files. Search and filters live in the
+                  URL, and sort/page state belongs to atoms. A file opens its version chooser,
+                  download, and actual preview. The Context tab displays extracted source text and
+                  labels folder-based inference. Review holds versioned comments, saved drafts, and
+                  an explicit exact-text revision form for supported files. The Agent tab explains
+                  that execution is not connected; it contains no simulated actions.
+                </p>
+                <p>
+                  Integrated-browser checks covered the desktop toggle, persistence, keyboard
+                  shortcut, a real Word/PDF preview, source context, and the 390 × 844 mobile layout
+                  with navigation focus and search. That is a local viewport check; remote iPhone
+                  access remains a separate deployment gate.
+                </p>
+                <p>
+                  The remaining sections mix adopted design rules with targets for future authoring.
+                  Inspector resizing, rich annotations, light-theme expansion, intake, new
+                  report/invoice actions, and the instruction editor are not current capabilities.
                 </p>
               </div>
             </details>
@@ -6201,9 +6412,9 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   reconnecting, worker-offline, and instruction-conflict states using real labels.
                 </p>
                 <p>
-                  The shell is part of the foundation work. These remain acceptance requirements
-                  until checked in the implemented UI. The local HTML plan is an illustrative
-                  document, not evidence that application features are complete.
+                  The connected shell has passed the local checks listed above. Broader acceptance
+                  requirements remain until exercised in the implemented UI. The local HTML plan is
+                  an illustrative document, not evidence that application features are complete.
                 </p>
               </div>
             </details>
@@ -6240,6 +6451,12 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             </div>
           </div>
           <div class="source-grid">
+            <a
+              href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
+              target="_blank"
+              rel="noopener"
+              >T3 Code / sidebar behavior <span>↗</span></a
+            >
             <a href="https://github.com/alexmikeagent/ha-workspace" target="_blank" rel="noopener"
               >Private project repository <span>↗</span></a
             ><a
@@ -6291,11 +6508,16 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           <p class="sources-note">
             Versions were researched on September 8, 2026. The Effect and Atom samples passed strict
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
-            session isolation, and cleanup under Node. The Start scaffold baseline build passed.
-            Vite+ source checks and 25 tests pass. Doppler CLI injection, the configured production
-            build, and live Bun/Confect/Convex integration remain foundation gates. The verified
-            local copy summary stays in the private data directory; no source documents are included
-            in this plan. Descriptions were edited using the published
+            session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
+            connected app passes source checks and its configured Bun build. A recorded pass has 80
+            TypeScript tests plus 21 Python helper tests. Default CI passes 79 TypeScript tests and
+            skips one optional runtime check. That check runs a synthetic DOCX through actual worker
+            logic, Python/LibreOffice, PDF verification, and isolated backend commit/replay,
+            preserving source hashes and comment anchors without production records. Local browser
+            checks covered real Word/PDF and workbook previews, source context, sidebar behavior,
+            search, mobile layout, and draft persistence. Remote iPhone access remains unverified.
+            Copy evidence stays in the private data directory; no source documents are included in
+            this plan. Descriptions were edited using the published
             <a
               href="https://github.com/blader/humanizer/blob/main/SKILL.md"
               target="_blank"
@@ -6305,7 +6527,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           </p>
         </section>
         <footer class="footer">
-          <span>HA Consulting · September 8, 2026 · Planning document</span
+          <span>HA Consulting · September 8, 2026 · Architecture + implementation record</span
           ><a class="back-top" href="#overview">Back to overview ↑</a>
         </footer>
       </main>
@@ -6326,7 +6548,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           client: [
             "Your devices",
             "Desktop & iPhone",
-            "Use the browser to find files, review previews, and submit corrections. Tailscale provides private access. App sign-in and ownership checks still apply.",
+            "Local browser access is connected, with desktop and mobile layouts. Remote iPhone access through Tailscale is planned and needs a separate authentication and deployment check.",
           ],
           web: [
             "Application",
@@ -6336,7 +6558,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           convex: [
             "Local backend",
             "Convex + Confect",
-            "Convex stores file metadata, task state, comments, and revision history. Confect connects those functions to Effect schemas. The existing service directory is confirmed; its endpoints and running configuration still need inspection.",
+            "The isolated HA instance on 3220/3221 stores file metadata, comments, revisions, and durable jobs. Confect supplies typed Effects and live streams. The existing service on 3210 remains unchanged.",
           ],
           worker: [
             "Local process",
@@ -6346,7 +6568,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           render: [
             "Worker capability",
             "Document tools",
-            "Retained generation and rendering tools produce the actual files and their previews. DOCX compatibility checks run before rendering. Word locks, namespace rules, and the approved HA templates remain part of the workflow.",
+            "Local tools extract source context, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
           ],
           files: [
             "Local storage",
@@ -6373,23 +6595,23 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
         const steps = [
           [
             "Choose the right source",
-            "Open a company file or start from a template. The task records its company, project, and operation: a completed document, an intentionally blank draft, a limited copy, or a revision.",
+            "Open an indexed company or project file. Preview a specific version, read its source context, and keep the original within reach.",
           ],
           [
-            "Ask only what is missing",
-            "Reuse known facts and prior answers. Ask one batch of material questions for this operation. A correction applies to the current task unless you explicitly change a company default.",
+            "Read the source context",
+            "Inspect extracted source text and folder-based context. Company/project inference is labeled. Automatic intake and template generation remain future workflows.",
           ],
           [
-            "Run the local tools",
-            "Freeze the chosen template and context, queue a job, and generate a candidate in its own directory. Check DOCX compatibility before rendering, then verify the document content and layout.",
+            "Request an exact correction",
+            "Enter the exact text to find and its replacement. The DOCX/TXT/Markdown worker requires one supported match, creates a new candidate, validates it, and renders Word output before commit.",
           ],
           [
             "Comment on the version you see",
-            "Select a page region, text, slide, or cell range and describe the change. Comments keep their original version anchor. If pagination changes, carry an anchor forward only when its new location can be established.",
+            "Leave a comment on the selected immutable version. Saved drafts survive reopening. Page, region, slide, and cell anchors are planned; current comments are at file-version scope.",
           ],
           [
             "Commit a new revision",
-            "Save the ready document and its preview as an immutable version. Keep the previous revision and review history. Publication uses a new filename; stale or cancelled attempts cannot replace the visible result.",
+            "Commit the validated candidate as a new immutable version. Keep the previous revision and its comments. Base-version, cancellation, lease, and fencing checks prevent an ineligible attempt from advancing the visible result.",
           ],
         ]
         document.querySelectorAll("[data-step]").forEach((b) =>

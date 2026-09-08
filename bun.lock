@@ -17,9 +17,12 @@
       "name": "@ha/web",
       "version": "0.1.0",
       "dependencies": {
+        "@confect/js": "10.0.0-next.21",
         "@effect/atom-react": "4.0.0-rc.112",
         "@effect/platform-bun": "4.0.0-rc.112",
         "@ha/application": "workspace:*",
+        "@ha/backend": "workspace:*",
+        "@ha/documents": "workspace:*",
         "@ha/domain": "workspace:*",
         "@tanstack/react-router": "1.170.33",
         "@tanstack/react-start": "1.168.50",
@@ -43,11 +46,17 @@
       "name": "@ha/worker",
       "version": "0.1.0",
       "dependencies": {
+        "@confect/js": "10.0.0-next.21",
         "@effect/platform-bun": "4.0.0-rc.112",
         "@ha/application": "workspace:*",
+        "@ha/backend": "workspace:*",
         "@ha/documents": "workspace:*",
         "@ha/domain": "workspace:*",
         "effect": "4.0.0-rc.112",
+      },
+      "devDependencies": {
+        "@confect/test": "10.0.0-next.21",
+        "convex-test": "0.0.56",
       },
     },
     "packages/application": {
@@ -69,10 +78,13 @@
         "@ha/domain": "workspace:*",
         "convex": "1.45.0",
         "effect": "4.0.0-rc.112",
+        "jose": "6.2.12",
       },
       "devDependencies": {
         "@confect/cli": "10.0.0-next.21",
         "@confect/test": "10.0.0-next.21",
+        "convex-test": "0.0.56",
+        "typescript": "6.0.3",
       },
     },
     "packages/documents": {

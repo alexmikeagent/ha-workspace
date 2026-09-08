@@ -14,6 +14,9 @@ export default defineConfig({
     ignorePatterns: [
       "**/dist/**",
       "**/routeTree.gen.ts",
+      "**/confect/_generated/**",
+      "**/convex/_generated/**",
+      "**/convex/_generated*.ts",
       "docs/architecture/*.mts",
       "docs/architecture/*.tsx",
     ],
@@ -65,6 +68,7 @@ export default defineConfig({
             {
               patterns: [
                 "@ha/documents*",
+                "@ha/backend/local-auth",
                 "@confect/server",
                 "@confect/cli",
                 "@effect/platform-bun",
@@ -80,7 +84,15 @@ export default defineConfig({
     semi: false,
     singleQuote: false,
     printWidth: 100,
-    ignorePatterns: ["**/dist/**", "**/node_modules/**", "**/routeTree.gen.ts", "bun.lock"],
+    ignorePatterns: [
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/routeTree.gen.ts",
+      "**/confect/_generated/**",
+      "**/convex/_generated/**",
+      "packages/backend/convex/**/*.ts",
+      "bun.lock",
+    ],
   },
   test: {
     include: ["packages/**/*.test.ts", "apps/**/*.test.ts"],

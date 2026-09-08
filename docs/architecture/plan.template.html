@@ -2629,7 +2629,7 @@
         <a href="#details"><span>08</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
-        <strong><span class="dot"></span>Local hosting confirmed</strong>Convex on your machine
+        <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
         Foundation in progress<br />Updated September 8, 2026
       </div>
@@ -2648,7 +2648,7 @@
           ><b>Workspace plan</b>
         </div>
         <div class="toolbar-actions">
-          <span class="pill">Foundation · v3</span
+          <span class="pill">Connected prototype · v4</span
           ><button class="quiet-button" id="print">
             <svg
               viewBox="0 0 24 24"
@@ -2671,12 +2671,16 @@
             changing, and review the next version without repeating the background.
           </p>
           <div class="meta-row">
-            <span><i></i>Desktop + iPhone</span><span><i></i>Private access through Tailscale</span
-            ><span><i></i>Foundation in progress</span>
+            <span><i></i>Local desktop + mobile layouts</span
+            ><span><i></i>Remote access planned</span><span><i></i>Review loop connected</span>
           </div>
           <div class="decision">
             <span class="label">Confirmed decision</span>
-            <p>Use the existing local Convex setup.<code>/home/akh/LocalServices/Convex</code></p>
+            <p>
+              Use isolated local Convex; preserve the existing service.<code
+                >HA backend :3220 · existing service :3210 unchanged</code
+              >
+            </p>
             <span class="check" aria-hidden="true">✓</span>
           </div>
         </section>
@@ -2684,12 +2688,12 @@
         <section class="section" id="foundation-setup">
           <div class="section-heading">
             <div>
-              <span class="section-number">Setup / In progress</span>
-              <h2>A real foundation to build on</h2>
+              <span class="section-number">Setup / Connected</span>
+              <h2>Your files are connected</h2>
             </div>
             <p>
-              The code, local data, and configuration now have a home. Workflow features and live
-              integration remain the next build gates.
+              Browse real company files, review a source, and request a precise correction. The
+              local services now carry the workflow from metadata to a new version.
             </p>
           </div>
           <div class="setup-grid">
@@ -2704,18 +2708,18 @@
                 >alexmikeagent / ha-workspace ↗</a
               ><code>/home/akh/Projects/ha-workspace</code>
               <p>
-                Modern shadcn Start shell with Effect Atom. Source checks and 25 tests pass; the
-                configured build awaits Doppler reauthentication.
+                Live Confect/Atom views, authenticated file access, and durable revision jobs. The
+                configured Bun build and source checks pass.
               </p>
             </article>
             <article>
-              <span class="setup-label">Data foundation</span>
-              <h3>2,867 files copied</h3>
-              <span class="setup-value">1,275,661,520 bytes · SHA-256 verified</span
+              <span class="setup-label">Verified input checkpoint</span>
+              <h3>10,052 files copied</h3>
+              <span class="setup-value">4,062,865,634 bytes · SHA-256 verified</span
               ><code>/home/akh/Projects/ha-workspace-data</code>
               <p>
-                The standalone copy matches the local mirror at copy time. Source contents were
-                preserved; no delete option was used.
+                The catalog indexes 7,225 active files across 13 companies and 55 projects. A later
+                source scan saw 28 arrivals; live mirror downloading was still active.
               </p>
             </article>
             <article>
@@ -2723,8 +2727,8 @@
               <h3>Doppler</h3>
               <span class="setup-value">OmarchySys76 / ha-workspace</span><code>dev_personal</code>
               <p>
-                Runtime injection with <code>doppler run --no-fallback</code>. CLI reauthentication
-                is still pending.
+                CLI authentication and runtime injection verified. All app commands use
+                <code>doppler run --no-fallback</code>; secrets stay out of Git.
               </p>
             </article>
           </div>
@@ -2761,7 +2765,8 @@
           </div>
           <div class="map-wrap">
             <div class="map-header">
-              <span>HA Workspace / system map</span><span>Planned components, not live status</span>
+              <span>HA Workspace / system map</span
+              ><span>Connected local services + marked future work</span>
             </div>
             <div class="map">
               <svg class="map-wires" aria-hidden="true">
@@ -2825,9 +2830,9 @@
                 <h3 id="node-title">Convex + Confect</h3>
               </div>
               <p id="node-description">
-                Convex stores file metadata, task state, comments, and revision history. Confect
-                connects those functions to Effect schemas. The existing service directory is
-                confirmed; its endpoints and running configuration still need inspection.
+                The isolated HA instance on 3220/3221 stores file metadata, comments, revisions, and
+                durable jobs. Confect supplies typed Effects and live streams. The existing service
+                on 3210 remains unchanged.
               </p>
             </div>
           </div>
@@ -2970,8 +2975,9 @@ bun.lock</pre>
               Bun <code>1.4.2</code> is the latest stable release checked for this plan, following
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
-              declares Node tooling. Vite+ source checks and 25 tests pass. The final configured
-              build and full Bun integration remain to be verified.
+              declares Node tooling. The configured production build passes. A recorded verification
+              pass includes 80 TypeScript tests under Doppler and 21 Python document-helper tests.
+              Default CI runs 79 TypeScript tests and skips one optional local-runtime check.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
                 >Bun release notes ↗</a
               >
@@ -3080,8 +3086,9 @@ bun.lock</pre>
                 aria-label="Typechecked Effect v4 RC use-case example"
               ><code>{{EFFECT_SAMPLE}}</code></pre>
               <p>
-                Illustrative API check with a fake service. Strict typecheck and Node execution
-                passed; application integration is still to be built.
+                Historical API check with a fake service. Strict typecheck and Node execution
+                passed. Current worker and browser verification are recorded in the engineering
+                notes.
               </p>
             </div>
             <div class="code-notes">
@@ -3219,8 +3226,8 @@ bun.lock</pre>
           <p class="footnote">
             Atom is the reactive UI layer. A single Confect WebSocket client supplies live data and
             typed commands. The checked Atom adapter shared subscriptions, recovered after typed
-            errors, and disposed resources in isolated registry tests. Live integration remains a
-            foundation check.
+            errors, and disposed resources in isolated registry tests. The app now waits for local
+            authentication before mounting its live catalog, comment, and job streams.
           </p>
         </section>
 
@@ -3238,19 +3245,19 @@ bun.lock</pre>
           <div class="flow-strip" aria-label="Document workflow stages">
             <button class="flow-stage" data-step="0" aria-pressed="true">
               <span class="count">01</span><strong>Choose a file</strong
-              ><small>Company &amp; template</small>
+              ><small>Company &amp; project</small>
             </button>
             <button class="flow-stage" data-step="1" aria-pressed="false">
-              <span class="count">02</span><strong>Fill the gaps</strong
-              ><small>One question batch</small>
+              <span class="count">02</span><strong>Read the context</strong
+              ><small>Source excerpts</small>
             </button>
             <button class="flow-stage" data-step="2" aria-pressed="false">
-              <span class="count">03</span><strong>Generate &amp; check</strong
-              ><small>Local tools</small>
+              <span class="count">03</span><strong>Request a change</strong
+              ><small>Exact text replacement</small>
             </button>
             <button class="flow-stage" data-step="3" aria-pressed="false">
               <span class="count">04</span><strong>Review in place</strong
-              ><small>Preview &amp; annotate</small>
+              ><small>Preview &amp; comment</small>
             </button>
             <button class="flow-stage" data-step="4" aria-pressed="false">
               <span class="count">05</span><strong>Save a revision</strong
@@ -3260,9 +3267,8 @@ bun.lock</pre>
           <div class="flow-caption" aria-live="polite">
             <h3 id="step-title">Choose the right source</h3>
             <p id="step-description">
-              Open a company file or start from a template. The task records its company, project,
-              and operation: a completed document, an intentionally blank draft, a limited copy, or
-              a revision.
+              Open an indexed company or project file. Preview a specific version, read its source
+              context, and keep the original within reach.
             </p>
           </div>
           <div class="format-grid">
@@ -3270,16 +3276,16 @@ bun.lock</pre>
               <b>DOCX</b>
               <h3>Word documents</h3>
               <p>
-                Page previews from local conversion. Comments point to a page, region, or known
-                template field.
+                PDF previews from local conversion. Comments stay with the file version; supported
+                body text can be revised with one exact replacement.
               </p>
             </div>
             <div class="format">
               <b>XLSX</b>
               <h3>Excel workbooks</h3>
               <p>
-                A read-only sheet grid. Comments identify the sheet and cell range; cached values
-                are labeled.
+                A bounded read-only sheet grid with cached formula values labeled. Cell-range
+                annotations and recalculation remain future work.
               </p>
             </div>
             <div class="format">
@@ -3294,13 +3300,15 @@ bun.lock</pre>
               <b>PPTX</b>
               <h3>PowerPoint decks</h3>
               <p>
-                Rendered slides and thumbnails. Comments identify a slide and the selected area.
+                Slides converted to a PDF preview. Source downloads and versioned comments work;
+                slide-aware editing remains future work.
               </p>
             </div>
           </div>
           <p class="boundary">
-            Start with previews and requested revisions. Full Office editing in the browser is a
-            separate decision; each format needs a real-file rendering test.
+            Exact-text revisions support DOCX, TXT, and Markdown. They do not edit arbitrary Office
+            layouts or interpret natural-language comments. New report/invoice generation is still
+            planned.
           </p>
         </section>
 
@@ -3311,8 +3319,8 @@ bun.lock</pre>
               <h2>Keep the facts with the work</h2>
             </div>
             <p>
-              Store the chosen template, source facts, and instruction versions so a later
-              correction can start from the same context.
+              Files, versions, comments, and revision jobs are connected. The broader model below
+              also shows planned template, intake, and instruction history.
             </p>
           </div>
           <div class="model-grid">
@@ -3341,8 +3349,8 @@ bun.lock</pre>
               the browser, backend, and Bun worker.
             </p>
             <p>
-              A comment belongs to one file version. A running task keeps its instruction snapshot
-              even if you edit the skill.
+              A comment belongs to one file version. Frozen instruction snapshots are a requirement
+              for the future agent workflow.
             </p>
           </div>
         </section>
@@ -3354,10 +3362,15 @@ bun.lock</pre>
               <h2>Familiar controls, room to read</h2>
             </div>
             <p>
-              The wireframe guides the workflow. Build a modern visual system with clear hierarchy,
-              quiet controls, and motion that helps you follow a change. Keep the document central.
+              The wireframe guides the workflow. The connected app adds T3-style fully collapsible
+              navigation, quiet controls, persistent Atom state, and reduced-motion support.
             </p>
           </div>
+          <p class="footnote">
+            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
+            preference, and a separate mobile Sheet. The layout study below also illustrates future
+            annotations and instruction editing.
+          </p>
           <div
             class="mock"
             aria-label="Illustrative desktop layout, not the implemented application"
@@ -3567,21 +3580,17 @@ bun.lock</pre>
               <div class="phase-num">01</div>
               <details open>
                 <summary>
-                  <h3>Connect the foundation</h3>
-                  <span class="phase-status">In progress</span>
+                  <h3>Connected local stack</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  The private repository and shadcn Start scaffold are in place; its baseline build
-                  passed. Bun 1.4.2 and Node 24.20.0 are pinned. Source checks and 25 tests pass.
-                  Verify Doppler injection, the configured build, and local Convex through Effect
-                  ports.
+                  Bun, Vite+, Start, Doppler, and the isolated Convex instance now work together.
+                  The authenticated Confect runtime supplies the real catalog and typed commands.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Atom live queries and typed commands work in two isolated
-                  sessions; equivalent reads share a subscription, and declared query errors can
-                  recover. Vite+ checks and Node-based codegen pass. The production Start server
-                  runs on Bun; a Bun worker streams files, cancels its child process, and shuts down
-                  cleanly.
+                  <span>Checked</span>Production build and source checks pass. Keep testing
+                  reconnects, session teardown, worker restart, and resource lifetimes as features
+                  grow.
                 </div>
               </details>
             </div>
@@ -3589,18 +3598,18 @@ bun.lock</pre>
               <div class="phase-num">02</div>
               <details>
                 <summary>
-                  <h3>Build the workspace shell</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Modern company workspace</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  Add Companies, Reports, Invoices, and Templates. Use the wireframe journeys to
-                  build a clean file route, resizable inspector, and phone layout with progressive
-                  disclosure and restrained motion.
+                  Company/project files, category filters, search, sorting, versions, and source
+                  context share one clear workspace. The T3-inspired sidebar fully collapses and
+                  remembers its state.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Navigation and filtered lists work with the fake Drive,
-                  keyboard controls are usable, and light/dark layouts stay clear with long
-                  filenames. Motion respects reduced-motion preferences and preserves focus.
+                  <span>Checked</span>Desktop controls and the local 390 × 844 mobile viewport work.
+                  The mobile Sheet is independent; reduced-motion preferences remove panel travel.
+                  Remote iPhone use remains a separate gate.
                 </div>
               </details>
             </div>
@@ -3608,16 +3617,17 @@ bun.lock</pre>
               <div class="phase-num">03</div>
               <details>
                 <summary>
-                  <h3>Preview real files</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Real previews and review</h3>
+                  <span class="phase-status">Connected</span>
                 </summary>
                 <p>
-                  Index the verified fake Drive and select representative Word, Excel, PDF, and
-                  PowerPoint files. Render previews and save comments against a specific revision.
+                  Open real PDF, image, DOCX/PPTX, workbook, and text previews. Download originals,
+                  save versioned comments, and keep review drafts across reloads.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>You can open a file from iPhone, annotate it, reload, and
-                  find the same comment in the same place.
+                  <span>Checked</span>Browser checks covered a real three-page Word/PDF, a bounded
+                  workbook grid, extracted context, search results, and draft persistence. Rich
+                  page/cell annotations are still planned.
                 </div>
               </details>
             </div>
@@ -3625,17 +3635,18 @@ bun.lock</pre>
               <div class="phase-num">04</div>
               <details>
                 <summary>
-                  <h3>Complete one report workflow</h3>
-                  <span class="phase-status">Planned</span>
+                  <h3>Bounded document revisions</h3>
+                  <span class="phase-status">Implemented</span>
                 </summary>
                 <p>
-                  Choose the right template, ask for missing facts, generate a report, and check it.
-                  Apply an observation correction and save a new revision.
+                  Request one exact text replacement in DOCX, TXT, or Markdown. The worker creates
+                  new bytes, checks Word compatibility, renders the candidate, and commits through
+                  the durable queue.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>General and Dulles rules hold. Stale revisions and expired
-                  leases fail; duplicate requests reuse one job. Cancellation closes resources.
-                  Publication replays safely from a committed revision and respects Word locks.
+                  <span>Boundary</span>This is deterministic correction, not AI rewriting or full
+                  Office editing. Base versions, idempotency, cancellation, leases, and fencing
+                  remain enforced; broader recovery tests continue.
                 </div>
               </details>
             </div>
@@ -3643,16 +3654,17 @@ bun.lock</pre>
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Connect the agent and skills</h3>
+                  <h3>Generate reports and connect skills</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add streamed agent progress and the Markdown instruction editor. Keep saved drafts
-                  separate from the instructions used by an active task.
+                  Add template-aware intake and generation with the general/Dulles rules, followed
+                  by a replaceable agent runtime and versioned instruction editor.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>An applied instruction edit changes the next run, a current
-                  run keeps its snapshot, and conflicting source edits are visible.
+                  <span>Ready when</span>Missing facts are collected once; client/template authority
+                  is verified; an active run keeps its snapshot; newly applied instructions affect
+                  the next run.
                 </div>
               </details>
             </div>
@@ -3660,16 +3672,18 @@ bun.lock</pre>
               <div class="phase-num">06</div>
               <details>
                 <summary>
-                  <h3>Expand the workflows</h3>
+                  <h3>Remote access and broader authoring</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add invoice generation with client-specific evidence, richer sheet and slide
-                  changes, a separately verified cloud Drive adapter, and operating documentation.
+                  Establish remote identity and Tailscale access, verify a real iPhone, prove
+                  backup/restore, and then expand invoice, spreadsheet, slide, and cloud-provider
+                  workflows.
                 </p>
                 <div class="accept">
-                  <span>Ready when</span>Backups restore on a separate instance and the added
-                  document workflows pass their own content and layout checks.
+                  <span>Ready when</span>Remote sessions and private files remain protected, backups
+                  restore separately, and every added document workflow passes its own content and
+                  layout checks.
                 </div>
               </details>
             </div>
@@ -3677,7 +3691,7 @@ bun.lock</pre>
           <div class="decisions">
             <div class="decision-list">
               <h3>Decided</h3>
-              <p><span class="mark">✓</span>Local Convex at the existing service directory</p>
+              <p><span class="mark">✓</span>Isolated local Convex; existing service preserved</p>
               <p><span class="mark">✓</span>Bun 1.4.2 stable, Vite+, shadcn and TanStack Start</p>
               <p>
                 <span class="mark">✓</span>Effect use cases and side effects, with Atom for UI state
@@ -3688,9 +3702,9 @@ bun.lock</pre>
               <p><span class="mark">✓</span>Doppler owns application config and secrets</p>
             </div>
             <div class="decision-list pending">
-              <h3>Still to choose</h3>
-              <p><span class="mark">○</span>Local Convex deployment and live integration</p>
-              <p><span class="mark">○</span>How the owner signs in to the application</p>
+              <h3>Still ahead</h3>
+              <p><span class="mark">○</span>Generated reports, invoices, and richer annotations</p>
+              <p><span class="mark">○</span>Remote owner identity and Tailscale access</p>
               <p>
                 <span class="mark">○</span>Whether full Office editing belongs in a later version
               </p>
@@ -3724,6 +3738,12 @@ bun.lock</pre>
             </div>
           </div>
           <div class="source-grid">
+            <a
+              href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
+              target="_blank"
+              rel="noopener"
+              >T3 Code / sidebar behavior <span>↗</span></a
+            >
             <a href="https://github.com/alexmikeagent/ha-workspace" target="_blank" rel="noopener"
               >Private project repository <span>↗</span></a
             ><a
@@ -3775,11 +3795,16 @@ bun.lock</pre>
           <p class="sources-note">
             Versions were researched on September 8, 2026. The Effect and Atom samples passed strict
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
-            session isolation, and cleanup under Node. The Start scaffold baseline build passed.
-            Vite+ source checks and 25 tests pass. Doppler CLI injection, the configured production
-            build, and live Bun/Confect/Convex integration remain foundation gates. The verified
-            local copy summary stays in the private data directory; no source documents are included
-            in this plan. Descriptions were edited using the published
+            session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
+            connected app passes source checks and its configured Bun build. A recorded pass has 80
+            TypeScript tests plus 21 Python helper tests. Default CI passes 79 TypeScript tests and
+            skips one optional runtime check. That check runs a synthetic DOCX through actual worker
+            logic, Python/LibreOffice, PDF verification, and isolated backend commit/replay,
+            preserving source hashes and comment anchors without production records. Local browser
+            checks covered real Word/PDF and workbook previews, source context, sidebar behavior,
+            search, mobile layout, and draft persistence. Remote iPhone access remains unverified.
+            Copy evidence stays in the private data directory; no source documents are included in
+            this plan. Descriptions were edited using the published
             <a
               href="https://github.com/blader/humanizer/blob/main/SKILL.md"
               target="_blank"
@@ -3789,7 +3814,7 @@ bun.lock</pre>
           </p>
         </section>
         <footer class="footer">
-          <span>HA Consulting · September 8, 2026 · Planning document</span
+          <span>HA Consulting · September 8, 2026 · Architecture + implementation record</span
           ><a class="back-top" href="#overview">Back to overview ↑</a>
         </footer>
       </main>
@@ -3810,7 +3835,7 @@ bun.lock</pre>
           client: [
             "Your devices",
             "Desktop & iPhone",
-            "Use the browser to find files, review previews, and submit corrections. Tailscale provides private access. App sign-in and ownership checks still apply.",
+            "Local browser access is connected, with desktop and mobile layouts. Remote iPhone access through Tailscale is planned and needs a separate authentication and deployment check.",
           ],
           web: [
             "Application",
@@ -3820,7 +3845,7 @@ bun.lock</pre>
           convex: [
             "Local backend",
             "Convex + Confect",
-            "Convex stores file metadata, task state, comments, and revision history. Confect connects those functions to Effect schemas. The existing service directory is confirmed; its endpoints and running configuration still need inspection.",
+            "The isolated HA instance on 3220/3221 stores file metadata, comments, revisions, and durable jobs. Confect supplies typed Effects and live streams. The existing service on 3210 remains unchanged.",
           ],
           worker: [
             "Local process",
@@ -3830,7 +3855,7 @@ bun.lock</pre>
           render: [
             "Worker capability",
             "Document tools",
-            "Retained generation and rendering tools produce the actual files and their previews. DOCX compatibility checks run before rendering. Word locks, namespace rules, and the approved HA templates remain part of the workflow.",
+            "Local tools extract source context, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
           ],
           files: [
             "Local storage",
@@ -3857,23 +3882,23 @@ bun.lock</pre>
         const steps = [
           [
             "Choose the right source",
-            "Open a company file or start from a template. The task records its company, project, and operation: a completed document, an intentionally blank draft, a limited copy, or a revision.",
+            "Open an indexed company or project file. Preview a specific version, read its source context, and keep the original within reach.",
           ],
           [
-            "Ask only what is missing",
-            "Reuse known facts and prior answers. Ask one batch of material questions for this operation. A correction applies to the current task unless you explicitly change a company default.",
+            "Read the source context",
+            "Inspect extracted source text and folder-based context. Company/project inference is labeled. Automatic intake and template generation remain future workflows.",
           ],
           [
-            "Run the local tools",
-            "Freeze the chosen template and context, queue a job, and generate a candidate in its own directory. Check DOCX compatibility before rendering, then verify the document content and layout.",
+            "Request an exact correction",
+            "Enter the exact text to find and its replacement. The DOCX/TXT/Markdown worker requires one supported match, creates a new candidate, validates it, and renders Word output before commit.",
           ],
           [
             "Comment on the version you see",
-            "Select a page region, text, slide, or cell range and describe the change. Comments keep their original version anchor. If pagination changes, carry an anchor forward only when its new location can be established.",
+            "Leave a comment on the selected immutable version. Saved drafts survive reopening. Page, region, slide, and cell anchors are planned; current comments are at file-version scope.",
           ],
           [
             "Commit a new revision",
-            "Save the ready document and its preview as an immutable version. Keep the previous revision and review history. Publication uses a new filename; stale or cancelled attempts cannot replace the visible result.",
+            "Commit the validated candidate as a new immutable version. Keep the previous revision and its comments. Base-version, cancellation, lease, and fencing checks prevent an ineligible attempt from advancing the visible result.",
           ],
         ]
         document.querySelectorAll("[data-step]").forEach((b) =>
