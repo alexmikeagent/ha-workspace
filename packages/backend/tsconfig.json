@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "confect/**/*.ts"]
+  "include": ["src/**/*.ts", "confect/**/*.ts", "scripts/**/*.ts", "convex/**/*.ts"],
+  "compilerOptions": {
+    "types": ["node", "bun", "vite/client"]
+  }
 }

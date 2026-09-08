@@ -1,12 +1,26 @@
 {
-  "checkedAt": "2026-09-08T05:54:42.516690+00:00",
+  "checkedAt": "2026-09-08T06:56:19.422344+00:00",
   "htmlGenerated": true,
   "uniqueIds": 39,
   "localAnchorsValid": 14,
   "embeddedJavaScriptSyntaxValid": true,
   "oneStandaloneCopyPolicy": true,
-  "originalPlanningSourcesUnchanged": "Verified before documentation edits; see source-artifacts.json.",
-  "browserVerification": "Not completed. Integrated browser URL policy blocked the local file preview; no alternate browser or server workaround was used.",
-  "applicationSourceChecks": "Vite+ formatting, lint, and types passed; 25 tests passed.",
-  "runtimeVerification": "Configured production build and startup await Doppler CLI reauthentication."
+  "copiedInputCheckpoint": {
+    "files": 10052,
+    "bytes": 4062865634,
+    "inspectionFiles": 7185,
+    "baselineFiles": 2867,
+    "laterSourceArrivals": 28
+  },
+  "activeCatalogCheckpoint": {
+    "files": 7225,
+    "companies": 13,
+    "projects": 55,
+    "eligiblePathAudit": "No omissions or extra fixtures"
+  },
+  "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
+  "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior.",
+  "applicationVerification": "Source checks clean; 80 TypeScript tests pass under Doppler, default CI passes 79 and skips 1 optional local-runtime check; 21 Python helper tests pass; configured Bun build and Doppler injection pass.",
+  "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
+  "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed."
 }

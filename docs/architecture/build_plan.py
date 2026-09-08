@@ -107,7 +107,7 @@ def notes(file, prefix):
     return '\n'.join(result)
 
 template=(ROOT/'plan.template.html').read_text()
-appendix=notes('SETUP.md','Foundation')+'<div class="appendix-divider">Architecture decisions</div>'+notes('ARCHITECTURE.md','Architecture')+'<div class="appendix-divider">Effect implementation guidance</div>'+notes('EFFECT_GUIDE.md','Effect')+'<div class="appendix-divider">Interface requirements</div>'+notes('DESIGN.md','Design')
+appendix=notes('SETUP.md','Implementation')+'<div class="appendix-divider">Architecture decisions</div>'+notes('ARCHITECTURE.md','Architecture')+'<div class="appendix-divider">Effect implementation guidance</div>'+notes('EFFECT_GUIDE.md','Effect')+'<div class="appendix-divider">Interface requirements</div>'+notes('DESIGN.md','Design')
 sample=(ROOT/'effect-example.mts').read_text().split('\nconst runtime =', 1)[0].strip()
 output=template.replace('{{APPENDIX}}',appendix).replace('{{EFFECT_SAMPLE}}', html.escape(sample))
 assert '{{APPENDIX}}' not in output and '{{EFFECT_SAMPLE}}' not in output

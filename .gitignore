@@ -19,6 +19,9 @@ secrets.*
 *.key
 .DS_Store
 *.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
 *credentials*
 *token.json
 # Runtime/user material lives in the separate private data directory.
