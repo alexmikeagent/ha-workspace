@@ -7,6 +7,7 @@ import {
   INSPECTOR_MAX_WIDTH,
   INSPECTOR_MIN_WIDTH,
 } from "./state"
+import { clampPanelWidth, panelKeyboardWidth, usePanelResize } from "./use-panel-resize"
 
 const MAIN_MIN_WIDTH = 360
 const MOBILE_BREAKPOINT = 760
@@ -19,37 +20,11 @@ export function inspectorWidthLimit(containerWidth: number) {
 }
 
 export function boundedInspectorWidth(width: number, maximum = INSPECTOR_MAX_WIDTH) {
-  const safeWidth = Number.isFinite(width) ? width : INSPECTOR_DEFAULT_WIDTH
-  return Math.round(Math.max(INSPECTOR_MIN_WIDTH, Math.min(maximum, safeWidth)))
+  return clampPanelWidth(width, INSPECTOR_MIN_WIDTH, maximum, INSPECTOR_DEFAULT_WIDTH)
 }
 
 export function inspectorKeyboardWidth(key: string, width: number, maximum: number, shift = false) {
-  const step = shift ? 32 : 16
-  switch (key) {
-    case "ArrowLeft":
-      return boundedInspectorWidth(width + step, maximum)
-    case "ArrowRight":
-      return boundedInspectorWidth(width - step, maximum)
-    case "Home":
-      return INSPECTOR_MIN_WIDTH
-    case "End":
-      return maximum
-    default:
-      return undefined
-  }
-}
-
-interface Drag {
-  readonly pointerId: number
-  readonly startX: number
-  readonly startWidth: number
-  readonly handle: HTMLDivElement
-}
-
-function releaseDrag(drag: Drag | null) {
-  if (drag?.handle.hasPointerCapture(drag.pointerId)) {
-    drag.handle.releasePointerCapture(drag.pointerId)
-  }
+  return panelKeyboardWidth(key, width, INSPECTOR_MIN_WIDTH, maximum, "right", shift)
 }
 
 export function ResizableInspector({
@@ -64,55 +39,35 @@ export function ResizableInspector({
   const [preferredWidth, setPreferredWidth] = useAtom(inspectorWidthAtom)
   const [maximum, setMaximum] = useState(INSPECTOR_MAX_WIDTH)
   const [resizable, setResizable] = useState(false)
-  const [dragWidth, setDragWidth] = useState<number | null>(null)
   const aside = useRef<HTMLElement>(null)
-  const drag = useRef<Drag | null>(null)
   const id = useId()
   const instructionsId = useId()
-  const width = boundedInspectorWidth(dragWidth ?? preferredWidth, maximum)
+  const resize = usePanelResize({
+    preferredWidth,
+    onCommit: setPreferredWidth,
+    minimum: INSPECTOR_MIN_WIDTH,
+    maximum,
+    fallback: INSPECTOR_DEFAULT_WIDTH,
+    side: "right",
+    enabled: resizable,
+  })
 
   useEffect(() => {
     const container = aside.current?.parentElement
     if (!container) return
     const measure = () => {
       setMaximum(inspectorWidthLimit(container.clientWidth))
-      const wide = window.innerWidth > MOBILE_BREAKPOINT
-      setResizable(wide)
-      if (!wide && drag.current) {
-        const current = drag.current
-        drag.current = null
-        releaseDrag(current)
-        setDragWidth(null)
-      }
+      setResizable(window.innerWidth > MOBILE_BREAKPOINT)
     }
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(container)
-    const cancelOnBlur = () => {
-      const current = drag.current
-      drag.current = null
-      releaseDrag(current)
-      setDragWidth(null)
-    }
     window.addEventListener("resize", measure)
-    window.addEventListener("blur", cancelOnBlur)
     return () => {
       observer.disconnect()
       window.removeEventListener("resize", measure)
-      window.removeEventListener("blur", cancelOnBlur)
-      const current = drag.current
-      drag.current = null
-      releaseDrag(current)
     }
   }, [])
-
-  function cancelDrag(pointerId: number) {
-    if (drag.current?.pointerId !== pointerId) return
-    const current = drag.current
-    drag.current = null
-    releaseDrag(current)
-    setDragWidth(null)
-  }
 
   return (
     <aside
@@ -120,8 +75,8 @@ export function ResizableInspector({
       ref={aside}
       className={`workspace-inspector resizable-inspector ${className ?? ""}`}
       aria-label={label}
-      data-resizing={dragWidth !== null || undefined}
-      style={{ "--inspector-width": `${width}px` } as CSSProperties}
+      data-resizing={resize.dragging || undefined}
+      style={{ "--inspector-width": `${resize.width}px` } as CSSProperties}
     >
       {resizable && (
         <>
@@ -136,52 +91,10 @@ export function ResizableInspector({
             aria-describedby={instructionsId}
             aria-valuemin={INSPECTOR_MIN_WIDTH}
             aria-valuemax={maximum}
-            aria-valuenow={width}
-            aria-valuetext={`${width} pixels`}
-            data-resizing={dragWidth !== null || undefined}
-            onPointerDown={(event) => {
-              if (!event.isPrimary || event.button !== 0 || drag.current) return
-              event.preventDefault()
-              event.currentTarget.focus({ preventScroll: true })
-              event.currentTarget.setPointerCapture(event.pointerId)
-              drag.current = {
-                pointerId: event.pointerId,
-                startX: event.clientX,
-                startWidth: width,
-                handle: event.currentTarget,
-              }
-              setDragWidth(width)
-            }}
-            onPointerMove={(event) => {
-              const current = drag.current
-              if (current?.pointerId !== event.pointerId) return
-              setDragWidth(
-                boundedInspectorWidth(current.startWidth + current.startX - event.clientX, maximum),
-              )
-            }}
-            onPointerUp={(event) => {
-              const current = drag.current
-              if (current?.pointerId !== event.pointerId) return
-              drag.current = null
-              releaseDrag(current)
-              setPreferredWidth(
-                boundedInspectorWidth(current.startWidth + current.startX - event.clientX, maximum),
-              )
-              setDragWidth(null)
-            }}
-            onPointerCancel={(event) => cancelDrag(event.pointerId)}
-            onLostPointerCapture={(event) => cancelDrag(event.pointerId)}
-            onKeyDown={(event) => {
-              if (event.key === "Escape" && drag.current) {
-                event.preventDefault()
-                cancelDrag(drag.current.pointerId)
-                return
-              }
-              const next = inspectorKeyboardWidth(event.key, width, maximum, event.shiftKey)
-              if (next === undefined || drag.current) return
-              event.preventDefault()
-              setPreferredWidth(next)
-            }}
+            aria-valuenow={resize.width}
+            aria-valuetext={`${resize.width} pixels`}
+            data-resizing={resize.dragging || undefined}
+            {...resize.handleProps}
           />
           <span id={instructionsId} className="sr-only">
             Use Left and Right arrows to resize. Home sets the minimum width; End sets the maximum.
@@ -189,7 +102,7 @@ export function ResizableInspector({
         </>
       )}
       <div className="inspector-content">{children}</div>
-      {dragWidth !== null &&
+      {resize.dragging &&
         createPortal(<div className="inspector-resize-shield" aria-hidden="true" />, document.body)}
     </aside>
   )

@@ -29,6 +29,7 @@ import {
 import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/ui/components/sheet"
 import { ResizableInspector } from "@/features/workspace/resizable-inspector"
+import { ResizableWorkspaceShell } from "@/features/workspace/resizable-workspace-shell"
 import {
   desktopSidebarOpenAtom,
   filePageAtom,
@@ -189,140 +190,147 @@ function Workspace() {
   }, [setDesktopOpen, setMobileOpen])
 
   return (
-    <div
+    <ResizableWorkspaceShell
       className={`workspace-shell connected-shell ${search.file ? "has-document" : "has-catalog"}`}
-      data-sidebar={desktopOpen ? "expanded" : "collapsed"}
+      expanded={desktopOpen}
     >
-      <a href="#workspace-main" className="skip-link">
-        Skip to workspace
-      </a>
-      <div className="sidebar-toggle-wrap">
-        <Button
-          className="desktop-sidebar-toggle"
-          variant="ghost"
-          size="icon"
-          onClick={() => setDesktopOpen(!desktopOpen)}
-          aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
-          aria-expanded={desktopOpen}
-          aria-controls="desktop-navigation"
-          aria-keyshortcuts="Control+B Meta+B"
-          aria-describedby="sidebar-toggle-tip"
-        >
-          {desktopOpen ? <PanelLeftClose /> : <PanelLeft />}
-        </Button>
-        <span id="sidebar-toggle-tip" role="tooltip">
-          {desktopOpen ? "Collapse" : "Expand"} sidebar <kbd>Ctrl / ⌘ B</kbd>
-        </span>
-      </div>
-      <aside id="desktop-navigation" className="desktop-sidebar" inert={!desktopOpen}>
-        <div className="sidebar-inner">
-          <Navigation section={search.section} catalog={catalog} />
-        </div>
-      </aside>
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="mobile-sidebar">
-          <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
-          <SheetDescription className="sr-only">
-            Browse companies, reports, invoices, and templates.
-          </SheetDescription>
-          <Navigation
-            section={search.section}
-            catalog={catalog}
-            close={() => setMobileOpen(false)}
-          />
-        </SheetContent>
-      </Sheet>
-      <div className="workspace-body">
-        <header className="topbar">
-          <div className="breadcrumbs">
+      {(sidebarResizeHandle) => (
+        <>
+          <a href="#workspace-main" className="skip-link">
+            Skip to workspace
+          </a>
+          <div className="sidebar-toggle-wrap">
             <Button
-              className="mobile-menu"
+              className="desktop-sidebar-toggle"
               variant="ghost"
               size="icon"
-              aria-label="Open navigation"
-              onClick={() => setMobileOpen(true)}
+              onClick={() => setDesktopOpen(!desktopOpen)}
+              aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
+              aria-expanded={desktopOpen}
+              aria-controls="desktop-navigation"
+              aria-keyshortcuts="Control+B Meta+B"
+              aria-describedby="sidebar-toggle-tip"
             >
-              <Menu />
+              {desktopOpen ? <PanelLeftClose /> : <PanelLeft />}
             </Button>
-            <Link to="/" search={{ section: search.section }} className="breadcrumb-home">
-              {current.label}
-            </Link>
-            {company && (
-              <>
-                <ChevronRight size={13} />
-                <Link to="/" search={{ section: search.section, company: company.id }}>
-                  {company.name}
-                </Link>
-              </>
-            )}
-            {project && (
-              <>
-                <ChevronRight size={13} />
-                <span>{project.name}</span>
-              </>
-            )}
-            {search.file && (
-              <>
-                <ChevronRight size={13} />
-                <strong>Document</strong>
-              </>
-            )}
-          </div>
-          <div className="topbar-actions">
-            <span className="connection-label">
-              <span className={AsyncResult.isFailure(state) ? "status-dot issue" : "status-dot"} />
-              {AsyncResult.isFailure(state)
-                ? "Connection interrupted"
-                : catalog
-                  ? "Local workspace"
-                  : "Connecting…"}
+            <span id="sidebar-toggle-tip" role="tooltip">
+              {desktopOpen ? "Collapse" : "Expand"} sidebar <kbd>Ctrl / ⌘ B</kbd>
             </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setInspectorOpen(!inspectorOpen)}
-              aria-label={inspectorOpen ? "Close inspector" : "Open inspector"}
-              aria-expanded={inspectorOpen}
-            >
-              <PanelRight />
-            </Button>
           </div>
-        </header>
-        {search.file ? (
-          <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
-        ) : (
-          <div className="workspace-columns">
-            <main id="workspace-main" className="workspace-main catalog-main">
-              <div className="page-heading">
-                <div>
-                  <h1>{project?.name ?? company?.name ?? current.label}</h1>
-                  <p>
-                    {company
-                      ? `${company.fileCount.toLocaleString()} files across ${company.projectCount} ${company.projectCount === 1 ? "project" : "projects"}.`
-                      : current.description}
-                  </p>
-                </div>
+          <aside id="desktop-navigation" className="desktop-sidebar" inert={!desktopOpen}>
+            <div className="sidebar-inner">
+              <Navigation section={search.section} catalog={catalog} />
+            </div>
+          </aside>
+          {sidebarResizeHandle}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetContent side="left" className="mobile-sidebar">
+              <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
+              <SheetDescription className="sr-only">
+                Browse companies, reports, invoices, and templates.
+              </SheetDescription>
+              <Navigation
+                section={search.section}
+                catalog={catalog}
+                close={() => setMobileOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+          <div className="workspace-body">
+            <header className="topbar">
+              <div className="breadcrumbs">
+                <Button
+                  className="mobile-menu"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open navigation"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <Menu />
+                </Button>
+                <Link to="/" search={{ section: search.section }} className="breadcrumb-home">
+                  {current.label}
+                </Link>
+                {company && (
+                  <>
+                    <ChevronRight size={13} />
+                    <Link to="/" search={{ section: search.section, company: company.id }}>
+                      {company.name}
+                    </Link>
+                  </>
+                )}
+                {project && (
+                  <>
+                    <ChevronRight size={13} />
+                    <span>{project.name}</span>
+                  </>
+                )}
+                {search.file && (
+                  <>
+                    <ChevronRight size={13} />
+                    <strong>Document</strong>
+                  </>
+                )}
               </div>
-              {AsyncResult.isFailure(state) && (
-                <output className="connection-banner">
-                  {errorOf(state)}
-                  {catalog && " Showing the last available files."}
-                </output>
-              )}
-              <CatalogControls search={search} catalog={catalog} />
-              {catalog ? (
-                <CatalogContent search={search} catalog={catalog} />
-              ) : AsyncResult.isFailure(state) ? (
-                <ConnectionFailure search={search} />
-              ) : (
-                <LoadingRows />
-              )}
-            </main>
-            {inspectorOpen && <CatalogInspector catalog={catalog} />}
+              <div className="topbar-actions">
+                <span className="connection-label">
+                  <span
+                    className={AsyncResult.isFailure(state) ? "status-dot issue" : "status-dot"}
+                  />
+                  {AsyncResult.isFailure(state)
+                    ? "Connection interrupted"
+                    : catalog
+                      ? "Local workspace"
+                      : "Connecting…"}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setInspectorOpen(!inspectorOpen)}
+                  aria-label={inspectorOpen ? "Close inspector" : "Open inspector"}
+                  aria-expanded={inspectorOpen}
+                >
+                  <PanelRight />
+                </Button>
+              </div>
+            </header>
+            {search.file ? (
+              <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
+            ) : (
+              <div className="workspace-columns">
+                <main id="workspace-main" className="workspace-main catalog-main">
+                  <div className="page-heading">
+                    <div>
+                      <h1>{project?.name ?? company?.name ?? current.label}</h1>
+                      <p>
+                        {company
+                          ? `${company.fileCount.toLocaleString()} files across ${company.projectCount} ${company.projectCount === 1 ? "project" : "projects"}.`
+                          : current.description}
+                      </p>
+                    </div>
+                  </div>
+                  {AsyncResult.isFailure(state) && (
+                    <output className="connection-banner">
+                      {errorOf(state)}
+                      {catalog && " Showing the last available files."}
+                    </output>
+                  )}
+                  <CatalogControls search={search} catalog={catalog} />
+                  {catalog ? (
+                    <CatalogContent search={search} catalog={catalog} />
+                  ) : AsyncResult.isFailure(state) ? (
+                    <ConnectionFailure search={search} />
+                  ) : (
+                    <LoadingRows />
+                  )}
+                </main>
+                {inspectorOpen && <CatalogInspector catalog={catalog} />}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </ResizableWorkspaceShell>
   )
 }
 

@@ -1,6 +1,6 @@
 # Effect architecture and coding guide
 
-Adopted for HA Workspace on September 8, 2026. The connected implementation uses Effect v4 RC, one authenticated Confect/Atom browser runtime, local file capabilities, and durable revision jobs. Doppler injection and the configured Bun production build pass. The latest source suite passes 85 TypeScript tests and skips one optional local-runtime test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests; `SETUP.md` separates runtime/browser evidence from source checks. The linked API probes remain historical examples, not substitutes for application tests.
+Adopted for HA Workspace on September 8, 2026. The connected implementation uses Effect v4 RC, one authenticated Confect/Atom browser runtime, local file capabilities, and durable revision jobs. Doppler injection and the configured Bun production build pass. The latest source suite passes 89 TypeScript tests and skips one optional local-runtime test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests; `SETUP.md` separates runtime/browser evidence from source checks. The linked API probes remain historical examples, not substitutes for application tests.
 
 ## Architecture decision: hexagonal modular monolith
 

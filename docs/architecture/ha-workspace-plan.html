@@ -2975,7 +2975,7 @@ bun.lock</pre>
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
               declares Node tooling. The configured production build passes. The latest source suite
-              passes 85 TypeScript tests and skips one optional local-runtime check. That optional
+              passes 89 TypeScript tests and skips one optional local-runtime check. That optional
               test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
               tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
@@ -3393,10 +3393,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             </p>
           </div>
           <p class="footnote">
-            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
-            preference, and a separate mobile Sheet. The inspector saves its width and supports drag
-            and keyboard resizing on desktop. The layout study below also illustrates future
-            annotations and instruction editing.
+            Both desktop edges support drag and keyboard resizing, with separate saved Atom widths.
+            Navigation starts at 248px (220–360px); the inspector starts at 330px (280–560px), with
+            available space limiting each. Sidebar collapse preserves its width, Ctrl/Cmd+B stays
+            available, and mobile uses an independent 280px navigation Sheet. The layout study below
+            also illustrates future annotations and instruction editing.
           </p>
           <div
             class="mock"
@@ -3512,7 +3513,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <div class="design-metrics">
             <div>
               <b>248<small>px</small></b
-              ><span>Expanded sidebar width</span>
+              ><span>Default sidebar width</span>
             </div>
             <div>
               <b>14<small>px</small></b
@@ -3634,8 +3635,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   Company/project files, category filters, search, sorting, versions, and source
                   metadata share one clear workspace. The T3-inspired sidebar fully collapses and
-                  remembers its state. The inspector supports pointer and keyboard resizing, with a
-                  saved width and a full-width phone layout.
+                  remembers its width and open state. Both desktop sidebars resize with pointer or
+                  keyboard input. Mobile keeps a separate navigation drawer and full-width
+                  inspector.
                 </p>
                 <div class="accept">
                   <span>Checked</span>Geist, Hugeicons, and dark scrollbars verified. Inspector
@@ -3904,7 +3906,10 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <p>
                   The sidebar fully collapses off canvas and remembers its state through a
-                  schema-backed Atom preference. Its top-left button remains available; Ctrl/Cmd+B
+                  schema-backed Atom preference. Desktop width is independently saved: 248px by
+                  default, bounded to 220 to 360px and the available viewport. Its right-edge
+                  separator supports dragging and keyboard resizing while expanded. Collapsing
+                  retains the chosen width. Its top-left button remains available; Ctrl/Cmd+B
                   toggles it outside text inputs. Mobile navigation uses a separate Sheet.
                   Reduced-motion settings remove panel travel and transitions. The catalog and
                   document inspector also share a persisted width preference: 330px by default,
@@ -3993,7 +3998,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The configured production build and Doppler injection have passed. Source checks
                   and the expanding TypeScript suite cover domain, transport, authorization,
-                  storage, preview, and queue boundaries. The latest source suite passes 85
+                  storage, preview, and queue boundaries. The latest source suite passes 89
                   TypeScript tests and skips one optional runtime integration test. That optional
                   test passed in the earlier Doppler-configured verification, alongside 21 Python
                   document-helper tests. Live backend checks establish authenticated reads and
@@ -4054,6 +4059,34 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   These checks used local viewports and do not establish remote iPhone access. No
                   private filenames or screenshots are included in this record.
+                </p>
+                <h3>September 8, 2026: left navigation resize QA</h3>
+                <p>
+                  Vite+ checked 111 formatted files and 69 source files without warnings or type
+                  errors. The suite passed 89 tests and skipped one optional runtime test; the
+                  production build passed. Browser checks verified:
+                </p>
+                <ul>
+                  <li>
+                    Dragging navigation from 248px to 328px, Home at 220px, End at 360px, and
+                    Shift+ArrowLeft at 328px. During an unfinished drag to 360px, the grid
+                    transition was disabled and the preview shield was present; Escape restored
+                    328px and removed the shield.
+                  </li>
+                  <li>
+                    Collapse removed the handle. Reopening and reloading retained 328px. At 390px
+                    both resize handles were absent, with no horizontal overflow.
+                  </li>
+                  <li>
+                    The shared pointer logic still resized the inspector from 280px to 320px and
+                    back, independently of the 248px navigation width. No browser errors appeared.
+                    Catalog filters aligned on one row at a 1280px viewport.
+                  </li>
+                </ul>
+                <p>
+                  Navigation was restored to 248px on desktop. The user&#x27;s 280px inspector
+                  preference was preserved. These are local browser checks; remote iPhone access
+                  remains unverified.
                 </p>
                 <p>
                   Remaining gates include sustained reconnect/worker recovery, concurrent renderer
@@ -5016,12 +5049,13 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   <li>
                     <strong>Modern workspace:</strong> real company/project/file views, filters,
                     search, versions, file/source metadata, and T3-style fully collapsible
-                    navigation are connected. The desktop sidebar remembers its state through Effect
-                    Atom; Ctrl/Cmd+B, separate mobile navigation, and reduced motion are
-                    implemented. Local viewport checks are distinct from remote iPhone testing. The
-                    inspector now resizes with pointer and keyboard input and saves its width
-                    through Effect Atom; mobile keeps its full-width layout. Broader keyboard
-                    coverage and theme expansion remain design work.
+                    navigation are connected. The desktop sidebar remembers its open state and width
+                    through separate Effect Atom preferences; pointer/keyboard resizing, Ctrl/Cmd+B,
+                    separate mobile navigation, and reduced motion are implemented. Local viewport
+                    checks are distinct from remote iPhone testing. The inspector now resizes with
+                    pointer and keyboard input and saves its width through Effect Atom; mobile keeps
+                    its full-width layout. Broader keyboard coverage and theme expansion remain
+                    design work.
                   </li>
                   <li>
                     <strong>Persistent review loop:</strong> previews, downloads, versioned
@@ -5065,7 +5099,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   Adopted for HA Workspace on September 8, 2026. The connected implementation uses
                   Effect v4 RC, one authenticated Confect/Atom browser runtime, local file
                   capabilities, and durable revision jobs. Doppler injection and the configured Bun
-                  production build pass. The latest source suite passes 85 TypeScript tests and
+                  production build pass. The latest source suite passes 89 TypeScript tests and
                   skips one optional local-runtime test. That optional test passed in the earlier
                   Doppler-configured verification, alongside 21 Python document-helper tests;
                   <code>SETUP.md</code> separates runtime/browser evidence from source checks. The
@@ -6186,8 +6220,22 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   with focus handling and Escape dismissal.
                 </p>
                 <p>
-                  Desktop width is 248px, or 224px in compact layouts. Collapse transitions the
-                  layout column over 220ms with <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>; its
+                  The desktop sidebar starts at 248px and resizes from 220px to 360px, capped by the
+                  available shell width minus 360px. A separate schema-backed Effect Atom
+                  preference, <code>ha-workspace.ui.sidebar-width.v1</code>, stores its width;
+                  collapsing the sidebar preserves that preference. A temporary viewport clamp does
+                  not overwrite the saved width. Above 760px, the expanded sidebar exposes a
+                  right-edge separator immediately after navigation in keyboard Tab order.
+                  ArrowRight widens and ArrowLeft narrows by 16px; Shift uses 32px steps. Home
+                  selects 220px and End selects the current maximum. Mobile keeps its independent
+                  280px navigation Sheet.
+                </p>
+                <p>
+                  Navigation and inspector resizing share the same pointer lifecycle: capture the
+                  pointer, shield embedded previews while dragging, restore the starting width on
+                  Escape or cancellation, and persist once on completion. Direct dragging disables
+                  the shell grid transition so the edge follows the pointer. Collapse transitions
+                  the layout column over 220ms with <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>; its
                   contents fade over 140ms. The inspector enters over 180ms. Reduced-motion
                   preferences remove these transitions. Hidden navigation is inert, and the main
                   scroll surface stays mounted while the sidebar changes.
@@ -6351,7 +6399,10 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   Base UI drawer focus/Escape behavior passed. At 900px the inspector clamped to
                   available space; at 390px it became full width without a resize handle or
                   horizontal overflow. The browser reported no console warnings or errors.
-                  <code>SETUP.md</code> records the measurements. Remote iPhone access remains a
+                  <code>SETUP.md</code> records the measurements. The subsequent left-navigation
+                  check passed pointer/keyboard resizing, Escape cancellation,
+                  collapse/reopen/reload persistence, mobile handle removal, and independent
+                  inspector resizing through the shared hook. Remote iPhone access remains a
                   deployment gate.
                 </p>
                 <p>
@@ -6460,7 +6511,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
             connected app passes source checks and its configured Bun build. The latest source suite
-            passes 85 TypeScript tests and skips one optional runtime check. That optional check
+            passes 89 TypeScript tests and skips one optional runtime check. That optional check
             passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
             DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
             backend commit/replay, preserving source hashes and comment anchors without production

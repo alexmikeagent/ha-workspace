@@ -30,7 +30,7 @@ Comments are stored against a specific immutable version. Review and revision dr
 
 For DOCX, TXT, and Markdown, a revision request can replace one exact match with explicit replacement text. Word edits stay within supported uninterrupted document-body text. They do not edit headers, fields, tracked changes, or paragraphs as a general Word editor. The worker writes a new candidate, validates it, renders Word candidates, and asks Convex to commit it. Base-version, cancellation, lease, and fencing checks keep stale attempts from advancing the visible version. Source files are never overwritten.
 
-The sidebar fully collapses off canvas and remembers its state through a schema-backed Atom preference. Its top-left button remains available; Ctrl/Cmd+B toggles it outside text inputs. Mobile navigation uses a separate Sheet. Reduced-motion settings remove panel travel and transitions. The catalog and document inspector also share a persisted width preference: 330px by default, bounded to 280–560px and the available container. Desktop resizing supports pointer drag and keyboard controls; phone layouts stay full width. This behavior follows the [T3 Code layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [sidebar implementation](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx), adapted to the workspace's own visual system.
+The sidebar fully collapses off canvas and remembers its state through a schema-backed Atom preference. Desktop width is independently saved: 248px by default, bounded to 220–360px and the available viewport. Its right-edge separator supports dragging and keyboard resizing while expanded. Collapsing retains the chosen width. Its top-left button remains available; Ctrl/Cmd+B toggles it outside text inputs. Mobile navigation uses a separate Sheet. Reduced-motion settings remove panel travel and transitions. The catalog and document inspector also share a persisted width preference: 330px by default, bounded to 280–560px and the available container. Desktop resizing supports pointer drag and keyboard controls; phone layouts stay full width. This behavior follows the [T3 Code layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [sidebar implementation](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx), adapted to the workspace's own visual system.
 
 ## What copying proves
 
@@ -48,7 +48,7 @@ The root README lists the current key names. `bun run backend:start` starts the 
 
 ## Verification and remaining gates
 
-The configured production build and Doppler injection have passed. Source checks and the expanding TypeScript suite cover domain, transport, authorization, storage, preview, and queue boundaries. The latest source suite passes 85 TypeScript tests and skips one optional runtime integration test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests. Live backend checks establish authenticated reads and commands on the isolated instance.
+The configured production build and Doppler injection have passed. Source checks and the expanding TypeScript suite cover domain, transport, authorization, storage, preview, and queue boundaries. The latest source suite passes 89 TypeScript tests and skips one optional runtime integration test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests. Live backend checks establish authenticated reads and commands on the isolated instance.
 
 Earlier integrated-browser checks confirmed desktop sidebar collapse/persistence and Ctrl/Cmd+B, a real three-page DOCX PDF preview, the earlier source-text panel (subsequently removed), mobile layout at 390 × 844, drawer focus/navigation/close, a search returning real files, a bounded workbook grid with labeled cached values, and an unsent review draft surviving a full reload. No real client comment or revision was created by that browser check. These local viewport checks do not establish remote iPhone access.
 
@@ -65,5 +65,15 @@ Vite+ checked 108 formatted files and 66 source files without lint warnings or t
 - Sidebar collapse and Ctrl+B expansion worked. The browser reported no console warnings or errors. Width was restored to 330px and the viewport to 1224px after verification.
 
 These checks used local viewports and do not establish remote iPhone access. No private filenames or screenshots are included in this record.
+
+### September 8, 2026 — left navigation resize QA
+
+Vite+ checked 111 formatted files and 69 source files without warnings or type errors. The suite passed 89 tests and skipped one optional runtime test; the production build passed. Browser checks verified:
+
+- Dragging navigation from 248px to 328px, Home at 220px, End at 360px, and Shift+ArrowLeft at 328px. During an unfinished drag to 360px, the grid transition was disabled and the preview shield was present; Escape restored 328px and removed the shield.
+- Collapse removed the handle. Reopening and reloading retained 328px. At 390px both resize handles were absent, with no horizontal overflow.
+- The shared pointer logic still resized the inspector from 280px to 320px and back, independently of the 248px navigation width. No browser errors appeared. Catalog filters aligned on one row at a 1280px viewport.
+
+Navigation was restored to 248px on desktop. The user's 280px inspector preference was preserved. These are local browser checks; remote iPhone access remains unverified.
 
 Remaining gates include sustained reconnect/worker recovery, concurrent renderer stress, backup and restore, remote identity and Tailscale access, and real iPhone testing. Page/rectangle/cell annotations, automatic intake, template-based report and invoice generation, a skill/instruction editor, AI execution, and full Office authoring are not connected product features. Their architectural requirements remain in the plan without being presented as completed work.

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-08T15:10:07.432835+00:00",
+  "checkedAt": "2026-09-08T15:23:32.944704+00:00",
   "htmlGenerated": true,
   "uniqueIds": 39,
   "localAnchorsValid": 14,
@@ -20,7 +20,7 @@
   },
   "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
   "planBrowserVerification": "Not rerun during this theme documentation update. Static validation does not establish visual behavior.",
-  "applicationVerification": "Vite+ checked 108 formatted files and 66 source files with no lint warnings or type errors. Latest source suite: 85 tests passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Configured production build passed.",
+  "applicationVerification": "Vite+ checked 111 formatted files and 69 source files with no lint warnings or type errors. Latest source suite: 89 tests passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Configured production build passed.",
   "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
   "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed.",
   "externalAssets": 0,
@@ -55,5 +55,23 @@
     "console": "No warnings or errors",
     "restoredState": "330px inspector, 1224px desktop viewport",
     "limitations": "Local viewport checks; remote iPhone access remains unverified. No private filenames or screenshots stored."
+  },
+  "navigationResizeUpdate": {
+    "width": "Default 248px, bounds 220\u2013360px, available shell minus 360px cap with 220px floor",
+    "storage": "Independent Effect Atom preference ha-workspace.ui.sidebar-width.v1; retained during collapse",
+    "controls": "Expanded desktop above 760px only; right-edge drag; ArrowRight grows and ArrowLeft shrinks by 16px, Shift uses 32px, Home/End select bounds; shared pointer capture/cancel lifecycle",
+    "mobile": "Separate fixed 280px drawer unchanged",
+    "verification": "Root integrated-browser QA passed pointer and keyboard resizing, Escape cancellation, collapse/reopen/reload persistence, mobile handle removal, and independent inspector regression checks."
+  },
+  "navigationResizeBrowserVerification": {
+    "date": "2026-09-08",
+    "pointer": "248 to 328px; unfinished drag to 360px had zero-duration grid transition and an active shield; Escape restored 328px and removed shield",
+    "keyboard": "Home 220px, End 360px, Shift+ArrowLeft 328px",
+    "persistence": "Collapse removed handle; reopen and reload retained 328px",
+    "mobile": "390px; both resize handles absent and no horizontal overflow",
+    "inspectorRegression": "280 to 320 to 280px independently of 248px navigation; no browser errors",
+    "filters": "Catalog filters aligned on one row at 1280px",
+    "restoredState": "Left navigation 248px, desktop viewport; user inspector preference 280px preserved",
+    "limitations": "Local viewport checks only; remote iPhone access unverified"
   }
 }

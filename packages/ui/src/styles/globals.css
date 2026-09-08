@@ -174,12 +174,16 @@ a:focus-visible {
   --ease-panel: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .workspace-shell {
+  position: relative;
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   height: 100dvh;
   width: 100%;
   overflow: hidden;
   transition: grid-template-columns var(--motion-panel) var(--ease-panel);
+}
+.workspace-shell[data-sidebar-resizing] {
+  transition: none;
 }
 .workspace-shell[data-sidebar="collapsed"] {
   grid-template-columns: 0 minmax(0, 1fr);
@@ -1662,7 +1666,8 @@ textarea:focus-visible {
   min-height: 0;
   overflow: auto;
 }
-.inspector-resize-handle {
+.inspector-resize-handle,
+.sidebar-resize-handle {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1673,7 +1678,12 @@ textarea:focus-visible {
   z-index: 5;
   outline: none;
 }
-.inspector-resize-handle::after {
+.sidebar-resize-handle {
+  left: calc(var(--sidebar-width) - 4px);
+  z-index: 40;
+}
+.inspector-resize-handle::after,
+.sidebar-resize-handle::after {
   content: "";
   position: absolute;
   top: 0;
@@ -1684,10 +1694,13 @@ textarea:focus-visible {
   transition: background-color 150ms;
 }
 .inspector-resize-handle:hover::after,
-.inspector-resize-handle[data-resizing]::after {
+.inspector-resize-handle[data-resizing]::after,
+.sidebar-resize-handle:hover::after,
+.sidebar-resize-handle[data-resizing]::after {
   background: var(--border-hover);
 }
-.inspector-resize-handle:focus-visible::after {
+.inspector-resize-handle:focus-visible::after,
+.sidebar-resize-handle:focus-visible::after {
   background: var(--ring);
   width: 3px;
 }
@@ -1703,7 +1716,8 @@ textarea:focus-visible {
   * {
     scrollbar-color: auto;
   }
-  .inspector-resize-handle:focus-visible {
+  .inspector-resize-handle:focus-visible,
+  .sidebar-resize-handle:focus-visible {
     outline: 2px solid Highlight;
   }
 }
@@ -1718,9 +1732,6 @@ textarea:focus-visible {
   }
 }
 @media (max-width: 1300px) {
-  :root {
-    --sidebar-width: 224px;
-  }
   .workspace-main {
     padding: 28px 25px;
   }
@@ -1754,7 +1765,8 @@ textarea:focus-visible {
   }
 }
 @media (max-width: 760px) {
-  .inspector-resize-handle {
+  .inspector-resize-handle,
+  .sidebar-resize-handle {
     display: none;
   }
   .workspace-shell,

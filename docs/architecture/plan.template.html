@@ -2975,7 +2975,7 @@ bun.lock</pre>
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
               declares Node tooling. The configured production build passes. The latest source suite
-              passes 85 TypeScript tests and skips one optional local-runtime check. That optional
+              passes 89 TypeScript tests and skips one optional local-runtime check. That optional
               test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
               tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
@@ -3368,10 +3368,11 @@ bun.lock</pre>
             </p>
           </div>
           <p class="footnote">
-            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
-            preference, and a separate mobile Sheet. The inspector saves its width and supports drag
-            and keyboard resizing on desktop. The layout study below also illustrates future
-            annotations and instruction editing.
+            Both desktop edges support drag and keyboard resizing, with separate saved Atom widths.
+            Navigation starts at 248px (220–360px); the inspector starts at 330px (280–560px), with
+            available space limiting each. Sidebar collapse preserves its width, Ctrl/Cmd+B stays
+            available, and mobile uses an independent 280px navigation Sheet. The layout study below
+            also illustrates future annotations and instruction editing.
           </p>
           <div
             class="mock"
@@ -3487,7 +3488,7 @@ bun.lock</pre>
           <div class="design-metrics">
             <div>
               <b>248<small>px</small></b
-              ><span>Expanded sidebar width</span>
+              ><span>Default sidebar width</span>
             </div>
             <div>
               <b>14<small>px</small></b
@@ -3609,8 +3610,9 @@ bun.lock</pre>
                 <p>
                   Company/project files, category filters, search, sorting, versions, and source
                   metadata share one clear workspace. The T3-inspired sidebar fully collapses and
-                  remembers its state. The inspector supports pointer and keyboard resizing, with a
-                  saved width and a full-width phone layout.
+                  remembers its width and open state. Both desktop sidebars resize with pointer or
+                  keyboard input. Mobile keeps a separate navigation drawer and full-width
+                  inspector.
                 </p>
                 <div class="accept">
                   <span>Checked</span>Geist, Hugeicons, and dark scrollbars verified. Inspector
@@ -3826,7 +3828,7 @@ bun.lock</pre>
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
             connected app passes source checks and its configured Bun build. The latest source suite
-            passes 85 TypeScript tests and skips one optional runtime check. That optional check
+            passes 89 TypeScript tests and skips one optional runtime check. That optional check
             passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
             DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
             backend commit/replay, preserving source hashes and comment anchors without production
