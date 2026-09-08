@@ -2,7 +2,11 @@
 
 A private document workspace for HA Consulting. Browse company and project files, open a preview, keep comments with the version you reviewed, and make a precise correction as a new version.
 
-The local catalog, authenticated Confect subscriptions, previews, downloads, source context, and versioned comments are connected. A Bun worker processes bounded exact-text revision requests for DOCX, TXT, and Markdown. The interface uses Effect Atom throughout, including saved review drafts and a fully collapsible sidebar. Agent execution, report generation, the skills editor, and remote iPhone access are later steps.
+The local catalog, authenticated Confect subscriptions, previews, downloads, file/source metadata, and versioned comments are connected. A Bun worker processes bounded exact-text revision requests for DOCX, TXT, and Markdown. The interface uses Effect Atom throughout, including saved review drafts, a fully collapsible, resizable sidebar, and a resizable inspector. Agent execution, report generation, the skills editor, and remote iPhone access are later steps.
+
+The interface follows a Vercel/Geist neutral dark direction, with self-hosted Geist Sans/Mono, shadcn `base-nova` components built on Base UI, and Hugeicons. The T3-inspired sidebar keeps separate Atom preferences for width and open state, a keyboard shortcut, an independent mobile drawer, and reduced-motion behavior. The header uses a compact HA mark with a single-line HA Workspace name, and scrolling surfaces share the neutral theme. See the [interface contract](docs/architecture/DESIGN.md) for the adopted tokens and source references.
+
+Agents opens a read-only library of the skills, guidance, tools, and supporting files in the local Drive copy. Search by name or path, read highlighted source, and follow related skill resources. Markdown opens in a formatted Preview; HTML starts in Source with an explicit static Preview; recognized `@@PLACEHOLDER@@` tokens are labeled as an unfilled template. Refresh discovers new allowed resources in that copy. Viewing a resource does not activate instructions or change the revision worker's built-in rules.
 
 ## Run locally
 
@@ -54,7 +58,7 @@ mise exec -- bun run worker:check
 mise exec -- bun run backend:verify
 ```
 
-Source checks and unit tests need no application credentials. `worker:check` validates the configured storage roots. `backend:verify` exercises the dedicated local backend through Confect; it is an integration check and requires the local service and Doppler configuration. Browser and real-document checks are recorded separately from source compilation. Default CI runs 79 TypeScript tests and skips one optional document-runtime test. With Doppler supplying the Python and LibreOffice paths, all 80 TypeScript tests pass. The Python document-helper suite has 21 passing tests.
+Source checks and unit tests need no application credentials. `worker:check` validates the configured storage roots. `backend:verify` exercises the dedicated local backend through Confect; it is an integration check and requires the local service and Doppler configuration. Browser and real-document checks are recorded separately from source compilation. The latest source suite passes 126 TypeScript tests and skips one optional document-runtime test. That optional test passed separately in the earlier Doppler-configured runtime check. The Python document-helper suite has 21 passing tests.
 
 ```sh
 doppler run --no-fallback -- mise exec -- bun run test
@@ -64,7 +68,7 @@ The optional integration test creates a synthetic DOCX in temporary storage, run
 
 ## Architecture
 
-The project is a feature-oriented hexagonal modular monolith. Effect use cases and typed ports keep document rules separate from Convex, the filesystem, and rendering tools. Convex owns durable state and transactions. One authenticated Confect WebSocket feeds live queries into the session's Atom registry; there is no second query cache. The Bun worker owns each running document attempt.
+The project is a feature-oriented hexagonal modular monolith. Effect use cases and typed ports keep document rules separate from Convex, the filesystem, and rendering tools. Convex owns durable state and transactions. One authenticated Confect WebSocket feeds live queries into the session's Atom registry; there is no second query cache. The Bun worker owns each running document attempt. The Agents library has its own lightweight HTTP/Atom runtime and bootstraps the local owner session for each request; it can load without a Convex connection.
 
 | Location               | Responsibility                                                             |
 | ---------------------- | -------------------------------------------------------------------------- |
@@ -74,7 +78,7 @@ The project is a feature-oriented hexagonal modular monolith. Effect use cases a
 | `packages/application` | Effect use cases and capability contracts                                  |
 | `packages/backend`     | Confect specs, authenticated Convex functions, deployment and local auth   |
 | `packages/documents`   | Working-copy provider, extraction, preview conversion, revision tools      |
-| `packages/ui`          | shadcn components, design tokens, responsive layout, motion                |
+| `packages/ui`          | Base UI/shadcn components, Hugeicons, shared tokens, responsive layout     |
 | `docs/architecture`    | Decisions, visual plan, source evidence, and remaining gates               |
 
 Read the [visual plan](docs/architecture/ha-workspace-plan.html), [architecture](docs/architecture/ARCHITECTURE.md), [interface contract](docs/architecture/DESIGN.md), and [Effect conventions](docs/architecture/EFFECT_GUIDE.md).

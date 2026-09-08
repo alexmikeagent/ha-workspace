@@ -1,6 +1,7 @@
 import { LocalAuth, type LocalIdentity } from "@ha/backend/local-auth"
 import { DriveError, DriveStore } from "@ha/documents/drive-store"
 import { PreviewStore } from "@ha/documents/preview"
+import { AgentLibraryError, AgentLibraryStore } from "@ha/documents/agent-library"
 import { Config, Context, Effect, Layer } from "effect"
 import {
   HttpError,
@@ -97,6 +98,17 @@ function driveFailure(error: DriveError): HttpError {
   return new HttpError({ status: statuses[error.code] ?? 500, message: error.message })
 }
 
+function agentLibraryFailure(error: AgentLibraryError): HttpError {
+  const statuses = {
+    NotFound: 404,
+    InvalidResource: 415,
+    Changed: 409,
+    TooLarge: 413,
+    Unavailable: 503,
+  } as const
+  return new HttpError({ status: statuses[error.code], message: error.message })
+}
+
 const fileRoute =
   /^\/api\/files\/([a-f0-9]{64})\/versions\/([a-f0-9]{64})\/(preview|content|context|download)$/
 
@@ -106,6 +118,7 @@ export const LocalApiLive = Layer.effect(
     const auth = yield* LocalAuth
     const drive = yield* DriveStore
     const previews = yield* PreviewStore
+    const agents = yield* AgentLibraryStore
     const files = yield* LocalFileResponse
     const settings = yield* LocalApiSettings
     const owner = Effect.fn("http.owner")(function* (token: string | undefined) {
@@ -180,6 +193,9 @@ export const LocalApiLive = Layer.effect(
         )
       }
       yield* owner(sessionCookie(request))
+      if (url.pathname === "/api/agents") return jsonResponse(yield* agents.list())
+      const agentMatch = /^\/api\/agents\/([a-f0-9]{64})$/.exec(url.pathname)
+      if (agentMatch?.[1]) return jsonResponse(yield* agents.get(agentMatch[1]))
       const match = fileRoute.exec(url.pathname)
       if (!match)
         return yield* new HttpError({ status: 404, message: "This endpoint was not found." })
@@ -201,7 +217,12 @@ export const LocalApiLive = Layer.effect(
       handle: (request, remoteAddress) =>
         handle(request, remoteAddress).pipe(
           Effect.catch((error) => {
-            const failure = error instanceof DriveError ? driveFailure(error) : error
+            const failure =
+              error instanceof DriveError
+                ? driveFailure(error)
+                : error instanceof AgentLibraryError
+                  ? agentLibraryFailure(error)
+                  : error
             return Effect.succeed(jsonResponse({ error: failure.message }, failure.status))
           }),
           Effect.catchDefect(() =>

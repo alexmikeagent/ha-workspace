@@ -12,12 +12,11 @@ import {
   ShieldCheck,
   ZoomIn,
   ZoomOut,
-} from "lucide-react"
+} from "@workspace/ui/components/icons"
 import { Button } from "@workspace/ui/components/button"
 import {
   addReviewComment,
   editReviewDraft,
-  fileContext,
   loadReviewDraft,
   previewInfo,
   reviewDraft,
@@ -371,9 +370,6 @@ export function ContextPanel({
   companyName?: string
   projectName?: string
 }) {
-  const state = useAtomValue(fileContext(versionUrl(details.file.id, version.id, "context")))
-  const retry = useAtomRefresh(fileContext(versionUrl(details.file.id, version.id, "context")))
-  const context = valueOf(state)
   return (
     <div className="file-context">
       <div className="context-intro">
@@ -415,29 +411,6 @@ export function ContextPanel({
         Company and project groupings come from the copied folder structure. Treat them as context
         to verify.
       </p>
-      <section className="source-excerpt">
-        <h3>{context?.source === "folder" ? "Folder context" : "From this document"}</h3>
-        {context ? (
-          <>
-            <pre>{context.text || "No readable text was found in this file."}</pre>
-            {context.truncated && <p className="context-inference">This excerpt is shortened.</p>}
-            {context.notes.map((note, index) => (
-              <p key={index} className="context-inference">
-                {note}
-              </p>
-            ))}
-          </>
-        ) : AsyncResult.isFailure(state) ? (
-          <>
-            <p>{errorOf(state)}</p>
-            <Button variant="outline" size="sm" onClick={retry}>
-              Retry context
-            </Button>
-          </>
-        ) : (
-          <output>Reading the source context…</output>
-        )}
-      </section>
     </div>
   )
 }

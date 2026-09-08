@@ -72,6 +72,9 @@ export const workspaceRuntime = Atom.runtime(
 )
 
 export function catalogKey(search: WorkspaceSearch) {
+  if (search.section === "agents") {
+    return JSON.stringify({ search: "", companyId: "", projectId: "", category: "" })
+  }
   return JSON.stringify({
     search: search.q ?? "",
     companyId: search.company ?? "",
@@ -249,7 +252,7 @@ export const cancelRevision = Atom.family((jobId: string) =>
 export const versionUrl = (
   fileId: string,
   versionId: string,
-  operation: "preview" | "content" | "context" | "download",
+  operation: "preview" | "content" | "download",
 ) =>
   `/api/files/${encodeURIComponent(fileId)}/versions/${encodeURIComponent(versionId)}/${operation}`
 
@@ -268,16 +271,5 @@ export const PreviewInfo = Schema.Struct({
 export const previewInfo = Atom.family((url: string) =>
   workspaceRuntime.atom(
     requestJson(url).pipe(Effect.flatMap(Schema.decodeUnknownEffect(PreviewInfo))),
-  ),
-)
-const FileContext = Schema.Struct({
-  text: Schema.String,
-  source: Schema.Literals(["document", "folder"]),
-  truncated: Schema.Boolean,
-  notes: Schema.Array(Schema.String),
-})
-export const fileContext = Atom.family((url: string) =>
-  workspaceRuntime.atom(
-    requestJson(url).pipe(Effect.flatMap(Schema.decodeUnknownEffect(FileContext))),
   ),
 )

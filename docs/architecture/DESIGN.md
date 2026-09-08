@@ -1,158 +1,109 @@
 # HA Workspace — interface contract
 
-Interface direction updated September 8, 2026. The connected application supports company/project browsing, previews, versioned comments, and precise revision requests. Keep developing a modern, clear workspace around those real files. The wireframe guides the workflow. The finished product should feel deliberate and responsive on desktop and iPhone, with its own visual system and restrained animation.
+Updated September 8, 2026. HA Workspace uses a neutral dark interface, Geist typography, shadcn components built on Base UI, and Hugeicons. The document remains the main focus. Company/project browsing, file/source metadata, previews, versioned comments, and precise revision requests are connected; the design must make those operations easy to understand.
 
-## Reference and evidence
+## Design authority and source scope
 
-Use the existing `ha-codex-workroom.html` prototype as the functional reference. Keep its company/file/review journeys, then improve hierarchy, spacing, and interaction as the real document content requires. Codex remains a useful reference for quiet toolbars and document focus. Historical read-only inspection of its installed CSS inside `/usr/lib/chatgpt/resources/app.asar` found these declarations:
+This contract adapts Vercel's [design guidance](https://vercel.com/design.md), [dark design guidance](https://vercel.com/design.dark.md), [Geist system](https://vercel.com/geist/introduction), and [web interface guidelines](https://vercel.com/design/guidelines). Both Markdown endpoints returned identical content on September 8, 2026. Their published [CSS foundation](https://vercel.com/geist/vercel-brand.css) supplied the reference token roles and neutral values. This is an HA application adaptation: retain HA identity and application semantics, without Vercel logos, authorship claims, or the report-specific brand shell.
 
-| Token                   | Observed declaration                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------- |
-| Sans font               | `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`                                 |
-| Mono font               | `ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`  |
-| Type scale              | 11px, 12px, 14px base, 16px, 28px                                                           |
-| Spacing unit            | 4px                                                                                         |
-| Sidebar                 | Default preference 275px; clamp starts at 240px and permits up to 520px subject to viewport |
-| Toolbar                 | 46px base, 36px small, 40px pane; other selectors override the main toolbar to 52px         |
-| Neutral palette entries | White, #f9f9f9, #f3f3f3, #ededed, #303030, #282828, #212121, #181818                        |
+Use one continuous canvas, a clear type hierarchy, and deliberate spacing. Add surfaces where they explain interaction or grouping. Reserve color for focus, an actual state, or a document annotation; pair it with text or another visible cue. Remove decorative gradients, glows, textures, and ornamental shadows. These choices follow the reference's restraint while accommodating a dense document workspace. Existing layout studies describe workflow, not a pixel-matching target.
 
-These are historical source declarations, not measurements of the active window. They provide context for the initial plan; they are not a pixel-matching target. Use shadcn primitives, semantic tokens, and one coherent icon set. Evaluate the result with real files from the local fake Drive and the acceptance checks below.
+The original wireframe remains the workflow reference. Codex informed the early toolbars and document focus. T3 Code informs the sidebar behavior below. The current Vercel/Geist adaptation supersedes the earlier sage palette, system-font-only direction, and Lucide/Radix proposal. Historical evidence files remain records of those earlier decisions.
 
-## Implemented sidebar and workspace behavior
+## Palette and semantic roles
 
-The current sidebar follows the [T3 Code layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [off-canvas sidebar behavior](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx). It fully collapses, leaving the top-left toggle available. A schema-backed Effect Atom preference remembers the open state. Ctrl/Cmd+B toggles it outside editable fields; the button has an accessible name, expanded state, shortcut hint, and tooltip. Mobile navigation uses an independent Sheet with its own focus handling.
+The source foundation uses zero-chroma dark neutrals: black for its main surface, `oklch(0.946 0 0)` for primary text, and `oklch(0.706 0 0)` for secondary text. HA uses the following application values, with a little more separation between working surfaces. These are our semantic tokens; the app does not load a parallel `vbg-*` stylesheet.
 
-Desktop starts at 248px, with 224px on compact desktop layouts. Collapse changes the layout column over 220ms using `cubic-bezier(0.2, 0.8, 0.2, 1)`; contents fade over 140ms. The inspector enters over 180ms. Reduced-motion preferences remove those transitions. Hidden sidebar content is inert. The main scroll surface stays mounted while the sidebar changes.
+| Application role                    | Token                                     | Adopted dark value                |
+| ----------------------------------- | ----------------------------------------- | --------------------------------- |
+| Main canvas                         | `--background`                            | `#000000`                         |
+| Sidebar and ordinary surface        | `--sidebar`, `--card`                     | `#0a0a0a`                         |
+| Popover                             | `--popover`                               | `#111111`                         |
+| Quiet field or grouping             | `--muted`                                 | `#171717`                         |
+| Secondary action                    | `--secondary`                             | `#1a1a1a`                         |
+| Hover and active row                | `--accent`                                | `#1f1f1f`                         |
+| Ordinary divider                    | `--border`                                | `#292929`                         |
+| Input / stronger hover border       | `--input`, `--border-hover`               | `#333333` / `#454545`             |
+| Primary text and primary button     | `--foreground`, `--primary`               | `#ededed`                         |
+| Primary button text                 | `--primary-foreground`                    | `#0a0a0a`                         |
+| Secondary / subordinate text        | `--muted-foreground`, `--text-subtle`     | `#a1a1a1` / `#888888`             |
+| Keyboard focus                      | `--ring`                                  | `#52a8ff`                         |
+| Confirmed success / warning / error | `--success`, `--warning`, `--destructive` | `#3ccf91` / `#f5a623` / `#ff6369` |
+| Document paper                      | `--paper`, `--paper-foreground`           | `#ffffff` / `#171717`             |
 
-Company and project links show real indexed files. Search and filters live in the URL, and sort/page state belongs to atoms. A file opens its version chooser, download, and actual preview. The Context tab displays extracted source text and labels folder-based inference. Review holds versioned comments, saved drafts, and an explicit exact-text revision form for supported files. The Agent tab explains that execution is not connected; it contains no simulated actions.
+Selection in navigation is neutral. A primary action uses light text-color fill with dark lettering. Semantic status colors appear only when a confirmed state needs them. The document's own colors remain intact; dark mode changes its surroundings, not the source page. Use `color-scheme: dark` and a matching black browser theme color. A light application theme is future work.
 
-Integrated-browser checks covered the desktop toggle, persistence, keyboard shortcut, a real Word/PDF preview, source context, and the 390 × 844 mobile layout with navigation focus and search. That is a local viewport check; remote iPhone access remains a separate deployment gate.
+## Typography and component base
 
-The remaining sections mix adopted design rules with targets for future authoring. Inspector resizing, rich annotations, light-theme expansion, intake, new report/invoice actions, and the instruction editor are not current capabilities.
+Use [Geist Sans and Geist Mono](https://vercel.com/font). The application self-hosts variable fonts through `@fontsource-variable/geist` and `@fontsource-variable/geist-mono`, both pinned at `5.3.0`. Package index stylesheets declare Unicode-range subsets, and the browser loads the required local assets. Font requests stay on the application origin. Sans is the default for body text, navigation, controls, tables, dates, and counts. Mono is reserved for code, paths, and short operational identifiers; it should not turn ordinary descriptions or metrics into terminal output.
 
-## Shell geometry
+Application body text is 14px; secondary labels are 12–13px; page headings are 32px. Explanations use a 1.5 line height. Use regular weight for reading, medium for labels and headings, and tabular numbers for aligned numeric comparisons. Inputs on phone layouts remain at least 16px. Keep long filenames accessible in full through a label or tooltip.
 
-Desktop: persistent left navigation, central content, and one resizable right inspector. File lists open a dedicated file route with preserved origin/filter state. Avoid squeezing both a review sidebar and a second Agent sidebar beside the preview; the inspector switches between Review, Context, and Agent tabs.
+The standalone HTML plan makes no network font requests. It uses a Geist-first local stack and falls back to the system sans/mono fonts when Geist is unavailable. It shares the neutral palette and hierarchy; application screenshots are the authority for exact font rendering.
 
-```text
-┌──────────────────────┬──────────────────────────────────────────────────┐
-│ HA Consulting   [≡]  │ [←][→] Company / File           [↓] [⋯] [Panel] │
-│                      ├────────────────────────────────┬─────────────────┤
-│ Companies            │ [Version ▾] [Page − +] [Fit]   │ Review Context  │
-│ Reports              │                    [Annotate] │ Agent           │
-│ Invoices             ├────────────────────────────────┤                 │
-│ Templates            │                                │ Comments /      │
-│                      │       Document preview         │ source facts /  │
-│ Recent files         │                                │ AGENTS + skills │
-│ …                    │                                │                 │
-│                      │                                │ [composer]      │
-│ Profile   [Settings] │                                │ [attach]   [↑]  │
-└──────────────────────┴────────────────────────────────┴─────────────────┘
-```
+Use the shadcn `base-nova` configuration in both app and UI package, with neutral colors and CSS variables. Base UI supplies accessible interaction primitives; shadcn supplies editable local component code. Keep the existing monorepo arrangement and Vite+ orchestration. [shadcn Base UI documentation](https://ui.shadcn.com/docs/changelog/2026-01-base-ui), [monorepo configuration](https://ui.shadcn.com/docs/monorepo), [Base UI overview](https://base-ui.com/react/overview/about).
 
-Proposed implementation dimensions:
+Use `@hugeicons/react` with `@hugeicons/core-free-icons`, behind the shared semantic icon exports in `packages/ui`. Match outline weight and optical alignment across navigation, tools, and file types. Typical glyphs are 16px, with 18px where navigation needs more presence. Icons next to a label are decorative; icon-only buttons need an accessible name. Add a component only when an implemented screen needs it. [Hugeicons React quick start](https://hugeicons.com/docs/integrations/react/quick-start).
 
-| Element                       | Initial target                                                               |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| Navigation sidebar            | 248px starting point; resizable 224–320px                                    |
-| Main toolbar                  | 52px desktop; 56px on touch layouts                                          |
-| Document toolbar              | 44px desktop                                                                 |
-| Right inspector               | 340px default; resizable 300–480px                                           |
-| Minimum useful preview column | 480px; collapse inspector into an overlay below the combined panel threshold |
-| Page/dashboard gutters        | 32px desktop, 24px compact, 16px phone                                       |
-| Navigation rows               | 38px desktop, 44px touch                                                     |
-| Regular buttons               | 34px desktop, 44px touch                                                     |
-| Icon glyphs                   | 16px primary, 18px for major navigation                                      |
-| Button/field radius           | 8px controls, 12px surfaces, 16px composer                                   |
+## Sidebar and workspace behavior
 
-Persist width/collapse/theme preferences separately from document state. Bound widths again after viewport changes. Panel resizing must support keyboard controls.
+Follow the [T3 Code application layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [off-canvas sidebar](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx). The desktop sidebar fully collapses, while its top-left toggle stays available. A schema-backed Effect Atom preference remembers the open state. Ctrl/Cmd+B toggles outside editable fields. The button exposes its name, expanded state, shortcut hint, and tooltip. Mobile navigation uses an independent Base UI Sheet with focus handling and Escape dismissal.
 
-## Typography, color and components
+The desktop sidebar starts at 248px and resizes from 220px to 360px, capped by the available shell width minus 360px. A separate schema-backed Effect Atom preference, `ha-workspace.ui.sidebar-width.v1`, stores its width; collapsing the sidebar preserves that preference. A temporary viewport clamp does not overwrite the saved width. Above 760px, the expanded sidebar exposes a right-edge separator immediately after navigation in keyboard Tab order. ArrowRight widens and ArrowLeft narrows by 16px; Shift uses 32px steps. Home selects 220px and End selects the current maximum. Mobile keeps its independent 280px navigation Sheet.
 
-Use a system sans stack for readable application text and fast first paint. Use system monospace for Markdown source and identifiers. Body text is 14px, metadata 12px, quiet labels 11px, section titles 16px/500, page titles 28px/500. Inputs on iPhone use at least 16px. Use a 1.5 line height for explanatory text and a tighter line height for concise toolbar labels. Keep long filenames readable with a full-name tooltip and accessible label.
+Navigation and inspector resizing share the same pointer lifecycle: capture the pointer, shield embedded previews while dragging, restore the starting width on Escape or cancellation, and persist once on completion. Direct dragging disables the shell grid transition so the edge follows the pointer. Collapse transitions the layout column over 220ms with `cubic-bezier(0.2, 0.8, 0.2, 1)`; its contents fade over 140ms. The inspector enters over 180ms. Reduced-motion preferences remove these transitions. Hidden navigation is inert, and the main scroll surface stays mounted while the sidebar changes.
 
-Use a 4px spacing grid: 4/8/12/16/24/32. Keep icon-to-label gaps at 8px and align toolbar controls to one baseline. Use medium weight sparingly for selected rows and titles.
+Company and project links show real indexed files. Search and filters live in the URL; sort and page state belong to atoms. A file opens its version chooser, original download, and actual preview. Context shows file and source metadata, with folder-based company/project inference labeled. It does not show extracted document text. Backend extraction remains available to document tools and validation. Review holds versioned comments, saved drafts, and the exact-text revision form for supported files. Agent explains the current execution limit without simulated actions.
 
-| Semantic token     | Light proposal | Dark proposal |
-| ------------------ | -------------- | ------------- |
-| Main surface       | #ffffff        | #16191b       |
-| Sidebar            | #f6f7f5        | #111416       |
-| Preview surround   | #eef0ee        | #1c2023       |
-| Hover/selected row | #e7ebe6        | #282f31       |
-| Primary text       | #202626        | #edf1ed       |
-| Secondary text     | #596461        | #aab4af       |
-| Divider            | #dce2dd        | #30393a       |
+The header pairs a compact horizontal HA mark with the single-line name HA Workspace; no personal-workspace subtitle is needed. Scrollbars use the same neutral surfaces with a visible thumb and hover treatment. Keep native scrolling and avoid hiding the scroll affordance.
 
-These are proposed product tokens. Verify contrast in the rendered UI. Use a restrained sage accent for selection and the primary action, with a distinct blue for document annotations. Keep warning, danger, and success tokens semantic; status also includes a text label or icon. The document page stays white in dark mode. Avoid turning every panel into an elevated card: use spacing and a fine divider for ordinary grouping, and reserve elevation for overlays.
+Keep Companies, Reports, Invoices, Templates, and Agents in that navigation order. Put the version chooser and file actions in a stable toolbar. Review, Context, and Agent share one inspector instead of opening competing sidebars. Each screen should have one clear primary action; unavailable authoring features should not appear as working buttons.
 
-Start with shadcn Button, Sidebar, Resizable, Tabs, Tooltip, DropdownMenu, Dialog, Sheet, ScrollArea, Separator, Breadcrumb, Input and Textarea. Add only components needed by a screen. Use one Lucide outline icon set with consistent stroke weight; Lucide is the proposed equivalent, not a claim about Codex's internal icon library. Centralize icons through a named map so alignment changes propagate.
+## Agents and selection menus
 
-## Placement and behavior
+Agents is a resource library, separate from document files and the document inspector's Agent tab. Show skills as cards with their actual descriptions and supporting-file counts. Guidance, references, tools, and configuration files use concise linked rows. Search covers names, descriptions, and copied relative paths; kind filters make a large library manageable. Refresh, empty results, unavailable resources, and truncated previews need distinct feedback.
 
-| Control                              | Placement and behavior                                                           |
-| ------------------------------------ | -------------------------------------------------------------------------------- |
-| Companies/Reports/Invoices/Templates | Left rail in exactly this order, persistent selected state                       |
-| New report / New invoice             | Top right of the relevant list heading                                           |
-| Upload                               | Company file list heading; company/project context retained                      |
-| Back/forward + breadcrumbs           | Left side of top toolbar; restore list filters/scroll on return                  |
-| Download / overflow / inspector      | Right side of top toolbar, stable order on every file                            |
-| Version + page/slide/sheet + zoom    | Document toolbar; preserve page when compatible                                  |
-| Annotate                             | Right side of document toolbar; explicit select mode                             |
-| Review / Context / Agent             | Tabs at inspector top; Agent toggle activates the Agent tab                      |
-| Change-request composer              | Anchored at inspector bottom; selected annotation shown above text               |
-| Attach + Send                        | Bottom left and bottom right inside composer; Send becomes Stop during execution |
-| Save draft / Apply instructions      | Agent editor footer, with saved/active/conflict status                           |
+Every resource has a readable Source view with line numbers and syntax colors for supported formats. Keep source text selectable, horizontally scrollable, and available when highlighting fails or the file exceeds the formatting limit. Reuse the existing right inspector and its saved width for type, path, size, and related resources.
 
-Reports opens on recent reports and counts by company with filters; avoid filling the page with generic metric cards. Companies opens its file list; all four categories share the same list row component and file route. Templates display scope and current binding without exposing internal package names.
+Markdown opens in Preview with readable headings, GitHub-flavored tables/lists, and code examples; Source stays one click away. Relative links work only for known related library resources. External or unmatched links remain labels, images are placeholders, and raw HTML is skipped. HTML opens in Source and offers an explicit sanitized static Preview in an isolated iframe. Keep the choice and read-only status visible. This viewer does not provide editing, script execution, external navigation, or a guarantee that a source page will look identical to its original rendering. The read-only label and activation note stay visible: opening guidance does not change an agent's instructions or execute code. Do not show Save, Apply, or Run controls before those operations exist.
 
-The Context tab shows the selected template, task operation, company/project, visit facts and their sources, pending questions, and the corrections applied. A correction defaults to the current task; changing a company default is a separate explicit action. Intentional blank fields stay distinct from unanswered required fields.
+Company, project, sort, and version controls use the shared Base UI Select component. Its rounded, neutral popup is positioned within the viewport and uses ordinary local scrolling when options exceed the available height. Extra scroll-arrow overlays are removed. Keep selected and keyboard-highlighted options distinct, use Hugeicons consistently, and retain control labels, focus restoration, and reduced-motion transitions. Phone triggers and options use 44px targets and 16px text. Verify pointer selection, keyboard/typeahead, Escape, focus, scrolling, and narrow-screen placement in the rendered app; custom dropdown styling is not proof of those behaviors.
 
-Annotations support page rectangles and comments, text selection where available, sheet cell/range selection, and whole-file comments. Draft input survives route changes and reconnects. Apply a correction by creating a new source version and rendering it; the preview should never pretend that changing an HTML overlay changed the actual Office file.
+## Geometry and responsive layout
 
-## A calmer workflow through progressive disclosure
+Use a 4px spacing unit: 4, 8, 12, 16, 24, and 32px cover most relationships. One parent owns each gap. Control radius starts at 6px, ordinary surfaces at 8px; larger radii need a real purpose. Prefer spacing and a fine divider to nested cards. Align text and icons optically on shared baselines.
 
-Show the document and the next useful action first. The file list needs a strong filename, format, modified date, and relevant status; secondary metadata belongs in the inspector. A clear row selection and breadcrumb should explain location without repeating it in several headings. Preserve filters, sort order, scroll position, and preview position when returning from a file.
+The desktop toolbar targets 52px, with 32px content gutters where width permits. Compact layouts use 24px gutters and phone layouts 16px. The shared catalog, document, and Agents inspector starts at 330px. Its persisted Effect Atom preference uses `ha-workspace.ui.inspector-width.v1` in the existing storage runtime. Width is bounded to 280–560px, with the live maximum constrained by the container width minus 360px and a 280px floor. Narrowing the viewport clamps the rendered width without erasing the saved preference.
 
-Keep one primary action per context: New report on Reports, Upload within a company, and Send change request in review. Place uncommon actions in a labeled overflow menu. Never hide an essential action behind hover alone. Use concise, specific copy such as “Preview is being prepared” or “This revision changed. Review the latest version”; preserve the user's draft when an operation fails.
+Above 760px, drag the separator or use ArrowLeft to widen and ArrowRight to narrow by 16px; Shift changes the step to 32px. Home selects 280px and End selects the current maximum. Pointer capture and a temporary shield over embedded previews keep dragging reliable. Escape or pointer cancellation restores the starting width; a completed drag saves once. At 760px and below, the resize handle is absent and the inspector uses the existing full-width mobile layout.
 
-The inspector opens to the relevant tab and remembers its width. Expanding a panel should not move the current document anchor out of view. Details such as source facts, instruction hashes, renderer diagnostics, or adapter status appear when they help resolve a question; package names and runtime mechanics stay out of ordinary product flows.
+At narrow widths, use a single content column. Navigation moves into its Sheet and document tools reflow without page overflow. Keep grid and flex children at `min-width: 0`; allow long data tables to scroll locally. Use 44px touch targets, safe-area padding, and a visible composer when the software keyboard opens. Never disable zoom or intercept ordinary scrolling. Annotation gestures will require an explicit mode when annotations are implemented.
 
-Use a stable skeleton shaped like the eventual file row or page while data loads. Show the last valid preview during a refresh, with a quiet progress label. A blank file, unsupported format, failed preview, empty folder, and offline worker have distinct states with an appropriate next step. File previews and request status must always describe what the backend has confirmed.
+## Feedback, motion, and accessibility
 
-## Motion with a purpose
+Every file has a distinct loading, ready, empty, unsupported, and failed state. Show backend-confirmed job status and preserve draft text after failure. A last valid preview or query result may remain visible during refresh, with an honest progress or disconnected label. Do not imply a dispatched mutation was reversed when cancellation is merely requested.
 
-Motion should explain a state change and preserve orientation. Implement it through shared CSS variables and shadcn/Radix state attributes. Use CSS transitions for ordinary controls and overlays. Add a motion library only if a specific interaction cannot be expressed cleanly with these primitives; document the reason.
+Use CSS and Base UI state attributes for ordinary feedback. Keep transitions interruptible, name the properties being animated, and avoid `transition: all`. Prefer opacity and transforms; the bounded sidebar grid transition is a deliberate layout exception. Motion must not delay commands, move the current document anchor unexpectedly, or animate every newly loaded row. [Base UI animation guidance](https://base-ui.com/react/handbook/animation).
 
-| Interaction                   | Proposed duration | Behavior                                                                              |
-| ----------------------------- | ----------------- | ------------------------------------------------------------------------------------- |
-| Hover, press, focus treatment | 100–140ms         | Color/opacity change; a press may use at most a 1px offset                            |
-| Popover, menu, tooltip        | 120–160ms         | Small opacity/transform entrance with the correct transform origin                    |
-| Inspector or mobile sheet     | 180–220ms         | Short transform/opacity transition; focus moves after the panel becomes usable        |
-| Route/content change          | 160–220ms         | Brief crossfade or at most 8px movement; keep navigation and document controls stable |
-| Saved/success acknowledgement | 140–180ms         | Quiet icon or label transition, without blocking the next action                      |
+| Interaction                      | Duration  | Behavior                               |
+| -------------------------------- | --------- | -------------------------------------- |
+| Hover, press, focus              | 100–140ms | Color or opacity feedback              |
+| Menu and tooltip                 | 120–160ms | Small entrance with the correct origin |
+| Sidebar, inspector, mobile sheet | 180–220ms | Preserve orientation and focus         |
+| Save acknowledgement             | 140–180ms | Brief label or icon change             |
 
-Use `cubic-bezier(0.2, 0.8, 0.2, 1)` for entrances and `ease-out` for simple feedback. Animate transforms and opacity, avoiding repeated layout work across large document surfaces. Resizing follows the pointer immediately and has no smoothing lag. Virtualized lists should not animate every arriving row. Avoid perpetual decorative motion, bouncing panels, parallax, and shimmering loaders.
+Honor `prefers-reduced-motion: reduce`; state, focus, and live feedback must remain complete without animation. Use semantic links for navigation and buttons for actions. Preserve visible, unobscured focus, return it after dialogs close, label controls, and announce meaningful async updates politely. Test the whole keyboard path, not just individual components. These are the adapted interaction requirements from Vercel's [web interface guidelines](https://vercel.com/design/guidelines).
 
-Honor `prefers-reduced-motion: reduce`: remove travel and spring effects, disable automatic transitions, and apply state changes immediately or with a brief opacity change. Focus visibility, live status messages, and keyboard controls work with animation disabled. Announce meaningful async status with a polite live region; motion or color cannot be the only status signal. Avoid intercepting standard scroll and touch gestures.
+## Effect Atom boundaries
 
-Validate rapid repeated toggles, interruption midway through a panel animation, reduced-motion mode, and slower devices. An animation must not delay a command, hide a failure, clear a selection, or steal focus. Measure performance with a real multipage preview open.
+Views read feature atoms and send commands through runtime function atoms. One session registry owns the authenticated Confect client and its live reads. Keep shareable filters in the route URL, persisted panel preferences in their own Atom storage, and review drafts keyed by owner and source version through an Effect storage service. Use React refs for focus and geometry, and keep pure JSX straightforward.
 
-## Phone behavior
+Typed failures must lead to a useful action: restore a connection, open the latest version, correct the request, or retry when safe. Preserve the user's input and version context throughout. State management, theme changes, and panel motion must not create a second query cache or an extra client.
 
-At narrow widths, switch to a single content surface. Navigation moves into a Sheet, file preview takes the full width, and Review/Context/Agent open as full-height panels or drawers. Preserve the exact navigation names and inspector tabs. Use 44px touch targets and safe-area padding; keep the composer visible with the software keyboard open.
+## Verification and future work
 
-Pinch/scroll remain normal until annotation mode is selected. In annotation mode, a drag creates a box with handles and a clear Done/Cancel action. Do not treat every touch gesture as drawing. Delay heavy viewers until a file is opened; render only nearby pages/slides or visible sheet ranges.
+The September 8 theme and inspector checks verified loaded Geist fonts, Hugeicons, dark scrollbars, metadata-only Context, and a real PDF during pointer resizing. Keyboard resizing, saved width across reloads and routes, sidebar controls, and Base UI drawer focus/Escape behavior passed. At 900px the inspector clamped to available space; at 390px it became full width without a resize handle or horizontal overflow. The browser reported no console warnings or errors. `SETUP.md` records the measurements. The subsequent left-navigation check passed pointer/keyboard resizing, Escape cancellation, collapse/reopen/reload persistence, mobile handle removal, and independent inspector resizing through the shared hook. Remote iPhone access remains a deployment gate.
 
-## Visual and interaction acceptance
+Subsequent browser checks verified the 29-resource library, search, Tools filtering, skill links, company/project reset, keyboard sorting, the version menu, and the 390px layout. The viewer pass also verified Markdown Preview/Source, syntax colors across YAML/Python/JSON/HTML, and an explicit static HTML preview with retained inline styling, no scripts, and no network requests. At 390px, content stayed within the viewport and view controls remained 44px high. These browser checks used actual copied resources; hostile-input cases were exercised in unit tests rather than a malicious browser fixture. Continue checking new screens at desktop, compact desktop, and phone widths. Include font fallback, long filenames, active/hover/focus states, repeated toggles, reduced motion, empty results, failures, and worker-offline behavior. Prior checks established review-draft persistence and real Word/PDF and workbook previews; a new feature needs its own interaction evidence.
 
-Review light and dark screenshots at 1440×900, 1024×768, and a representative 390px-wide iPhone viewport. Judge hierarchy, font fallback, icon baseline, density, toolbar order, active/hover/focus states, and panel geometry against this contract. Use long filenames, mixed formats, unavailable previews, and real folder depth from the fake Drive. The wireframe establishes workflow coverage; the product design should improve clarity and comfort as actual content is introduced.
-
-Exercise keyboard navigation, focus restoration, Escape behavior, panel resizing, mobile selection, page zoom and comment positioning. Verify that opening the inspector does not create horizontal overflow, document text stays readable, and the keyboard does not hide Send. Check loading, empty, error, rendering, reconnecting, worker-offline, and instruction-conflict states using real labels.
-
-The connected shell has passed the local checks listed above. Broader acceptance requirements remain until exercised in the implemented UI. The local HTML plan is an illustrative document, not evidence that application features are complete.
-
-## Effect Atom state and command boundaries
-
-Keep application behavior out of JSX and event handlers. A view reads feature atoms and sends commands through runtime function atoms. A session-owned Atom registry supplies state and typed command outcomes. One Confect client feeds live reads into atoms through a schema-preserving adapter. Show typed missing-fact, revision-conflict, locked-file, and publication-conflict states with an action the user can take. Preserve draft text when a command fails. Cancellation displays a request until durable job state confirms completion; it does not imply a dispatched mutation was reversed.
-
-Use atoms for the inspector tab, annotation selection, preview zoom, panel preferences, draft editing, and derived submit state. Keep shareable filters in the route URL. Drafts persist through an Effect storage service, keyed by owner and source revision. Render async query/command states explicitly, with draft text and the last valid preview preserved when a refresh fails. Use React refs for focus and geometry.
+Page/cell annotations, full Office authoring, intake, new reports/invoices, the instruction editor, AI execution, and a light theme remain future capabilities. They must preserve version ownership and the original document. The visual plan includes labeled layout studies for some of these ideas; it is not evidence that they are implemented.

@@ -1,8 +1,8 @@
 {
-  "checkedAt": "2026-09-08T06:56:19.422344+00:00",
+  "checkedAt": "2026-09-08T16:11:55.593517+00:00",
   "htmlGenerated": true,
-  "uniqueIds": 39,
-  "localAnchorsValid": 14,
+  "uniqueIds": 40,
+  "localAnchorsValid": 15,
   "embeddedJavaScriptSyntaxValid": true,
   "oneStandaloneCopyPolicy": true,
   "copiedInputCheckpoint": {
@@ -19,8 +19,107 @@
     "eligiblePathAudit": "No omissions or extra fixtures"
   },
   "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
-  "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior.",
-  "applicationVerification": "Source checks clean; 80 TypeScript tests pass under Doppler, default CI passes 79 and skips 1 optional local-runtime check; 21 Python helper tests pass; configured Bun build and Doppler injection pass.",
+  "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior; application browser QA is recorded separately.",
+  "applicationVerification": "Vite+ checked 127 formatted files and 83 source files successfully. Full suite: 126 passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Production build passed with a lazy Shiki chunk size advisory (about 803 KB raw / 128 KB gzip).",
   "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
-  "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed."
+  "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed.",
+  "externalAssets": 0,
+  "designUpdate": {
+    "sourceSnapshot": "2026-09-08",
+    "direction": "Vercel/Geist neutral dark adaptation; Base UI shadcn base-nova; Hugeicons; T3 interaction contract preserved",
+    "planFonts": "Geist-first local stack with system fallback; no network requests",
+    "applicationFonts": "Self-hosted Geist Sans/Mono variable 5.3.0; package-index CSS with Unicode-range subsets",
+    "scope": "Plan verified statically; application theme and interaction QA completed separately by the root task."
+  },
+  "inspectorUpdate": {
+    "context": "File/source metadata only; removed client extracted-text panel and fetch",
+    "width": "Effect Atom persisted preference, default 330px, bounded 280\u2013560px and container; pointer/keyboard above 760px, full-width mobile",
+    "brand": "Compact HA mark and single-line HA Workspace label",
+    "scrollbars": "Neutral track/thumb theme with native scrolling",
+    "verification": "Root integrated-browser QA passed pointer/keyboard resizing, persistence, viewport clamping, full-width mobile behavior, and drawer focus. No console warnings or errors."
+  },
+  "themeBrowserVerification": {
+    "date": "2026-09-08",
+    "desktopViewportWidth": 1224,
+    "font": "Geist loaded",
+    "icons": "Hugeicons rendered",
+    "context": "Metadata-only; removed extracted-text panel absent",
+    "scrollbars": "Dark catalog scrollbar verified",
+    "pointerResize": "330 to 465px across PDF; drag shield removed on release",
+    "keyboardResize": "ArrowRight 449px, Home 280px, End 560px, Shift+ArrowRight 528px",
+    "persistence": "528px survived reload and catalog/document navigation",
+    "compactViewport": "900px viewport, 676px container, inspector clamped to 316px",
+    "mobileViewport": "390px, full-width inspector, no resize handle or horizontal overflow",
+    "drawer": "280px; focuses Companies; Escape restores Open navigation; navigation closes drawer",
+    "sidebar": "Click collapse and Ctrl+B expansion passed",
+    "console": "No warnings or errors",
+    "restoredState": "330px inspector, 1224px desktop viewport",
+    "limitations": "Local viewport checks; remote iPhone access remains unverified. No private filenames or screenshots stored."
+  },
+  "navigationResizeUpdate": {
+    "width": "Default 248px, bounds 220\u2013360px, available shell minus 360px cap with 220px floor",
+    "storage": "Independent Effect Atom preference ha-workspace.ui.sidebar-width.v1; retained during collapse",
+    "controls": "Expanded desktop above 760px only; right-edge drag; ArrowRight grows and ArrowLeft shrinks by 16px, Shift uses 32px, Home/End select bounds; shared pointer capture/cancel lifecycle",
+    "mobile": "Separate fixed 280px drawer unchanged",
+    "verification": "Root integrated-browser QA passed pointer and keyboard resizing, Escape cancellation, collapse/reopen/reload persistence, mobile handle removal, and independent inspector regression checks."
+  },
+  "navigationResizeBrowserVerification": {
+    "date": "2026-09-08",
+    "pointer": "248 to 328px; unfinished drag to 360px had zero-duration grid transition and an active shield; Escape restored 328px and removed shield",
+    "keyboard": "Home 220px, End 360px, Shift+ArrowLeft 328px",
+    "persistence": "Collapse removed handle; reopen and reload retained 328px",
+    "mobile": "390px; both resize handles absent and no horizontal overflow",
+    "inspectorRegression": "280 to 320 to 280px independently of 248px navigation; no browser errors",
+    "filters": "Catalog filters aligned on one row at 1280px",
+    "restoredState": "Left navigation 248px, desktop viewport; user inspector preference 280px preserved",
+    "limitations": "Local viewport checks only; remote iPhone access unverified"
+  },
+  "agentsLibraryUpdate": {
+    "resources": 29,
+    "byKind": {
+      "skill": 3,
+      "instruction": 2,
+      "reference": 11,
+      "tool": 8,
+      "configuration": 5
+    },
+    "copy": "16 missing support files copied additively and hash-verified; 3 existing SKILL.md files preserved",
+    "scope": "Authenticated read-only Agents library; search, kind filters, skill cards, highlighted Source, GFM Markdown Preview, explicit sanitized static HTML Preview, related support files, shared resizable metadata inspector, explicit Refresh",
+    "boundaries": "Approved copied paths only; bounded discovery and text previews, symlink/path rejection, task-owned/operational/credential-like name exclusions; no activation or execution and no Convex changes",
+    "state": "Shared Effect schemas and AgentLibraryStore. Browser read atoms use independent Atom.runtime(Layer.empty) in the existing registry; each read bootstraps the owner session, then authenticated HTTP; no Confect connection dependency.",
+    "selectionMenus": "Company, project, sort, and version migrated to shared Base UI Select",
+    "verification": "Browser library/menu checks passed: 29 resources, 3 skills, 8 Tools, guidance search, five related skill links, company/project reset, keyboard sort, version menu, 390px layout. Viewer browser checks and final source/test/build checks passed."
+  },
+  "agentViewerUpdate": {
+    "source": "Line-numbered Source with lazy scoped Shiki tokens for supported types; plain-text fallback for unknown format, excessive size/line length, or highlighting failure",
+    "markdown": "Defaults to Preview with GFM and highlighted code; raw HTML omitted, images replaced by labels, relative links navigate only to known related resources; external/unmatched links inert",
+    "html": "Defaults to Source; explicit DOMPurify-sanitized static Preview with restrictive CSP in an empty-sandbox iframe; no script execution/forms/active navigation or remote fetches",
+    "limits": "API 256 KiB source cap; highlighting/Markdown fallback above 100,000 characters, 3,000 lines, or a 3,000-character line; independent HTML preview size guard",
+    "readOnly": "Opening a resource never activates instructions or invokes tools",
+    "verification": "Real-resource browser pass completed; 18 unit security cases cover hostile inputs, but no malicious browser fixture was exercised."
+  },
+  "agentViewerBrowserVerification": {
+    "date": "2026-09-08",
+    "markdown": "Defaults to Preview; legible headings/lists/code and hidden frontmatter. Source: 78 lines, 5 colors, Geist Mono.",
+    "sourceLanguages": {
+      "yaml": "5 lines / 3 colors",
+      "python": "209 lines / 7 colors",
+      "json": "85 lines / 5 colors",
+      "html": "186 lines / 7 colors"
+    },
+    "html": "Defaults to Source. Explicit static Preview retained inline CSS; sandbox empty, no-referrer, restrictive CSP. Zero script elements and zero network requests observed during preview.",
+    "mobile": "390px Markdown view without horizontal overflow; controls 44px; no resize handles",
+    "dropdown": "Selection Check icon only; 14 options in scrollable panel, maximum height 384px, #111 background, about 8.4px radius; overlay artifact absent",
+    "backend": "Restored local backend; authenticated catalog again returned 7,225 files, 13 companies, 55 projects",
+    "securityScope": "Real copied resources tested in browser. Hostile inputs covered by 18 unit security cases; malicious browser fixture not exercised.",
+    "limits": "Remote iPhone access unverified; no private filenames or screenshots stored.",
+    "mobileDropdown": "At 390px: left 18px, right 210px, width 192px, height 384px, option height 44px; no horizontal overflow.",
+    "console": "Final browser logs: zero warnings and errors."
+  },
+  "agentHtmlTemplateUpdate": {
+    "scope": "HTML Preview only: an Unfilled template note appears for recognized @@PLACEHOLDER@@ tokens; the viewer does not fill them",
+    "metadata": "Preview-owned responsive viewport and allowlisted color-scheme metadata; inert fragment parsing retained",
+    "fidelity": "Full html/body root attributes are not preserved; static preview is not a full-fidelity page renderer",
+    "verification": "Confirmed follow-up: 23 HTML-preview tests including five metadata regression cases; full suite 126 passed and 1 optional local-runtime test skipped; production build passed. Earlier viewer/security records retain their historical counts."
+  }
 }

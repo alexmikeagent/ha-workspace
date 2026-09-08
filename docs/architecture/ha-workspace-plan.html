@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="The architecture and build plan for HA Workspace: local Convex, Bun, Effect Atom, a verified fake Drive, and a modern document review interface."
@@ -11,23 +12,45 @@
     <title>HA Workspace · Architecture plan</title>
     <style>
       :root {
-        --bg: #111314;
-        --rail: #141617;
-        --surface: #191c1e;
-        --raised: #202426;
-        --line: #303638;
-        --ink: #eef1ed;
-        --muted: #abb3af;
-        --quiet: #929c96;
-        --accent: #d5e8a2;
-        --green: #a8ceae;
-        --blue: #a9c5df;
-        --amber: #e5c595;
-        --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        --bg: #000000;
+        --rail: #0a0a0a;
+        --surface: #111111;
+        --raised: #1a1a1a;
+        --line: #292929;
+        --ink: #ededed;
+        --muted: #a1a1a1;
+        --quiet: #888888;
+        --accent: #ededed;
+        --green: #a1a1a1;
+        --blue: #52a8ff;
+        --amber: #f5a623;
+        --mono:
+          "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+        --sans:
+          "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          sans-serif;
+        --focus: #52a8ff;
+        color-scheme: dark;
       }
       * {
         box-sizing: border-box;
+        scrollbar-color: #454545 var(--bg);
+        scrollbar-width: thin;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #454545;
+        border: 2px solid var(--bg);
+        border-radius: 8px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #666666;
       }
       html {
         scroll-behavior: smooth;
@@ -59,7 +82,7 @@
       button:focus-visible,
       a:focus-visible,
       summary:focus-visible {
-        outline: 2px solid var(--accent);
+        outline: 2px solid var(--focus);
         outline-offset: 5px;
       }
       button {
@@ -94,7 +117,7 @@
         display: block;
       }
       ::selection {
-        background: #d5e8a238;
+        background: #52a8ff40;
         color: var(--ink);
       }
       [hidden] {
@@ -113,6 +136,8 @@
         top: 10px;
       }
       .rail {
+        overflow-y: auto;
+        overscroll-behavior: contain;
         width: 222px;
         position: fixed;
         inset: 0 auto 0 0;
@@ -124,6 +149,7 @@
         z-index: 10;
       }
       .brand {
+        white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 11px;
@@ -132,14 +158,15 @@
         letter-spacing: -0.2px;
       }
       .brandmark {
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 24px;
+        flex: none;
         display: grid;
         place-items: center;
-        border: 1px solid #758064;
-        border-radius: 9px;
+        border: 1px solid #454545;
+        border-radius: 6px;
         color: var(--accent);
-        font: 12px var(--mono);
+        font: 500 12px var(--sans);
       }
       .brand small {
         display: block;
@@ -148,9 +175,7 @@
         margin-top: 5px;
       }
       .rail-label {
-        font: 10px var(--mono);
-        letter-spacing: 1.4px;
-        text-transform: uppercase;
+        font: 10px var(--sans);
         color: var(--quiet);
         margin: 53px 10px 12px;
       }
@@ -168,7 +193,7 @@
         font-size: 13px;
       }
       .nav a span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
       }
       .nav a:hover {
@@ -176,7 +201,7 @@
         color: var(--ink);
       }
       .nav a[aria-current="true"] {
-        background: #d5e8a20c;
+        background: #ededed0c;
         color: var(--accent);
       }
       .nav a[aria-current="true"] span {
@@ -216,11 +241,10 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 42px;
-        background: #111314ed;
+        background: var(--bg);
         position: sticky;
         top: 0;
         z-index: 8;
-        backdrop-filter: blur(12px);
         font-size: 12px;
       }
       .crumb {
@@ -239,7 +263,7 @@
         border: 1px solid var(--line);
         border-radius: 99px;
         padding: 3px 10px;
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--muted);
         white-space: nowrap;
       }
@@ -276,10 +300,8 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        font: 11px var(--mono);
-        letter-spacing: 1px;
+        font: 11px var(--sans);
         color: var(--accent);
-        text-transform: uppercase;
       }
       .eyebrow:before {
         content: "";
@@ -311,7 +333,7 @@
         flex-wrap: wrap;
         gap: 24px;
         margin-top: 31px;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       .meta-row span {
@@ -330,15 +352,13 @@
         align-items: center;
         gap: 22px;
         padding: 20px 23px;
-        background: #d5e8a207;
-        border: 1px solid #d5e8a223;
+        background: #ededed07;
+        border: 1px solid #ededed23;
         border-radius: 10px;
         margin-top: 36px;
       }
       .decision .label {
-        font: 10px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
+        font: 10px var(--sans);
         color: var(--accent);
         white-space: nowrap;
       }
@@ -358,7 +378,7 @@
         height: 24px;
         flex: none;
         color: var(--accent);
-        border: 1px solid #d5e8a244;
+        border: 1px solid #ededed44;
         display: grid;
         place-items: center;
         border-radius: 50%;
@@ -377,7 +397,7 @@
         margin-bottom: 28px;
       }
       .section-number {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 11px;
@@ -392,7 +412,7 @@
         padding-top: 25px;
       }
       .section-heading .tag {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         white-space: nowrap;
         padding-top: 33px;
@@ -414,7 +434,7 @@
         justify-content: space-between;
         padding: 15px 22px;
         border-bottom: 1px solid var(--line);
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       .map-header span:first-child {
@@ -424,8 +444,6 @@
         position: relative;
         padding: 25px;
         isolation: isolate;
-        background-image: radial-gradient(#ffffff09 0.8px, transparent 0.8px);
-        background-size: 18px 18px;
       }
       .map-grid {
         display: grid;
@@ -446,8 +464,8 @@
       .map-node {
         position: relative;
         text-align: left;
-        background: #1e2223;
-        border: 1px solid #3b4244;
+        background: #111111;
+        border: 1px solid #292929;
         padding: 18px;
         border-radius: 9px;
         min-height: 107px;
@@ -456,19 +474,16 @@
           border-color 0.15s;
       }
       .map-node:hover {
-        background: #242a2b;
-        border-color: #727d75;
+        background: #1a1a1a;
+        border-color: #454545;
       }
       .map-node[aria-pressed="true"] {
-        background: #252c25;
-        border-color: #91a56f;
-        box-shadow: 0 0 0 3px #d5e8a208;
+        background: #1f1f1f;
+        border-color: #888888;
       }
       .map-node .node-label {
         display: block;
-        font: 9px var(--mono);
-        letter-spacing: 0.7px;
-        text-transform: uppercase;
+        font: 9px var(--sans);
         color: var(--quiet);
         margin-bottom: 10px;
       }
@@ -487,7 +502,7 @@
         position: absolute;
         right: 13px;
         top: 12px;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       #node-client {
@@ -542,7 +557,7 @@
         gap: 25px;
         padding: 22px 25px;
         min-height: 126px;
-        background: #171a1b;
+        background: #0a0a0a;
       }
       .node-detail h3 {
         font-size: 14px;
@@ -553,7 +568,7 @@
         max-width: 690px;
       }
       .node-detail .detail-cap {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--accent);
         display: block;
         margin-bottom: 7px;
@@ -586,7 +601,7 @@
         display: grid;
         place-items: center;
         border-radius: 8px;
-        font: 13px var(--mono);
+        font: 13px var(--sans);
         color: var(--accent);
       }
       .stack-row h3 {
@@ -598,12 +613,12 @@
         max-width: 280px;
       }
       .version {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         padding-top: 3px;
       }
       .repo {
-        background: #171a1b;
+        background: #0a0a0a;
         border: 1px solid var(--line);
         border-radius: 10px;
         padding: 23px;
@@ -640,14 +655,14 @@
         gap: 14px;
         align-items: start;
         margin-top: 24px;
-        background: #e5c59507;
-        border: 1px solid #e5c59520;
+        background: #f5a62307;
+        border: 1px solid #f5a62320;
         padding: 17px 19px;
         border-radius: 8px;
       }
       .compatibility span {
         color: var(--amber);
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         padding-top: 3px;
         white-space: nowrap;
       }
@@ -673,7 +688,7 @@
         border-right: 0;
       }
       .flow-stage .count {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 19px;
@@ -693,7 +708,7 @@
         background: var(--raised);
       }
       .flow-stage[aria-pressed="true"] {
-        background: #d5e8a212;
+        background: #ededed12;
       }
       .flow-stage[aria-pressed="true"] .count {
         color: var(--accent);
@@ -723,9 +738,9 @@
         padding: 18px 0;
       }
       .format b {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         display: inline-block;
-        border: 1px solid #4b5252;
+        border: 1px solid #454545;
         border-radius: 5px;
         padding: 5px 8px;
         margin-bottom: 14px;
@@ -740,8 +755,8 @@
       }
       .boundary {
         padding: 18px 20px;
-        border-left: 2px solid #748864;
-        background: #d5e8a206;
+        border-left: 2px solid #888888;
+        background: #ededed06;
         margin-top: 15px;
         font-size: 13px;
       }
@@ -754,7 +769,7 @@
         padding: 19px;
         border: 1px solid var(--line);
         border-radius: 9px;
-        background: #171a1b;
+        background: #0a0a0a;
       }
       .model-group h3 {
         font-size: 14px;
@@ -777,7 +792,7 @@
         flex: 1;
       }
       .mock {
-        border: 1px solid #404646;
+        border: 1px solid #333333;
         border-radius: 11px;
         background: #212121;
         overflow: hidden;
@@ -794,7 +809,7 @@
       }
       .mock-top .mock-controls {
         letter-spacing: 10px;
-        color: #b7bcb6;
+        color: #b3b3b3;
       }
       .mock-body {
         display: grid;
@@ -842,7 +857,7 @@
         color: #bbb;
       }
       .paper {
-        background: #f9f9f6;
+        background: #ffffff;
         color: #333;
         width: 72%;
         max-width: 300px;
@@ -853,7 +868,6 @@
       }
       .paper-brand {
         font-size: 10px;
-        letter-spacing: 0.3px;
         font-weight: 600;
       }
       .paper-title {
@@ -869,7 +883,7 @@
       }
       .paper-line {
         height: 3px;
-        background: #d2d4cf;
+        background: #d4d4d4;
         margin: 7px 0;
         width: 100%;
       }
@@ -895,7 +909,7 @@
         height: 16px;
         display: grid;
         place-items: center;
-        font: 8px var(--mono);
+        font: 8px var(--sans);
       }
       .mock-inspector {
         padding: 15px;
@@ -1030,13 +1044,13 @@
         border-radius: 50%;
         display: grid;
         place-items: center;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
         background: var(--bg);
         z-index: 1;
       }
       .phase:first-child .phase-num {
-        border-color: #9aad79;
+        border-color: #888888;
         color: var(--accent);
       }
       .phase details {
@@ -1062,7 +1076,7 @@
         letter-spacing: -0.25px;
       }
       .phase summary .phase-status {
-        font: 9px var(--mono);
+        font: 9px var(--sans);
         color: var(--quiet);
         border: 1px solid var(--line);
         border-radius: 4px;
@@ -1070,7 +1084,7 @@
       }
       .phase summary:after {
         content: "+";
-        font: 17px var(--mono);
+        font: 17px var(--sans);
         color: var(--quiet);
         grid-column: 2;
         grid-row: 1;
@@ -1096,7 +1110,7 @@
       }
       .accept span {
         color: var(--accent);
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         display: block;
         margin-bottom: 5px;
       }
@@ -1117,7 +1131,7 @@
         gap: 12px;
       }
       .decision-list .mark {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--accent);
         padding-top: 3px;
       }
@@ -1150,7 +1164,7 @@
       }
       .appendix details > summary:after {
         content: "+";
-        font: 16px var(--mono);
+        font: 16px var(--sans);
         color: var(--quiet);
       }
       .appendix details[open] > summary:after {
@@ -1189,7 +1203,7 @@
       }
       .appendix-content pre {
         padding: 19px;
-        background: #191c1e;
+        background: #111111;
         border: 1px solid var(--line);
         border-radius: 6px;
         overflow: auto;
@@ -1223,9 +1237,7 @@
         color: var(--ink);
       }
       .appendix-divider {
-        font: 10px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font: 10px var(--sans);
         color: var(--quiet);
         padding: 27px 4px 17px;
       }
@@ -1237,7 +1249,7 @@
       .source-grid a {
         font-size: 12px;
         padding: 13px 15px;
-        background: #191c1e;
+        background: #111111;
         border: 1px solid var(--line);
         border-radius: 7px;
         display: flex;
@@ -1315,8 +1327,8 @@
           font-size: 12px;
         }
         .brandmark {
-          width: 28px;
-          height: 28px;
+          width: 30px;
+          height: 22px;
         }
         .frame {
           margin-left: 168px;
@@ -1771,13 +1783,13 @@
       @media print {
         :root {
           --bg: #fff;
-          --surface: #f1f2f0;
-          --raised: #e9ece8;
-          --line: #d2d6d0;
-          --ink: #161b16;
-          --muted: #444b43;
-          --quiet: #535e50;
-          --accent: #405425;
+          --surface: #f5f5f5;
+          --raised: #ededed;
+          --line: #d4d4d4;
+          --ink: #171717;
+          --muted: #444444;
+          --quiet: #555555;
+          --accent: #171717;
           --blue: #2a5071;
         }
         body {
@@ -1789,15 +1801,15 @@
         .node-detail,
         .repo,
         .model-group {
-          background: #f2f4f0;
-          color: #161b16;
+          background: #f5f5f5;
+          color: #171717;
         }
         .mock {
           color: #ececec;
         }
         .compatibility,
         .boundary {
-          background: #f3f4ef;
+          background: #f5f5f5;
         }
         .rail,
         .topbar,
@@ -1824,7 +1836,7 @@
           font-size: 38px;
         }
         .hero h1 em {
-          color: #405425;
+          color: #171717;
         }
         .section {
           break-inside: avoid;
@@ -1874,10 +1886,8 @@
       .runtime-strip span,
       .choice-label {
         display: block;
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--accent);
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
         margin-bottom: 11px;
       }
       .runtime-strip h3 {
@@ -1892,9 +1902,9 @@
         grid-template-columns: 1.2fr 0.8fr;
         gap: 30px;
         padding: 26px;
-        border: 1px solid #d5e8a230;
+        border: 1px solid #ededed30;
         border-radius: 12px;
-        background: #d5e8a207;
+        background: #ededed07;
       }
       .architecture-choice h3 {
         font-size: 20px;
@@ -1912,7 +1922,7 @@
         flex-wrap: wrap;
       }
       .feature-tags span {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         padding: 9px 12px;
         border: 1px solid var(--line);
         border-radius: 6px;
@@ -1928,7 +1938,7 @@
       }
       .dependency-map > b {
         color: var(--quiet);
-        font: 22px var(--mono);
+        font: 22px var(--sans);
         text-align: center;
       }
       .dependency-layer {
@@ -1939,9 +1949,7 @@
         background: var(--surface);
       }
       .dependency-layer span {
-        font: 9px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
+        font: 9px var(--sans);
         color: var(--quiet);
       }
       .dependency-layer h3 {
@@ -1952,8 +1960,8 @@
         font-size: 12px;
       }
       .dependency-layer.core {
-        border-color: #697b51;
-        background: #d5e8a20a;
+        border-color: #666666;
+        background: #ededed0a;
       }
       .dependency-layer.core span {
         color: var(--accent);
@@ -1984,7 +1992,7 @@
         padding-top: 17px;
       }
       .effect-principles span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
       }
       .effect-principles h4 {
@@ -2003,7 +2011,7 @@
         min-width: 0;
         border: 1px solid var(--line);
         border-radius: 11px;
-        background: #171b1c;
+        background: #0a0a0a;
         overflow: hidden;
       }
       .code-title {
@@ -2025,7 +2033,7 @@
         overflow: auto;
         font-size: 11px;
         line-height: 1.9;
-        color: #d6ddcc;
+        color: #d4d4d4;
         tab-size: 2;
       }
       .code-window pre code {
@@ -2102,7 +2110,7 @@
       }
       .durability li {
         padding-left: 18px;
-        border-left: 2px solid #657754;
+        border-left: 2px solid #666666;
       }
       .durability b {
         display: block;
@@ -2223,11 +2231,11 @@
         .code-window,
         .durability,
         .feature-tags span {
-          background: #f1f2ef;
-          color: #161b16;
+          background: #f5f5f5;
+          color: #171717;
         }
         .code-window pre {
-          color: #161b16;
+          color: #171717;
         }
         .code-study,
         .durability {
@@ -2254,14 +2262,12 @@
         background: var(--surface);
       }
       .atom-path .atom-owner {
-        border-color: #889b69;
-        background: #d5e8a20c;
+        border-color: #888888;
+        background: #ededed0c;
       }
       .atom-path span {
         display: block;
-        font: 9px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
+        font: 9px var(--sans);
         color: var(--quiet);
         margin-bottom: 10px;
       }
@@ -2303,7 +2309,7 @@
         margin-top: 23px;
       }
       .atom-note > span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         white-space: nowrap;
         color: var(--accent);
         padding-top: 4px;
@@ -2332,7 +2338,7 @@
       @media print {
         .atom-path > div,
         .atom-path .atom-owner {
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
       }
 
@@ -2347,12 +2353,10 @@
         min-width: 0;
       }
       .setup-label {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
       }
       .setup-grid h3 {
         font-size: 20px;
@@ -2392,10 +2396,8 @@
       }
       .drive-path small {
         display: block;
-        font: 9px var(--mono);
+        font: 9px var(--sans);
         color: var(--quiet);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
       .drive-path strong {
         display: block;
@@ -2436,7 +2438,7 @@
         margin: 22px 0;
       }
       .motion-timings b {
-        font: 20px var(--mono);
+        font: 20px var(--sans);
         font-weight: 400;
         color: var(--accent);
         display: block;
@@ -2457,7 +2459,7 @@
         height: 175px;
         border: 1px solid var(--line);
         border-radius: 9px;
-        background: #1c2023;
+        background: #111111;
         position: relative;
         overflow: hidden;
       }
@@ -2468,18 +2470,18 @@
         width: 47%;
         height: 150px;
         padding: 24px 16px;
-        background: #edf0ea;
+        background: #ffffff;
         box-shadow: 0 2px 10px #0003;
       }
       .motion-page i {
         height: 3px;
         display: block;
-        background: #c6cdc4;
+        background: #cccccc;
         margin-bottom: 11px;
       }
       .motion-page i:first-child {
         width: 60%;
-        background: #939f90;
+        background: #999999;
         margin-bottom: 21px;
       }
       .motion-pane {
@@ -2488,8 +2490,8 @@
         inset-block: 0;
         width: 42%;
         padding: 15px;
-        background: #16191b;
-        border-left: 1px solid #3a4541;
+        background: #000000;
+        border-left: 1px solid #292929;
         transform: translateX(14px);
         opacity: 0;
         transition:
@@ -2506,7 +2508,7 @@
         display: block;
         width: 95%;
         height: 3px;
-        background: #3d4a44;
+        background: #333333;
         margin-bottom: 8px;
       }
       .motion-pane > i:nth-child(3) {
@@ -2520,7 +2522,7 @@
         left: 10px;
         right: 10px;
         padding: 10px 8px;
-        border: 1px solid #38423c;
+        border: 1px solid #333333;
         border-radius: 8px;
       }
       .motion-preview[data-open="true"] .motion-pane {
@@ -2592,12 +2594,12 @@
       @media print {
         .motion-preview,
         .drive-path {
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
         .motion-pane {
           transform: none;
           opacity: 1;
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
         .motion-button {
           display: none;
@@ -2612,8 +2614,7 @@
     <a class="skip" href="#main">Skip to plan</a>
     <aside class="rail" id="rail">
       <a class="brand" href="#overview"
-        ><span class="brandmark">HA</span
-        ><span>HA Workspace<small>Architecture &amp; design</small></span></a
+        ><span class="brandmark">HA</span><span>HA Workspace</span></a
       >
       <div class="rail-label">The plan</div>
       <nav class="nav" aria-label="Plan sections">
@@ -2625,13 +2626,14 @@
         <a href="#workflow"><span>04</span>Document workflow</a>
         <a href="#data"><span>05</span>Data model</a>
         <a href="#interface"><span>06</span>Interface</a>
-        <a href="#roadmap"><span>07</span>Build sequence</a>
-        <a href="#details"><span>08</span>Engineering notes</a>
+        <a href="#agent-library"><span>07</span>Agents library</a>
+        <a href="#roadmap"><span>08</span>Build sequence</a>
+        <a href="#details"><span>09</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
         <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
-        Foundation in progress<br />Updated September 8, 2026
+        Connected local prototype<br />Updated September 8, 2026
       </div>
     </aside>
     <div class="frame">
@@ -2664,7 +2666,7 @@
       </header>
       <main class="content" id="main">
         <section class="hero" id="overview" aria-labelledby="title">
-          <div class="eyebrow">Personal software / HA Consulting</div>
+          <div class="eyebrow">HA Consulting / Architecture plan</div>
           <h1>A workspace for your files.<br /><em>A faster way to review.</em></h1>
           <p class="intro">
             Keep company files and templates in one place. Open a document, point to what needs
@@ -2755,7 +2757,7 @@
         <section class="section" id="architecture">
           <div class="section-heading">
             <div>
-              <span class="section-number">01 / Architecture</span>
+              <span class="section-number">Architecture</span>
               <h2>Where each part runs</h2>
             </div>
             <p>
@@ -2780,7 +2782,7 @@
                     markerHeight="5"
                     orient="auto-start-reverse"
                   >
-                    <path d="M0 0 10 5 0 10" fill="#69776a" />
+                    <path d="M0 0 10 5 0 10" fill="#666666" />
                   </marker>
                 </defs>
                 <g id="wires"></g>
@@ -2845,7 +2847,7 @@
         <section class="section" id="stack">
           <div class="section-heading">
             <div>
-              <span class="section-number">02 / Foundation</span>
+              <span class="section-number">Foundation</span>
               <h2>A small Bun monorepo</h2>
             </div>
             <p>
@@ -2878,14 +2880,14 @@
                 <div class="stack-logo">T</div>
                 <div>
                   <h3>TanStack Start</h3>
-                  <p>Routes and the server shell. Start from shadcn's monorepo template.</p>
+                  <p>Routes and the server shell. Use the established shadcn monorepo structure.</p>
                 </div>
                 <span class="version">1.168.50</span>
               </div>
               <div class="stack-row">
                 <div class="stack-logo">/</div>
                 <div>
-                  <h3>shadcn + Tailwind</h3>
+                  <h3>Base UI + shadcn</h3>
                   <p>Accessible components with shared colors, spacing, and typography.</p>
                 </div>
                 <span class="version">4.21.0 / 4.3.3</span>
@@ -2975,9 +2977,10 @@ bun.lock</pre>
               Bun <code>1.4.2</code> is the latest stable release checked for this plan, following
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
-              declares Node tooling. The configured production build passes. A recorded verification
-              pass includes 80 TypeScript tests under Doppler and 21 Python document-helper tests.
-              Default CI runs 79 TypeScript tests and skips one optional local-runtime check.
+              declares Node tooling. The configured production build passes. The latest source suite
+              passes 126 TypeScript tests and skips one optional local-runtime check. That optional
+              test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
+              tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
                 >Bun release notes ↗</a
               >
@@ -2988,7 +2991,7 @@ bun.lock</pre>
         <section class="section" id="effect-architecture">
           <div class="section-heading">
             <div>
-              <span class="section-number">03 / Architecture decision</span>
+              <span class="section-number">Architecture decision</span>
               <h2>One product. Clear boundaries.</h2>
             </div>
             <p>
@@ -3185,8 +3188,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div>
                 <h4>Runtime function atoms</h4>
                 <p>
-                  Request a revision, save instructions, or cancel a job. Pending, success, and
-                  typed failures stay visible.
+                  Request a revision, save a comment, or cancel a job. Pending, success, and typed
+                  failures stay visible.
                 </p>
               </div>
               <div>
@@ -3259,7 +3262,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
         <section class="section" id="workflow">
           <div class="section-heading">
             <div>
-              <span class="section-number">04 / The review loop</span>
+              <span class="section-number">The review loop</span>
               <h2>From a file to its next revision</h2>
             </div>
             <p>
@@ -3273,8 +3276,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               ><small>Company &amp; project</small>
             </button>
             <button class="flow-stage" data-step="1" aria-pressed="false">
-              <span class="count">02</span><strong>Read the context</strong
-              ><small>Source excerpts</small>
+              <span class="count">02</span><strong>Check the source</strong
+              ><small>File &amp; source details</small>
             </button>
             <button class="flow-stage" data-step="2" aria-pressed="false">
               <span class="count">03</span><strong>Request a change</strong
@@ -3292,8 +3295,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           <div class="flow-caption" aria-live="polite">
             <h3 id="step-title">Choose the right source</h3>
             <p id="step-description">
-              Open an indexed company or project file. Preview a specific version, read its source
-              context, and keep the original within reach.
+              Open an indexed company or project file. Preview a specific version, check its source
+              details, and keep the original within reach.
             </p>
           </div>
           <div class="format-grid">
@@ -3340,7 +3343,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
         <section class="section" id="data">
           <div class="section-heading">
             <div>
-              <span class="section-number">05 / Durable context</span>
+              <span class="section-number">Durable context</span>
               <h2>Keep the facts with the work</h2>
             </div>
             <p>
@@ -3383,31 +3386,37 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
         <section class="section" id="interface">
           <div class="section-heading">
             <div>
-              <span class="section-number">06 / Interface direction</span>
+              <span class="section-number">Interface direction</span>
               <h2>Familiar controls, room to read</h2>
             </div>
             <p>
-              The wireframe guides the workflow. The connected app adds T3-style fully collapsible
-              navigation, quiet controls, persistent Atom state, and reduced-motion support.
+              The wireframe guides the workflow. Vercel-inspired neutral surfaces, Geist typography,
+              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. Rounded
+              selection menus fit the viewport and scroll locally. The T3-style sidebar keeps its
+              saved state and reduced-motion support.
             </p>
           </div>
           <p class="footnote">
-            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
-            preference, and a separate mobile Sheet. The layout study below also illustrates future
-            annotations and instruction editing.
+            Both desktop edges support drag and keyboard resizing, with separate saved Atom widths.
+            Navigation starts at 248px (220–360px); the inspector starts at 330px (280–560px), with
+            available space limiting each. Sidebar collapse preserves its width, Ctrl/Cmd+B stays
+            available, and mobile uses an independent 280px navigation Sheet. The layout study below
+            also illustrates future annotations and instruction editing.
           </p>
           <div
             class="mock"
             aria-label="Illustrative desktop layout, not the implemented application"
           >
             <div class="mock-top">
-              <span>HA Consulting / Reports / DSAI</span><span class="mock-controls">↓ ··· ▥</span>
+              <span>HA Consulting / Reports / Example project</span
+              ><span class="mock-controls">↓ ··· ▥</span>
             </div>
             <div class="mock-body">
               <div class="mock-nav">
                 <div class="mock-brand">HA Consulting</div>
                 <span>Companies</span><span class="selected">Reports</span><span>Invoices</span
-                ><span>Templates</span><small>Recent files</small><span>DSAI</span><span>IAD5</span>
+                ><span>Templates</span><span>Agents</span><small>Recent files</small
+                ><span>Example project</span><span>Recent report</span>
               </div>
               <div class="mock-preview">
                 <div class="mock-preview-bar">
@@ -3501,13 +3510,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             </div>
           </div>
           <p class="footnote">
-            Layout study. Inspector tabs are interactive; the document is a diagram of the proposed
-            review surface.
+            Layout study. Inspector tabs are interactive; the document shows future review tools.
+            The plan uses locally available Geist or a system fallback and makes no font requests.
+            The application bundles its own Geist fonts.
           </p>
           <div class="design-metrics">
             <div>
               <b>248<small>px</small></b
-              ><span>Proposed sidebar width</span>
+              ><span>Default sidebar width</span>
             </div>
             <div>
               <b>14<small>px</small></b
@@ -3519,22 +3529,22 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             </div>
             <div>
               <b>44<small>px</small></b
-              ><span>Proposed touch targets</span>
+              ><span>Touch target size</span>
             </div>
           </div>
           <div class="design-bottom">
             <div class="design-note">
-              <div class="palette" aria-label="Proposed neutral palette">
-                <span class="swatch" style="background: #111416" title="Sidebar #111416"></span
-                ><span class="swatch" style="background: #16191b" title="Main #16191b"></span
-                ><span class="swatch" style="background: #1c2023" title="Preview #1c2023"></span
-                ><span class="swatch" style="background: #282f31" title="Selected #282f31"></span
-                ><span class="swatch" style="background: #edf1ed" title="Text #edf1ed"></span>
+              <div class="palette" aria-label="Adopted neutral dark palette">
+                <span class="swatch" style="background: #0a0a0a" title="Sidebar #0a0a0a"></span
+                ><span class="swatch" style="background: #000000" title="Main #000000"></span
+                ><span class="swatch" style="background: #111111" title="Preview #111111"></span
+                ><span class="swatch" style="background: #1f1f1f" title="Selected #1f1f1f"></span
+                ><span class="swatch" style="background: #ededed" title="Text #ededed"></span>
               </div>
               <p>
-                Use system fonts, one outline icon set, and semantic color tokens. Group related
-                controls with spacing and fine dividers. The finished interface has its own visual
-                system.
+                Geist Sans for the interface, Mono for code and identifiers. Base UI through shadcn
+                base-nova, with Hugeicons and a neutral dark palette. Use spacing and fine dividers
+                to group controls. Keep color for focus and meaningful state.
               </p>
             </div>
             <p>
@@ -3589,10 +3599,67 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           </div>
         </section>
 
+        <section class="section" id="agent-library">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Agents library</span>
+              <h2>The files behind the workflow</h2>
+            </div>
+            <p>
+              Read the skills and project guidance retained in the local Drive copy. Search the
+              library, open the original source text, and follow the files a skill depends on.
+            </p>
+          </div>
+          <div class="setup-grid">
+            <article>
+              <span class="setup-label">Current resource checkpoint</span>
+              <h3>29 resources</h3>
+              <p>3 skills, 2 guidance files, 11 references, 8 tools, and 5 configuration files.</p>
+            </article>
+            <article>
+              <span class="setup-label">Copy preserved</span>
+              <h3>16 files added</h3>
+              <p>
+                Missing support files were copied and hash-verified. The three existing skill
+                entrypoints stayed unchanged.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Available to read</span>
+              <h3>Review before use</h3>
+              <p>
+                Opening guidance does not activate it or execute tools. The revision worker
+                continues to use its built-in rules.
+              </p>
+            </article>
+          </div>
+          <div class="model-caption">
+            <p>
+              Source shows syntax colors and line numbers, with plain-text fallback. Markdown opens
+              in a formatted Preview with known-resource links. HTML starts in Source; Preview is an
+              explicit, sanitized static view inside an isolated iframe. Related resources and
+              metadata stay in the shared resizable inspector.
+            </p>
+            <p>
+              Read-only HTTP atoms bootstrap the local owner session for each request, independently
+              of Confect. Refresh retries a failed startup and discovers newly copied allowed
+              resources. Source code never executes; previews cannot activate instructions. No
+              Convex changes or copied source content enter the repository.
+            </p>
+          </div>
+          <p class="footnote">
+            Browser checks passed for the library, search, filters, related links, the four Base UI
+            dropdowns, and the 390px layout. Markdown and highlighted Source passed across real
+            resources. Static HTML Preview retained inline styling with zero network requests and no
+            scripts. Hostile inputs have unit-test coverage; no malicious browser fixture was run.
+            Runtime activation and instruction editing remain future workflows.
+          </p>
+        </section>
+
         <section class="section" id="roadmap">
           <div class="section-heading">
             <div>
-              <span class="section-number">07 / Build sequence</span>
+              <span class="section-number">Build sequence</span>
               <h2>Prove the review loop first</h2>
             </div>
             <p>
@@ -3628,13 +3695,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </summary>
                 <p>
                   Company/project files, category filters, search, sorting, versions, and source
-                  context share one clear workspace. The T3-inspired sidebar fully collapses and
-                  remembers its state.
+                  metadata share one clear workspace. The T3-inspired sidebar fully collapses and
+                  remembers its width and open state. Both desktop sidebars resize with pointer or
+                  keyboard input. Mobile keeps a separate navigation drawer and full-width
+                  inspector.
                 </p>
                 <div class="accept">
-                  <span>Checked</span>Desktop controls and the local 390 × 844 mobile viewport work.
-                  The mobile Sheet is independent; reduced-motion preferences remove panel travel.
-                  Remote iPhone use remains a separate gate.
+                  <span>Checked</span>Geist, Hugeicons, and dark scrollbars verified. Inspector
+                  drag, keyboard controls, saved width, and 900px clamping pass. At 390px it fills
+                  the viewport without overflow; the mobile drawer restores focus. Remote iPhone use
+                  remains a separate gate.
                 </div>
               </details>
             </div>
@@ -3651,8 +3721,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <div class="accept">
                   <span>Checked</span>Browser checks covered a real three-page Word/PDF, a bounded
-                  workbook grid, extracted context, search results, and draft persistence. Rich
-                  page/cell annotations are still planned.
+                  workbook grid, search results, and draft persistence. The inspector now shows
+                  source metadata, with the earlier extracted-text panel removed. Rich page/cell
+                  annotations are still planned.
                 </div>
               </details>
             </div>
@@ -3679,12 +3750,13 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Generate reports and connect skills</h3>
+                  <h3>Generate reports and activate instructions</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add template-aware intake and generation with the general/Dulles rules, followed
-                  by a replaceable agent runtime and versioned instruction editor.
+                  The copied skills are already available to read in Agents. Add template-aware
+                  intake and generation with the general/Dulles rules, then a replaceable runtime
+                  and explicit, versioned instruction activation.
                 </p>
                 <div class="accept">
                   <span>Ready when</span>Missing facts are collected once; client/template authority
@@ -3740,7 +3812,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
         <section class="section" id="details">
           <div class="section-heading">
             <div>
-              <span class="section-number">08 / Engineering notes</span>
+              <span class="section-number">Engineering notes</span>
               <h2>The details behind the diagrams</h2>
             </div>
           </div>
@@ -3759,9 +3831,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="appendix-content">
                 <p>
                   Updated September 8, 2026. The local workspace is connected: real files,
-                  company/project views, previews, downloads, source context, versioned comments,
-                  and bounded revision jobs. The remaining work is to broaden document workflows and
-                  verify remote access, rather than connect an empty shell.
+                  company/project views, previews, downloads, file/source metadata, versioned
+                  comments, and bounded revision jobs. The remaining work is to broaden document
+                  workflows and verify remote access, rather than connect an empty shell.
                 </p>
               </div>
             </details>
@@ -3870,10 +3942,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   projects; later imports can change these counts.
                 </p>
                 <p>
-                  A file opens its version chooser, preview, original download, and source context.
-                  PDF and images are shown directly; DOCX/PPTX use local PDF conversion; workbooks
-                  have bounded read-only grids; supported text has a readable preview. Extraction is
-                  not an AI interpretation or contract approval. Missing, unsupported, locked,
+                  A file opens its version chooser, preview, original download, and file/source
+                  metadata. PDF and images are shown directly; DOCX/PPTX use local PDF conversion;
+                  workbooks have bounded read-only grids; supported text has a readable preview. The
+                  Context inspector is metadata-only; extracted source text was removed from that
+                  panel. Backend extraction still supports document tooling and validation, without
+                  implying AI interpretation or contract approval. Missing, unsupported, locked,
                   oversized, and failed previews keep their own states.
                 </p>
                 <p>
@@ -3894,10 +3968,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <p>
                   The sidebar fully collapses off canvas and remembers its state through a
-                  schema-backed Atom preference. Its top-left button remains available; Ctrl/Cmd+B
+                  schema-backed Atom preference. Desktop width is independently saved: 248px by
+                  default, bounded to 220 to 360px and the available viewport. Its right-edge
+                  separator supports dragging and keyboard resizing while expanded. Collapsing
+                  retains the chosen width. Its top-left button remains available; Ctrl/Cmd+B
                   toggles it outside text inputs. Mobile navigation uses a separate Sheet.
-                  Reduced-motion settings remove panel travel and transitions. This behavior follows
-                  the
+                  Reduced-motion settings remove panel travel and transitions. The catalog and
+                  document inspector also share a persisted width preference: 330px by default,
+                  bounded to 280 to 560px and the available container. Desktop resizing supports
+                  pointer drag and keyboard controls; phone layouts stay full width. This behavior
+                  follows the
                   <a
                     href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
                     target="_blank"
@@ -3911,6 +3991,42 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                     rel="noopener"
                     >sidebar implementation</a
                   >, adapted to the workspace&#x27;s own visual system.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Implementation / Agents library and dropdown update</summary>
+              <div class="appendix-content">
+                <p>
+                  Agents now opens the copied project resource library, with 29 discovered resources
+                  at this checkpoint: 3 skills, 2 guidance files, 11 references, 8 tools, and 5
+                  configuration files. Sixteen missing support files were copied additively and
+                  hash-verified; the three existing skill entrypoints were preserved. This
+                  supplements the earlier document-copy checkpoint without replacing source files or
+                  adding private resource content to Git.
+                </p>
+                <p>
+                  The library supports search and kind filters, skill cards, highlighted Source,
+                  formatted Markdown Preview, explicit static HTML Preview, and links to related
+                  resources. Its metadata uses the existing resizable inspector. Refresh rescans the
+                  approved copied guidance/tools and <code>.agents/skills</code> structure. The
+                  read-only API uses the existing local owner session, but its browser HTTP/Atom
+                  runtime is independent of Confect. Every request bootstraps that session, and
+                  Refresh can recover after a transient authentication failure. No Convex schema or
+                  deployment changes are required. Opening a skill does not activate it, and the
+                  document worker retains its built-in rules.
+                </p>
+                <p>
+                  Company, project, sort, and version controls now use shared Base UI Select menus
+                  with keyboard interaction, bounded popup scrolling, and the project theme. Browser
+                  checks verified 29 resources and three skills, the eight-item Tools filter,
+                  AGENTS.md search, five related links from a skill, company/project reset, keyboard
+                  sorting, the version menu, and a 390px layout without horizontal overflow. The
+                  menus retain ordinary scrolling after removing extra scroll-arrow overlays. The
+                  viewer-specific checks also passed; the dated record below distinguishes real-file
+                  browser checks from unit security cases. The complete run passed 126 tests and
+                  skipped one optional local-runtime test, source checks passed, and the production
+                  build passed.
                 </p>
               </div>
             </details>
@@ -3972,6 +4088,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   production Bun server. <code>worker:check</code> is a storage readiness check, not
                   a job runner.
                 </p>
+                <p>
+                  HTML Preview now labels recognized <code>@@PLACEHOLDER@@</code> tokens as an
+                  unfilled template. It uses a responsive viewport and allowlisted color-scheme
+                  metadata while preserving inert fragment parsing and the existing sandbox. Root
+                  <code>html</code>/<code>body</code> attributes remain a known fidelity limit. The
+                  follow-up passed 23 HTML-preview tests, including five metadata regressions; the
+                  full suite passed 126 tests with one optional runtime test skipped, and the
+                  production build passed. Earlier dated QA records retain their original counts.
+                </p>
               </div>
             </details>
             <details>
@@ -3980,25 +4105,137 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The configured production build and Doppler injection have passed. Source checks
                   and the expanding TypeScript suite cover domain, transport, authorization,
-                  storage, preview, and queue boundaries. All 80 TypeScript tests pass with Doppler
-                  supplying document-runtime paths, alongside 21 Python document-helper tests.
-                  Default CI passes 79 TypeScript tests and skips the one optional runtime
-                  integration test. Live backend checks establish authenticated reads and commands
-                  on the isolated instance. Integrated-browser checks confirmed desktop sidebar
-                  collapse/persistence and Ctrl/Cmd+B, a real three-page DOCX PDF preview,
-                  source-context extraction, mobile layout at 390 × 844, drawer
-                  focus/navigation/close, a search returning real files, a bounded workbook grid
-                  with labeled cached values, and an unsent review draft surviving a full reload. No
-                  real client comment or revision was created by that browser check. These local
-                  viewport checks do not establish remote iPhone access. The optional
-                  document-runtime test creates a synthetic DOCX, uses the actual worker logic with
-                  real Python and LibreOffice processes, and verifies the resulting PDF and
-                  corrected extracted text. Backend commit and replay run through isolated
-                  <code>convex-test</code> functions; the check preserves the source hash and
-                  existing comment anchors, avoids duplicate versions, and confirms staging cleanup.
-                  It creates no production records and changes no client documents. This establishes
-                  that bounded runtime path, while sustained reconnect and recovery behavior still
-                  need broader checks.
+                  storage, preview, and queue boundaries. The latest source suite passes 126
+                  TypeScript tests and skips one optional runtime integration test. That optional
+                  test passed in the earlier Doppler-configured verification, alongside 21 Python
+                  document-helper tests. Live backend checks establish authenticated reads and
+                  commands on the isolated instance.
+                </p>
+                <p>
+                  Earlier integrated-browser checks confirmed desktop sidebar collapse/persistence
+                  and Ctrl/Cmd+B, a real three-page DOCX PDF preview, the earlier source-text panel
+                  (subsequently removed), mobile layout at 390 × 844, drawer focus/navigation/close,
+                  a search returning real files, a bounded workbook grid with labeled cached values,
+                  and an unsent review draft surviving a full reload. No real client comment or
+                  revision was created by that browser check. These local viewport checks do not
+                  establish remote iPhone access.
+                </p>
+                <p>
+                  The optional document-runtime test creates a synthetic DOCX, uses the actual
+                  worker logic with real Python and LibreOffice processes, and verifies the
+                  resulting PDF and corrected extracted text. Backend commit and replay run through
+                  isolated <code>convex-test</code> functions; the check preserves the source hash
+                  and existing comment anchors, avoids duplicate versions, and confirms staging
+                  cleanup. It creates no production records and changes no client documents. This
+                  establishes that bounded runtime path, while sustained reconnect and recovery
+                  behavior still need broader checks.
+                </p>
+                <h3>September 8, 2026: theme and inspector QA</h3>
+                <p>
+                  Vite+ checked 108 formatted files and 66 source files without lint warnings or
+                  type errors. The source suite passed 85 tests and skipped the optional
+                  document-runtime test; the configured production build passed. Integrated-browser
+                  checks confirmed:
+                </p>
+                <ul>
+                  <li>
+                    Self-hosted Geist loaded, Hugeicons rendered, and the catalog used the dark
+                    scrollbar treatment. The Context inspector contained metadata without the
+                    removed document-text panel.
+                  </li>
+                  <li>
+                    At a 1224px desktop viewport, dragging across a PDF changed the inspector from
+                    330px to 465px. The drag shield cleared on release. Arrow keys, Shift, Home, and
+                    End changed the width correctly.
+                  </li>
+                  <li>
+                    A 528px preference survived reload and navigation between the catalog and
+                    document workspace. At 900px, it clamped to 316px within the 676px container.
+                  </li>
+                  <li>
+                    At 390px, the inspector filled the viewport with no resize handle or horizontal
+                    overflow. The 280px Base UI drawer focused Companies; Escape restored focus to
+                    Open navigation, and choosing Companies closed the drawer.
+                  </li>
+                  <li>
+                    Sidebar collapse and Ctrl+B expansion worked. The browser reported no console
+                    warnings or errors. Width was restored to 330px and the viewport to 1224px after
+                    verification.
+                  </li>
+                </ul>
+                <p>
+                  These checks used local viewports and do not establish remote iPhone access. No
+                  private filenames or screenshots are included in this record.
+                </p>
+                <h3>September 8, 2026: left navigation resize QA</h3>
+                <p>
+                  Vite+ checked 111 formatted files and 69 source files without warnings or type
+                  errors. The suite passed 89 tests and skipped one optional runtime test; the
+                  production build passed. Browser checks verified:
+                </p>
+                <ul>
+                  <li>
+                    Dragging navigation from 248px to 328px, Home at 220px, End at 360px, and
+                    Shift+ArrowLeft at 328px. During an unfinished drag to 360px, the grid
+                    transition was disabled and the preview shield was present; Escape restored
+                    328px and removed the shield.
+                  </li>
+                  <li>
+                    Collapse removed the handle. Reopening and reloading retained 328px. At 390px
+                    both resize handles were absent, with no horizontal overflow.
+                  </li>
+                  <li>
+                    The shared pointer logic still resized the inspector from 280px to 320px and
+                    back, independently of the 248px navigation width. No browser errors appeared.
+                    Catalog filters aligned on one row at a 1280px viewport.
+                  </li>
+                </ul>
+                <p>
+                  Navigation was restored to 248px on desktop. The user&#x27;s 280px inspector
+                  preference was preserved. These are local browser checks; remote iPhone access
+                  remains unverified.
+                </p>
+                <h3>September 8, 2026: Agents viewer and selection-menu QA</h3>
+                <p>
+                  Vite+ checked 127 formatted files and 83 source files successfully. The full suite
+                  passed 121 tests and skipped one optional local-runtime test; the production build
+                  passed. The lazy Shiki chunk is about 803 KB raw / 128 KB gzip and triggers the
+                  build&#x27;s size advisory. It loads when syntax coloring is needed; basic
+                  navigation does not require it.
+                </p>
+                <ul>
+                  <li>
+                    Markdown opened in Preview with readable headings, lists, and code; frontmatter
+                    was hidden. Source showed 78 lines with five syntax colors in Geist Mono. YAML
+                    (5 lines), Python (209), JSON (85), and HTML (186) also showed syntax colors.
+                  </li>
+                  <li>
+                    HTML opened in Source. Its explicit static Preview retained the template&#x27;s
+                    inline layout styling, with an empty iframe sandbox, no-referrer policy, and
+                    restrictive CSP. Inspection found no script elements and recorded zero network
+                    requests during that preview.
+                  </li>
+                  <li>
+                    At 390px, Markdown had no horizontal page overflow, view controls were 44px
+                    high, and resize handles were absent.
+                  </li>
+                  <li>
+                    The dropdown popup showed the selection checkmark without the former overlay
+                    artifact. Fourteen options scrolled within a maximum 384px panel, using the
+                    neutral background and rounded corners. At 390px, the popup measured 192 × 384px
+                    between x=18px and x=210px; options were 44px high with no horizontal overflow.
+                    The final browser log had no warnings or errors.
+                  </li>
+                  <li>
+                    After restoring the local backend, authenticated catalog verification again
+                    returned 7,225 files, 13 companies, and 55 projects.
+                  </li>
+                </ul>
+                <p>
+                  The browser pass used real copied resources. Malicious-input behavior is covered
+                  by 18 unit security cases; a malicious browser fixture was not exercised. No
+                  source documents or private screenshots are included in this record, and remote
+                  iPhone access remains unverified.
                 </p>
                 <p>
                   Remaining gates include sustained reconnect/worker recovery, concurrent renderer
@@ -4016,7 +4253,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="appendix-content">
                 <p>
                   Status: connected local prototype, updated September 8, 2026. The authenticated
-                  catalog, Confect/Atom subscriptions, previews, source context, downloads,
+                  catalog, Confect/Atom subscriptions, previews, file/source metadata, downloads,
                   versioned comments, and bounded exact-text revision jobs are implemented. Doppler
                   injection and the configured production build pass. Source checks, backend tests,
                   browser checks, and real-document verification establish different parts of the
@@ -4027,9 +4264,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   Based on the <strong>HA Workflow App Wireframe</strong> task
                   (<code>01a07ea0-e62b-7351-9374-828b3122a949</code>) and its final local HTML
                   prototype. Use the wireframe to understand the work: find a file, review it,
-                  request a correction, and inspect the next revision. The finished interface will
-                  use a modern visual system and clearer interaction design. Its exact layout,
-                  spacing, and motion are product decisions, guided by the workflow.
+                  request a correction, and inspect the next revision. The adopted interface uses
+                  Vercel-inspired neutral dark surfaces, self-hosted Geist Sans/Mono, Base UI
+                  through shadcn <code>base-nova</code>, and Hugeicons. T3-style sidebar behavior
+                  and accessible motion remain part of the workflow. <code>DESIGN.md</code> is the
+                  current design authority.
                 </p>
               </div>
             </details>
@@ -4074,17 +4313,18 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The app reads a standalone copy of the consulting and inspection collections.
                   Company/project groupings come from folder evidence, with ambiguous context kept
-                  explicit. All four navigation categories share file rows, filters, search, and the
-                  version workspace. Catalog queries cap returned matches and tell the view when to
-                  narrow a search.
+                  explicit. The four document categories share file rows, filters, search, and the
+                  version workspace. Agents is a separate read-only resource library. Catalog
+                  queries cap returned matches and tell the view when to narrow a search.
                 </p>
                 <p>
                   PDF and image previews use protected local content URLs. Word and PowerPoint
                   convert locally to PDF; workbooks expose bounded read-only grids; text is
-                  displayed without executing markup. Extracted context is an excerpt from the
-                  source, not an AI summary or approved client fact. Comments remain attached to
-                  their source revision; important drafts persist through an Effect IndexedDB
-                  adapter.
+                  displayed without executing markup. The Context inspector contains file/source
+                  metadata and labeled folder inference. Extracted document text is no longer an
+                  inspector feature; backend extraction supports preview and worker validation.
+                  Comments remain attached to their source revision; important drafts persist
+                  through an Effect IndexedDB adapter.
                 </p>
                 <p>
                   The first revision operation is deliberately precise: replace one exact match in
@@ -4145,10 +4385,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
-                        <td>Agent panel</td>
+                        <td>Agents library</td>
                         <td>
-                          Project AGENTS.md and skill list; Markdown preview, editing, revision
-                          comparison, save/apply states
+                          Copied skills, guidance, tools and references; source/preview viewing,
+                          search and related resources
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Agent editor</td>
+                        <td>
+                          Future instruction editing, revision comparison, save/apply states and
+                          runtime activation
                         </td>
                       </tr>
                       <tr>
@@ -4299,11 +4546,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <h3>Scaffold and tooling</h3>
                 <p>
-                  Start from the official shadcn flow:
-                  <code>bunx shadcn@4.21.0 init -t start --monorepo</code>, choosing Bun, neutral
-                  colors, and one primitive base (proposed: Radix). Its monorepo starter currently
-                  includes Turborepo. Preserve the generated app/UI arrangement, then replace the
-                  generated task orchestration with Vite+ after a baseline build.
+                  The repository began with the official shadcn TanStack Start monorepo flow. Keep
+                  its app/UI package arrangement and the established Bun/Vite+ orchestration. The
+                  selected primitive base is now Base UI, recorded as <code>base-nova</code> in both
+                  <code>components.json</code> files, with neutral CSS variables and
+                  <code>hugeicons</code> as the icon library. Geist variable font assets are bundled
+                  locally. Do not scaffold over the connected application to apply a visual preset.
                   <a
                     href="https://ui.shadcn.com/docs/installation/tanstack"
                     target="_blank"
@@ -4312,6 +4560,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   >,
                   <a href="https://ui.shadcn.com/docs/monorepo" target="_blank" rel="noopener"
                     >monorepo guide</a
+                  >,
+                  <a
+                    href="https://ui.shadcn.com/docs/changelog/2026-01-base-ui"
+                    target="_blank"
+                    rel="noopener"
+                    >Base UI support</a
                   >.
                 </p>
                 <p>
@@ -4560,12 +4814,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <p>
                   Use Effect Atom as the UI state layer: <code>@effect/atom-react</code> with the v4
-                  reactivity modules. One session-owned registry and
-                  <code>Atom.runtime</code> handle feature state, derived values, typed commands,
-                  and stream-backed reads. Use one scoped <code>@confect/js</code> WebSocket client
-                  for live queries and commands; an adapter preserves its schema codecs and typed
-                  query results. Do not add parallel Confect React subscriptions or a second query
-                  cache.
+                  reactivity modules. One session-owned registry owns feature atoms and their
+                  runtimes for derived values, typed commands, and stream-backed reads. Use one
+                  scoped <code>@confect/js</code> WebSocket client for live queries and commands; an
+                  adapter preserves its schema codecs and typed query results. Do not add parallel
+                  Confect React subscriptions or a second query cache.
                   <a
                     href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/atom/react/README.md"
                     target="_blank"
@@ -4793,8 +5046,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </div>
                 <p>
                   Preview metadata and bytes remain bound to the selected file/version ID.
-                  Unsupported formats stay downloadable. The current grid and extracted text are
-                  bounded excerpts, not proof of recalculation or Office layout fidelity. Macro and
+                  Unsupported formats stay downloadable. Workbook grids and plain-text previews are
+                  bounded views, not proof of recalculation or Office layout fidelity. Macro and
                   external-resource validation runs before local Office conversion.
                 </p>
                 <p>
@@ -4817,6 +5070,75 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   specified safe renderer and its process-isolation behavior. Fail DOCX validation
                   for undeclared Markup Compatibility namespaces. Rendering results do not authorize
                   rewriting the source template to compensate for renderer differences.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Architecture / Read-only Agents library</summary>
+              <div class="appendix-content">
+                <p>
+                  <code>/?section=agents</code> opens the copied project library;
+                  <code>resource</code> selects a resource by opaque ID. The current checkpoint
+                  contains 29 resources: 3 skills, 2 guidance files, 11 references, 8 tools, and 5
+                  configuration files. Sixteen missing support files were copied additively and
+                  verified by hash; the three existing <code>SKILL.md</code> files were preserved.
+                  These resources stay outside Git, alongside the other private working-copy data.
+                </p>
+                <p>
+                  The authenticated <code>GET /api/agents</code> and
+                  <code>GET /api/agents/:id</code> endpoints use the existing local owner session.
+                  <code>AgentLibraryStore</code> is an Effect service in the documents adapter, with
+                  shared schemas in the domain package. Browser reads use an independent
+                  <code>Atom.runtime(Layer.empty)</code> inside the existing app registry. Each list
+                  or detail request first calls <code>readSession</code>, then makes the
+                  authenticated HTTP request and decodes its response. This filesystem-backed
+                  library does not depend on the Confect connection layer, so a Convex startup
+                  failure need not block it. A focused retry test verifies that Refresh recovers
+                  after a transient owner-session failure without opening a WebSocket. The library
+                  does not add Convex tables, subscriptions, or deployment changes.
+                </p>
+                <p>
+                  Discovery covers fixed approved guidance, the template manifest, local tools, and
+                  valid skill directories under <code>.agents/skills</code>. A skill exposes its
+                  <code>SKILL.md</code>, agent configuration, references, scripts, and supported
+                  text assets. Refresh rescans these locations; a newly copied allowed skill can
+                  appear without editing a hardcoded card list. The scan is bounded to 128
+                  resources, 256 entries per directory, and six nested levels; source previews are
+                  capped at 256 KiB. It rejects out-of-root paths and symlinks, excludes task-owned
+                  <code>.codex-*</code> directories, and filters hidden, operational, and
+                  credential-like names. Binary or invalid UTF-8 resources are not rendered as text.
+                </p>
+                <p>
+                  The UI provides search, kind filters, skill cards, linked supporting resources,
+                  and Source/Preview viewing with metadata in the existing resizable inspector.
+                  Source uses line numbers and lazy Shiki syntax tokens for recognized formats, with
+                  a readable plain-text fallback for unknown types, oversized content, or
+                  highlighting failure. The scoped highlighter is shared within the registry and
+                  released with it. Its production chunk is about 803 KB raw / 128 KB gzip, loaded
+                  only when syntax coloring is needed; the build reports a size advisory.
+                </p>
+                <p>
+                  Markdown defaults to Preview with GitHub-flavored Markdown tables, lists, and code
+                  blocks. Raw HTML is skipped. A relative link navigates only when it resolves to a
+                  known related resource; unmatched/external links are displayed as text, and images
+                  use placeholders. HTML defaults to Source. Its explicit Preview sanitizes static
+                  markup with DOMPurify, removes scripts/forms/active navigation, and renders in an
+                  iframe with an empty sandbox and a restrictive content security policy. Remote
+                  fetches are blocked; permitted embedded raster data images can render. The
+                  original source remains available, and scripts are never executed. The preview
+                  supplies a responsive viewport and retains only allowlisted color-scheme metadata.
+                  Root <code>html</code>/<code>body</code> attributes are not fully preserved, so
+                  this remains a static approximation rather than a full-fidelity page renderer. In
+                  HTML Preview only, recognized <code>@@PLACEHOLDER@@</code> tokens show an Unfilled
+                  template note; the viewer does not populate them.
+                </p>
+                <p>
+                  Highlighting and formatted Markdown fall back to source above 100,000 characters,
+                  3,000 lines, or a 3,000-character line. The API&#x27;s independent source-read cap
+                  remains 256 KiB; truncation is shown. HTML preview also has its own size guard.
+                  Opening a resource neither activates its instructions nor runs its tools. The
+                  revision worker continues to use its built-in rules. Editable instructions and
+                  runtime activation require a later explicit workflow.
                 </p>
               </div>
             </details>
@@ -4847,14 +5169,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   prose.
                 </p>
                 <p>
-                  The future Agent panel will list active project instructions and relevant skill
-                  versions. The current panel states that execution and instruction editing are not
-                  connected. Editing auto-saves a draft; an explicit Apply action activates it.
-                  Compare the source hash before replacing an allowlisted instruction file, preserve
-                  a recoverable prior version, and show conflicts instead of overwriting another
-                  edit. An active run retains its instruction snapshot; changes apply to subsequent
-                  runs. Skill assets/scripts are linked as package dependencies so a SKILL.md
-                  preview is not misrepresented as the entire skill.
+                  The Agents library now exposes copied guidance and skill resources for reading.
+                  The document Agent tab still states that execution and instruction editing are not
+                  connected. A future editor will distinguish available resources from the versions
+                  explicitly activated for a run. Editing auto-saves a draft; an explicit Apply
+                  action activates it. Compare the source hash before replacing an allowlisted
+                  instruction file, preserve a recoverable prior version, and show conflicts instead
+                  of overwriting another edit. An active run retains its instruction snapshot;
+                  changes apply to subsequent runs. Skill assets/scripts are linked as package
+                  dependencies so a SKILL.md preview is not misrepresented as the entire skill.
                 </p>
               </div>
             </details>
@@ -4950,11 +5273,14 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </li>
                   <li>
                     <strong>Modern workspace:</strong> real company/project/file views, filters,
-                    search, versions, context, and T3-style fully collapsible navigation are
-                    connected. The desktop sidebar remembers its state through Effect Atom;
-                    Ctrl/Cmd+B, separate mobile navigation, and reduced motion are implemented.
-                    Local viewport checks are distinct from remote iPhone testing. Inspector
-                    resizing, broader keyboard navigation, and theme expansion remain design work.
+                    search, versions, file/source metadata, and T3-style fully collapsible
+                    navigation are connected. The desktop sidebar remembers its open state and width
+                    through separate Effect Atom preferences; pointer/keyboard resizing, Ctrl/Cmd+B,
+                    separate mobile navigation, and reduced motion are implemented. Local viewport
+                    checks are distinct from remote iPhone testing. The inspector now resizes with
+                    pointer and keyboard input and saves its width through Effect Atom; mobile keeps
+                    its full-width layout. Broader keyboard coverage and theme expansion remain
+                    design work.
                   </li>
                   <li>
                     <strong>Persistent review loop:</strong> previews, downloads, versioned
@@ -4969,10 +5295,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                     rules in that workflow.
                   </li>
                   <li>
-                    <strong>Agent and instruction editor:</strong> connect the replaceable runtime
-                    adapter, stream durable progress, save/apply instruction versions, and preserve
-                    the active run&#x27;s snapshot. Existing desktop history and credentials are not
-                    implicitly inherited.
+                    <strong>Agents library and later activation:</strong> read-only discovery,
+                    search, source viewing, and related resources are implemented. Next connect the
+                    replaceable runtime adapter, stream durable progress, save/apply instruction
+                    versions, and preserve the active run&#x27;s snapshot. Existing desktop history
+                    and credentials are not implicitly inherited.
                   </li>
                   <li>
                     <strong>Remote access and operations:</strong> establish remote authentication
@@ -4998,11 +5325,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   Adopted for HA Workspace on September 8, 2026. The connected implementation uses
                   Effect v4 RC, one authenticated Confect/Atom browser runtime, local file
                   capabilities, and durable revision jobs. Doppler injection and the configured Bun
-                  production build pass. Current verification includes 80 TypeScript tests under
-                  Doppler and 21 Python document-helper tests. Default CI runs 79 TypeScript tests
-                  and skips the optional local-runtime test; <code>SETUP.md</code> separates
-                  runtime/browser evidence from source checks. The linked API probes remain
-                  historical examples, not substitutes for application tests.
+                  production build pass. The latest source suite passes 126 TypeScript tests and
+                  skips one optional local-runtime test. That optional test passed in the earlier
+                  Doppler-configured verification, alongside 21 Python document-helper tests;
+                  <code>SETUP.md</code> separates runtime/browser evidence from source checks. The
+                  linked API probes remain historical examples, not substitutes for application
+                  tests.
                 </p>
               </div>
             </details>
@@ -5055,10 +5383,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
+                        <td>Agents library</td>
+                        <td>
+                          Read-only copied skills/guidance/supporting resources; bounded discovery
+                          and source reads
+                        </td>
+                      </tr>
+                      <tr>
                         <td>Instructions</td>
                         <td>
-                          AGENTS.md and skill versions, drafts, apply operations and source
-                          conflicts
+                          Future instruction versions, drafts, apply operations and source conflicts
                         </td>
                       </tr>
                       <tr>
@@ -5194,11 +5528,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  Use a session-owned Atom registry and runtime. Dispose session resources on logout
-                  or owner change; SSR authentication and registries belong to their request. Do not
-                  place mutable user identity or request-bound Convex context in a process-wide
-                  singleton. RC.112 scopes <code>Atom.runtime</code> layer memoization to its
-                  registry; avoid a global memo map for user services.
+                  Use a session-owned Atom registry for feature runtimes. Dispose session resources
+                  on logout or owner change; SSR authentication and registries belong to their
+                  request. Do not place mutable user identity or request-bound Convex context in a
+                  process-wide singleton. RC.112 scopes <code>Atom.runtime</code> layer memoization
+                  to its registry; avoid a global memo map for user services.
                   <a
                     href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/unstable/reactivity/Atom.ts"
                     target="_blank"
@@ -5261,10 +5595,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
-                        <td>Live files, comments, job progress, active instructions</td>
+                        <td>Live files, comments and job progress</td>
                         <td>
                           Read atoms projecting the single Confect subscription stream; Convex
                           remains authoritative
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Copied agent library and resource source</td>
+                        <td>
+                          Schema-decoded HTTP read atoms in an independent local runtime;
+                          owner-session bootstrap on each read
                         </td>
                       </tr>
                       <tr>
@@ -5291,13 +5632,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  Create one stable <code>Atom.runtime</code> from the browser&#x27;s live Layer
-                  inside its session boundary. Use its <code>fn</code> constructor for commands and
-                  its stream-backed atoms for reads and progress. This replaces the separate browser
-                  <code>ManagedRuntime</code> bridge. Keep command/use-case definitions in the
-                  application package and atom definitions in each web feature, so application code
-                  does not import UI reactivity APIs. Standalone server and worker boundaries retain
-                  their own scoped execution model.
+                  Create stable <code>Atom.runtime</code> values from capability-specific Layers
+                  inside the same registry. The document workspace owns one Confect runtime; local
+                  library reads and syntax highlighting have independent runtimes so they do not
+                  inherit an unrelated connection failure. Use runtime function atoms for commands
+                  and stream-backed atoms for live reads and progress. These runtimes replace the
+                  separate browser <code>ManagedRuntime</code> bridge without duplicating transports
+                  or caches. Keep command/use-case definitions in the application package and atom
+                  definitions in each web feature, so application code does not import UI reactivity
+                  APIs. Standalone server and worker boundaries retain their own scoped execution
+                  model.
                 </p>
                 <p>
                   The browser uses one scoped <code>@confect/js</code> WebSocket client as its
@@ -5429,6 +5773,26 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   comment anchors, idempotent commit replay, and staging cleanup without production
                   records. It requires the Doppler-provided document-tool paths; the default source
                   suite skips it when those runtimes are absent.
+                </p>
+                <p>
+                  The read-only Agents library uses <code>AgentLibraryStore</code> with shared
+                  Effect schemas and typed failures. Its same-origin HTTP reads use a small
+                  <code>Atom.runtime(Layer.empty)</code> in the existing app registry. Each request
+                  bootstraps the local owner session with <code>readSession</code>, then fetches and
+                  decodes the library response. This runtime is independent of Confect availability
+                  and creates no WebSocket or second query cache. Refresh can retry a failed
+                  authentication bootstrap; a focused test exercises that recovery. Discover only
+                  the bounded approved working-copy locations, keep source reads read-only, and
+                  isolate any formatted preview. Reading a resource cannot activate instructions,
+                  mutate Drive, or dispatch a worker tool. A future activation command needs its own
+                  durable authorization and version snapshot.
+                </p>
+                <p>
+                  <code>SourceHighlighter</code> is a separate scoped Effect capability. Its lazy
+                  Shiki layer is shared within the registry and disposes the grammar instance when
+                  released. Token rendering stays ordinary React text, with explicit plain-text
+                  fallback on failure or size limits. Markdown parsing and HTML sanitization are
+                  view boundaries, never tool dispatch or instruction activation.
                 </p>
                 <p>
                   The rules below also cover planned template generation, richer annotations,
@@ -5876,568 +6240,497 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
               <summary>Design / document context</summary>
               <div class="appendix-content">
                 <p>
-                  Interface direction updated September 8, 2026. The connected application supports
-                  company/project browsing, previews, versioned comments, and precise revision
-                  requests. Keep developing a modern, clear workspace around those real files. The
-                  wireframe guides the workflow. The finished product should feel deliberate and
-                  responsive on desktop and iPhone, with its own visual system and restrained
-                  animation.
+                  Updated September 8, 2026. HA Workspace uses a neutral dark interface, Geist
+                  typography, shadcn components built on Base UI, and Hugeicons. The document
+                  remains the main focus. Company/project browsing, file/source metadata, previews,
+                  versioned comments, and precise revision requests are connected; the design must
+                  make those operations easy to understand.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Reference and evidence</summary>
+              <summary>Design / Design authority and source scope</summary>
               <div class="appendix-content">
                 <p>
-                  Use the existing <code>ha-codex-workroom.html</code> prototype as the functional
-                  reference. Keep its company/file/review journeys, then improve hierarchy, spacing,
-                  and interaction as the real document content requires. Codex remains a useful
-                  reference for quiet toolbars and document focus. Historical read-only inspection
-                  of its installed CSS inside <code>/usr/lib/chatgpt/resources/app.asar</code> found
-                  these declarations:
+                  This contract adapts Vercel&#x27;s
+                  <a href="https://vercel.com/design.md" target="_blank" rel="noopener"
+                    >design guidance</a
+                  >,
+                  <a href="https://vercel.com/design.dark.md" target="_blank" rel="noopener"
+                    >dark design guidance</a
+                  >,
+                  <a href="https://vercel.com/geist/introduction" target="_blank" rel="noopener"
+                    >Geist system</a
+                  >, and
+                  <a href="https://vercel.com/design/guidelines" target="_blank" rel="noopener"
+                    >web interface guidelines</a
+                  >. Both Markdown endpoints returned identical content on September 8, 2026. Their
+                  published
+                  <a href="https://vercel.com/geist/vercel-brand.css" target="_blank" rel="noopener"
+                    >CSS foundation</a
+                  >
+                  supplied the reference token roles and neutral values. This is an HA application
+                  adaptation: retain HA identity and application semantics, without Vercel logos,
+                  authorship claims, or the report-specific brand shell.
+                </p>
+                <p>
+                  Use one continuous canvas, a clear type hierarchy, and deliberate spacing. Add
+                  surfaces where they explain interaction or grouping. Reserve color for focus, an
+                  actual state, or a document annotation; pair it with text or another visible cue.
+                  Remove decorative gradients, glows, textures, and ornamental shadows. These
+                  choices follow the reference&#x27;s restraint while accommodating a dense document
+                  workspace. Existing layout studies describe workflow, not a pixel-matching target.
+                </p>
+                <p>
+                  The original wireframe remains the workflow reference. Codex informed the early
+                  toolbars and document focus. T3 Code informs the sidebar behavior below. The
+                  current Vercel/Geist adaptation supersedes the earlier sage palette,
+                  system-font-only direction, and Lucide/Radix proposal. Historical evidence files
+                  remain records of those earlier decisions.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Design / Palette and semantic roles</summary>
+              <div class="appendix-content">
+                <p>
+                  The source foundation uses zero-chroma dark neutrals: black for its main surface,
+                  <code>oklch(0.946 0 0)</code> for primary text, and
+                  <code>oklch(0.706 0 0)</code> for secondary text. HA uses the following
+                  application values, with a little more separation between working surfaces. These
+                  are our semantic tokens; the app does not load a parallel
+                  <code>vbg-*</code> stylesheet.
                 </p>
                 <div class="table-wrap">
                   <table>
                     <thead>
                       <tr>
+                        <th scope="col">Application role</th>
                         <th scope="col">Token</th>
-                        <th scope="col">Observed declaration</th>
+                        <th scope="col">Adopted dark value</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Sans font</td>
+                        <td>Main canvas</td>
+                        <td><code>--background</code></td>
+                        <td><code>#000000</code></td>
+                      </tr>
+                      <tr>
+                        <td>Sidebar and ordinary surface</td>
+                        <td><code>--sidebar</code>, <code>--card</code></td>
+                        <td><code>#0a0a0a</code></td>
+                      </tr>
+                      <tr>
+                        <td>Popover</td>
+                        <td><code>--popover</code></td>
+                        <td><code>#111111</code></td>
+                      </tr>
+                      <tr>
+                        <td>Quiet field or grouping</td>
+                        <td><code>--muted</code></td>
+                        <td><code>#171717</code></td>
+                      </tr>
+                      <tr>
+                        <td>Secondary action</td>
+                        <td><code>--secondary</code></td>
+                        <td><code>#1a1a1a</code></td>
+                      </tr>
+                      <tr>
+                        <td>Hover and active row</td>
+                        <td><code>--accent</code></td>
+                        <td><code>#1f1f1f</code></td>
+                      </tr>
+                      <tr>
+                        <td>Ordinary divider</td>
+                        <td><code>--border</code></td>
+                        <td><code>#292929</code></td>
+                      </tr>
+                      <tr>
+                        <td>Input / stronger hover border</td>
+                        <td><code>--input</code>, <code>--border-hover</code></td>
+                        <td><code>#333333</code> / <code>#454545</code></td>
+                      </tr>
+                      <tr>
+                        <td>Primary text and primary button</td>
+                        <td><code>--foreground</code>, <code>--primary</code></td>
+                        <td><code>#ededed</code></td>
+                      </tr>
+                      <tr>
+                        <td>Primary button text</td>
+                        <td><code>--primary-foreground</code></td>
+                        <td><code>#0a0a0a</code></td>
+                      </tr>
+                      <tr>
+                        <td>Secondary / subordinate text</td>
+                        <td><code>--muted-foreground</code>, <code>--text-subtle</code></td>
+                        <td><code>#a1a1a1</code> / <code>#888888</code></td>
+                      </tr>
+                      <tr>
+                        <td>Keyboard focus</td>
+                        <td><code>--ring</code></td>
+                        <td><code>#52a8ff</code></td>
+                      </tr>
+                      <tr>
+                        <td>Confirmed success / warning / error</td>
                         <td>
-                          <code
-                            >-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;,
-                            sans-serif</code
-                          >
+                          <code>--success</code>, <code>--warning</code>, <code>--destructive</code>
                         </td>
+                        <td><code>#3ccf91</code> / <code>#f5a623</code> / <code>#ff6369</code></td>
                       </tr>
                       <tr>
-                        <td>Mono font</td>
-                        <td>
-                          <code
-                            >ui-monospace, &quot;SFMono-Regular&quot;, &quot;SF Mono&quot;, Menlo,
-                            Consolas, &quot;Liberation Mono&quot;, monospace</code
-                          >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Type scale</td>
-                        <td>11px, 12px, 14px base, 16px, 28px</td>
-                      </tr>
-                      <tr>
-                        <td>Spacing unit</td>
-                        <td>4px</td>
-                      </tr>
-                      <tr>
-                        <td>Sidebar</td>
-                        <td>
-                          Default preference 275px; clamp starts at 240px and permits up to 520px
-                          subject to viewport
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Toolbar</td>
-                        <td>
-                          46px base, 36px small, 40px pane; other selectors override the main
-                          toolbar to 52px
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Neutral palette entries</td>
-                        <td>
-                          White, #f9f9f9, #f3f3f3, #ededed, #303030, #282828, #212121, #181818
-                        </td>
+                        <td>Document paper</td>
+                        <td><code>--paper</code>, <code>--paper-foreground</code></td>
+                        <td><code>#ffffff</code> / <code>#171717</code></td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p>
-                  These are historical source declarations, not measurements of the active window.
-                  They provide context for the initial plan; they are not a pixel-matching target.
-                  Use shadcn primitives, semantic tokens, and one coherent icon set. Evaluate the
-                  result with real files from the local fake Drive and the acceptance checks below.
+                  Selection in navigation is neutral. A primary action uses light text-color fill
+                  with dark lettering. Semantic status colors appear only when a confirmed state
+                  needs them. The document&#x27;s own colors remain intact; dark mode changes its
+                  surroundings, not the source page. Use <code>color-scheme: dark</code> and a
+                  matching black browser theme color. A light application theme is future work.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Implemented sidebar and workspace behavior</summary>
+              <summary>Design / Typography and component base</summary>
               <div class="appendix-content">
                 <p>
-                  The current sidebar follows the
+                  Use
+                  <a href="https://vercel.com/font" target="_blank" rel="noopener"
+                    >Geist Sans and Geist Mono</a
+                  >. The application self-hosts variable fonts through
+                  <code>@fontsource-variable/geist</code> and
+                  <code>@fontsource-variable/geist-mono</code>, both pinned at <code>5.3.0</code>.
+                  Package index stylesheets declare Unicode-range subsets, and the browser loads the
+                  required local assets. Font requests stay on the application origin. Sans is the
+                  default for body text, navigation, controls, tables, dates, and counts. Mono is
+                  reserved for code, paths, and short operational identifiers; it should not turn
+                  ordinary descriptions or metrics into terminal output.
+                </p>
+                <p>
+                  Application body text is 14px; secondary labels are 12 to 13px; page headings are
+                  32px. Explanations use a 1.5 line height. Use regular weight for reading, medium
+                  for labels and headings, and tabular numbers for aligned numeric comparisons.
+                  Inputs on phone layouts remain at least 16px. Keep long filenames accessible in
+                  full through a label or tooltip.
+                </p>
+                <p>
+                  The standalone HTML plan makes no network font requests. It uses a Geist-first
+                  local stack and falls back to the system sans/mono fonts when Geist is
+                  unavailable. It shares the neutral palette and hierarchy; application screenshots
+                  are the authority for exact font rendering.
+                </p>
+                <p>
+                  Use the shadcn <code>base-nova</code> configuration in both app and UI package,
+                  with neutral colors and CSS variables. Base UI supplies accessible interaction
+                  primitives; shadcn supplies editable local component code. Keep the existing
+                  monorepo arrangement and Vite+ orchestration.
+                  <a
+                    href="https://ui.shadcn.com/docs/changelog/2026-01-base-ui"
+                    target="_blank"
+                    rel="noopener"
+                    >shadcn Base UI documentation</a
+                  >,
+                  <a href="https://ui.shadcn.com/docs/monorepo" target="_blank" rel="noopener"
+                    >monorepo configuration</a
+                  >,
+                  <a href="https://base-ui.com/react/overview/about" target="_blank" rel="noopener"
+                    >Base UI overview</a
+                  >.
+                </p>
+                <p>
+                  Use <code>@hugeicons/react</code> with <code>@hugeicons/core-free-icons</code>,
+                  behind the shared semantic icon exports in <code>packages/ui</code>. Match outline
+                  weight and optical alignment across navigation, tools, and file types. Typical
+                  glyphs are 16px, with 18px where navigation needs more presence. Icons next to a
+                  label are decorative; icon-only buttons need an accessible name. Add a component
+                  only when an implemented screen needs it.
+                  <a
+                    href="https://hugeicons.com/docs/integrations/react/quick-start"
+                    target="_blank"
+                    rel="noopener"
+                    >Hugeicons React quick start</a
+                  >.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Design / Sidebar and workspace behavior</summary>
+              <div class="appendix-content">
+                <p>
+                  Follow the
                   <a
                     href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
                     target="_blank"
                     rel="noopener"
-                    >T3 Code layout</a
+                    >T3 Code application layout</a
                   >
                   and
                   <a
                     href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx"
                     target="_blank"
                     rel="noopener"
-                    >off-canvas sidebar behavior</a
-                  >. It fully collapses, leaving the top-left toggle available. A schema-backed
-                  Effect Atom preference remembers the open state. Ctrl/Cmd+B toggles it outside
-                  editable fields; the button has an accessible name, expanded state, shortcut hint,
-                  and tooltip. Mobile navigation uses an independent Sheet with its own focus
-                  handling.
+                    >off-canvas sidebar</a
+                  >. The desktop sidebar fully collapses, while its top-left toggle stays available.
+                  A schema-backed Effect Atom preference remembers the open state. Ctrl/Cmd+B
+                  toggles outside editable fields. The button exposes its name, expanded state,
+                  shortcut hint, and tooltip. Mobile navigation uses an independent Base UI Sheet
+                  with focus handling and Escape dismissal.
                 </p>
                 <p>
-                  Desktop starts at 248px, with 224px on compact desktop layouts. Collapse changes
-                  the layout column over 220ms using <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>;
+                  The desktop sidebar starts at 248px and resizes from 220px to 360px, capped by the
+                  available shell width minus 360px. A separate schema-backed Effect Atom
+                  preference, <code>ha-workspace.ui.sidebar-width.v1</code>, stores its width;
+                  collapsing the sidebar preserves that preference. A temporary viewport clamp does
+                  not overwrite the saved width. Above 760px, the expanded sidebar exposes a
+                  right-edge separator immediately after navigation in keyboard Tab order.
+                  ArrowRight widens and ArrowLeft narrows by 16px; Shift uses 32px steps. Home
+                  selects 220px and End selects the current maximum. Mobile keeps its independent
+                  280px navigation Sheet.
+                </p>
+                <p>
+                  Navigation and inspector resizing share the same pointer lifecycle: capture the
+                  pointer, shield embedded previews while dragging, restore the starting width on
+                  Escape or cancellation, and persist once on completion. Direct dragging disables
+                  the shell grid transition so the edge follows the pointer. Collapse transitions
+                  the layout column over 220ms with <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>; its
                   contents fade over 140ms. The inspector enters over 180ms. Reduced-motion
-                  preferences remove those transitions. Hidden sidebar content is inert. The main
+                  preferences remove these transitions. Hidden navigation is inert, and the main
                   scroll surface stays mounted while the sidebar changes.
                 </p>
                 <p>
                   Company and project links show real indexed files. Search and filters live in the
-                  URL, and sort/page state belongs to atoms. A file opens its version chooser,
-                  download, and actual preview. The Context tab displays extracted source text and
-                  labels folder-based inference. Review holds versioned comments, saved drafts, and
-                  an explicit exact-text revision form for supported files. The Agent tab explains
-                  that execution is not connected; it contains no simulated actions.
+                  URL; sort and page state belong to atoms. A file opens its version chooser,
+                  original download, and actual preview. Context shows file and source metadata,
+                  with folder-based company/project inference labeled. It does not show extracted
+                  document text. Backend extraction remains available to document tools and
+                  validation. Review holds versioned comments, saved drafts, and the exact-text
+                  revision form for supported files. Agent explains the current execution limit
+                  without simulated actions.
                 </p>
                 <p>
-                  Integrated-browser checks covered the desktop toggle, persistence, keyboard
-                  shortcut, a real Word/PDF preview, source context, and the 390 × 844 mobile layout
-                  with navigation focus and search. That is a local viewport check; remote iPhone
-                  access remains a separate deployment gate.
+                  The header pairs a compact horizontal HA mark with the single-line name HA
+                  Workspace; no personal-workspace subtitle is needed. Scrollbars use the same
+                  neutral surfaces with a visible thumb and hover treatment. Keep native scrolling
+                  and avoid hiding the scroll affordance.
                 </p>
                 <p>
-                  The remaining sections mix adopted design rules with targets for future authoring.
-                  Inspector resizing, rich annotations, light-theme expansion, intake, new
-                  report/invoice actions, and the instruction editor are not current capabilities.
-                </p>
-              </div>
-            </details>
-            <details>
-              <summary>Design / Shell geometry</summary>
-              <div class="appendix-content">
-                <p>
-                  Desktop: persistent left navigation, central content, and one resizable right
-                  inspector. File lists open a dedicated file route with preserved origin/filter
-                  state. Avoid squeezing both a review sidebar and a second Agent sidebar beside the
-                  preview; the inspector switches between Review, Context, and Agent tabs.
-                </p>
-                <pre><code>┌──────────────────────┬──────────────────────────────────────────────────┐
-│ HA Consulting   [≡]  │ [←][→] Company / File           [↓] [⋯] [Panel] │
-│                      ├────────────────────────────────┬─────────────────┤
-│ Companies            │ [Version ▾] [Page − +] [Fit]   │ Review Context  │
-│ Reports              │                    [Annotate] │ Agent           │
-│ Invoices             ├────────────────────────────────┤                 │
-│ Templates            │                                │ Comments /      │
-│                      │       Document preview         │ source facts /  │
-│ Recent files         │                                │ AGENTS + skills │
-│ …                    │                                │                 │
-│                      │                                │ [composer]      │
-│ Profile   [Settings] │                                │ [attach]   [↑]  │
-└──────────────────────┴────────────────────────────────┴─────────────────┘</code></pre>
-                <p>Proposed implementation dimensions:</p>
-                <div class="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th scope="col">Element</th>
-                        <th scope="col">Initial target</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Navigation sidebar</td>
-                        <td>248px starting point; resizable 224 to 320px</td>
-                      </tr>
-                      <tr>
-                        <td>Main toolbar</td>
-                        <td>52px desktop; 56px on touch layouts</td>
-                      </tr>
-                      <tr>
-                        <td>Document toolbar</td>
-                        <td>44px desktop</td>
-                      </tr>
-                      <tr>
-                        <td>Right inspector</td>
-                        <td>340px default; resizable 300 to 480px</td>
-                      </tr>
-                      <tr>
-                        <td>Minimum useful preview column</td>
-                        <td>
-                          480px; collapse inspector into an overlay below the combined panel
-                          threshold
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Page/dashboard gutters</td>
-                        <td>32px desktop, 24px compact, 16px phone</td>
-                      </tr>
-                      <tr>
-                        <td>Navigation rows</td>
-                        <td>38px desktop, 44px touch</td>
-                      </tr>
-                      <tr>
-                        <td>Regular buttons</td>
-                        <td>34px desktop, 44px touch</td>
-                      </tr>
-                      <tr>
-                        <td>Icon glyphs</td>
-                        <td>16px primary, 18px for major navigation</td>
-                      </tr>
-                      <tr>
-                        <td>Button/field radius</td>
-                        <td>8px controls, 12px surfaces, 16px composer</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p>
-                  Persist width/collapse/theme preferences separately from document state. Bound
-                  widths again after viewport changes. Panel resizing must support keyboard
-                  controls.
+                  Keep Companies, Reports, Invoices, Templates, and Agents in that navigation order.
+                  Put the version chooser and file actions in a stable toolbar. Review, Context, and
+                  Agent share one inspector instead of opening competing sidebars. Each screen
+                  should have one clear primary action; unavailable authoring features should not
+                  appear as working buttons.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Typography, color and components</summary>
+              <summary>Design / Agents and selection menus</summary>
               <div class="appendix-content">
                 <p>
-                  Use a system sans stack for readable application text and fast first paint. Use
-                  the system monospace font for Markdown source and identifiers. Body text is 14px,
-                  metadata 12px, quiet labels 11px, section titles 16px/500, page titles 28px/500.
-                  Inputs on iPhone use at least 16px. Use a 1.5 line height for explanatory text and
-                  a tighter line height for concise toolbar labels. Keep long filenames readable
-                  with a full-name tooltip and accessible label.
+                  Agents is a resource library, separate from document files and the document
+                  inspector&#x27;s Agent tab. Show skills as cards with their actual descriptions
+                  and supporting-file counts. Guidance, references, tools, and configuration files
+                  use concise linked rows. Search covers names, descriptions, and copied relative
+                  paths; kind filters make a large library manageable. Refresh, empty results,
+                  unavailable resources, and truncated previews need distinct feedback.
                 </p>
                 <p>
-                  Use a 4px spacing grid: 4/8/12/16/24/32. Keep icon-to-label gaps at 8px and align
-                  toolbar controls to one baseline. Use medium weight sparingly for selected rows
-                  and titles.
-                </p>
-                <div class="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th scope="col">Semantic token</th>
-                        <th scope="col">Light proposal</th>
-                        <th scope="col">Dark proposal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Main surface</td>
-                        <td>#ffffff</td>
-                        <td>#16191b</td>
-                      </tr>
-                      <tr>
-                        <td>Sidebar</td>
-                        <td>#f6f7f5</td>
-                        <td>#111416</td>
-                      </tr>
-                      <tr>
-                        <td>Preview surround</td>
-                        <td>#eef0ee</td>
-                        <td>#1c2023</td>
-                      </tr>
-                      <tr>
-                        <td>Hover/selected row</td>
-                        <td>#e7ebe6</td>
-                        <td>#282f31</td>
-                      </tr>
-                      <tr>
-                        <td>Primary text</td>
-                        <td>#202626</td>
-                        <td>#edf1ed</td>
-                      </tr>
-                      <tr>
-                        <td>Secondary text</td>
-                        <td>#596461</td>
-                        <td>#aab4af</td>
-                      </tr>
-                      <tr>
-                        <td>Divider</td>
-                        <td>#dce2dd</td>
-                        <td>#30393a</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p>
-                  These are proposed product tokens. Verify contrast in the rendered UI. Use a
-                  restrained sage accent for selection and the primary action, with a distinct blue
-                  for document annotations. Keep warning, danger, and success tokens semantic;
-                  status also includes a text label or icon. The document page stays white in dark
-                  mode. Avoid turning every panel into an elevated card: use spacing and a fine
-                  divider for ordinary grouping, and reserve elevation for overlays.
+                  Every resource has a readable Source view with line numbers and syntax colors for
+                  supported formats. Keep source text selectable, horizontally scrollable, and
+                  available when highlighting fails or the file exceeds the formatting limit. Reuse
+                  the existing right inspector and its saved width for type, path, size, and related
+                  resources.
                 </p>
                 <p>
-                  Start with shadcn Button, Sidebar, Resizable, Tabs, Tooltip, DropdownMenu, Dialog,
-                  Sheet, ScrollArea, Separator, Breadcrumb, Input and Textarea. Add only components
-                  needed by a screen. Use one Lucide outline icon set with consistent stroke weight;
-                  Lucide is the proposed equivalent, not a claim about Codex&#x27;s internal icon
-                  library. Centralize icons through a named map so alignment changes propagate.
+                  Markdown opens in Preview with readable headings, GitHub-flavored tables/lists,
+                  and code examples; Source stays one click away. Relative links work only for known
+                  related library resources. External or unmatched links remain labels, images are
+                  placeholders, and raw HTML is skipped. HTML opens in Source and offers an explicit
+                  sanitized static Preview in an isolated iframe. Keep the choice and read-only
+                  status visible. This viewer does not provide editing, script execution, external
+                  navigation, or a guarantee that a source page will look identical to its original
+                  rendering. The read-only label and activation note stay visible: opening guidance
+                  does not change an agent&#x27;s instructions or execute code. Do not show Save,
+                  Apply, or Run controls before those operations exist.
+                </p>
+                <p>
+                  Company, project, sort, and version controls use the shared Base UI Select
+                  component. Its rounded, neutral popup is positioned within the viewport and uses
+                  ordinary local scrolling when options exceed the available height. Extra
+                  scroll-arrow overlays are removed. Keep selected and keyboard-highlighted options
+                  distinct, use Hugeicons consistently, and retain control labels, focus
+                  restoration, and reduced-motion transitions. Phone triggers and options use 44px
+                  targets and 16px text. Verify pointer selection, keyboard/typeahead, Escape,
+                  focus, scrolling, and narrow-screen placement in the rendered app; custom dropdown
+                  styling is not proof of those behaviors.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Placement and behavior</summary>
+              <summary>Design / Geometry and responsive layout</summary>
               <div class="appendix-content">
-                <div class="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th scope="col">Control</th>
-                        <th scope="col">Placement and behavior</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Companies/Reports/Invoices/Templates</td>
-                        <td>Left rail in exactly this order, persistent selected state</td>
-                      </tr>
-                      <tr>
-                        <td>New report / New invoice</td>
-                        <td>Top right of the relevant list heading</td>
-                      </tr>
-                      <tr>
-                        <td>Upload</td>
-                        <td>Company file list heading; company/project context retained</td>
-                      </tr>
-                      <tr>
-                        <td>Back/forward + breadcrumbs</td>
-                        <td>Left side of top toolbar; restore list filters/scroll on return</td>
-                      </tr>
-                      <tr>
-                        <td>Download / overflow / inspector</td>
-                        <td>Right side of top toolbar, stable order on every file</td>
-                      </tr>
-                      <tr>
-                        <td>Version + page/slide/sheet + zoom</td>
-                        <td>Document toolbar; preserve page when compatible</td>
-                      </tr>
-                      <tr>
-                        <td>Annotate</td>
-                        <td>Right side of document toolbar; explicit select mode</td>
-                      </tr>
-                      <tr>
-                        <td>Review / Context / Agent</td>
-                        <td>Tabs at inspector top; Agent toggle activates the Agent tab</td>
-                      </tr>
-                      <tr>
-                        <td>Change-request composer</td>
-                        <td>Anchored at inspector bottom; selected annotation shown above text</td>
-                      </tr>
-                      <tr>
-                        <td>Attach + Send</td>
-                        <td>
-                          Bottom left and bottom right inside composer; Send becomes Stop during
-                          execution
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Save draft / Apply instructions</td>
-                        <td>Agent editor footer, with saved/active/conflict status</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
                 <p>
-                  Reports opens on recent reports and counts by company with filters; avoid filling
-                  the page with generic metric cards. Companies opens its file list; all four
-                  categories share the same list row component and file route. Templates display
-                  scope and current binding without exposing internal package names.
+                  Use a 4px spacing unit: 4, 8, 12, 16, 24, and 32px cover most relationships. One
+                  parent owns each gap. Control radius starts at 6px, ordinary surfaces at 8px;
+                  larger radii need a real purpose. Prefer spacing and a fine divider to nested
+                  cards. Align text and icons optically on shared baselines.
                 </p>
                 <p>
-                  The Context tab shows the selected template, task operation, company/project,
-                  visit facts and their sources, pending questions, and the corrections applied. A
-                  correction defaults to the current task; changing a company default is a separate
-                  explicit action. Intentional blank fields stay distinct from unanswered required
-                  fields.
+                  The desktop toolbar targets 52px, with 32px content gutters where width permits.
+                  Compact layouts use 24px gutters and phone layouts 16px. The shared catalog,
+                  document, and Agents inspector starts at 330px. Its persisted Effect Atom
+                  preference uses <code>ha-workspace.ui.inspector-width.v1</code> in the existing
+                  storage runtime. Width is bounded to 280 to 560px, with the live maximum
+                  constrained by the container width minus 360px and a 280px floor. Narrowing the
+                  viewport clamps the rendered width without erasing the saved preference.
                 </p>
                 <p>
-                  Annotations support page rectangles and comments, text selection where available,
-                  sheet cell/range selection, and whole-file comments. Draft input survives route
-                  changes and reconnects. Apply a correction by creating a new source version and
-                  rendering it; the preview should never pretend that changing an HTML overlay
-                  changed the actual Office file.
+                  Above 760px, drag the separator or use ArrowLeft to widen and ArrowRight to narrow
+                  by 16px; Shift changes the step to 32px. Home selects 280px and End selects the
+                  current maximum. Pointer capture and a temporary shield over embedded previews
+                  keep dragging reliable. Escape or pointer cancellation restores the starting
+                  width; a completed drag saves once. At 760px and below, the resize handle is
+                  absent and the inspector uses the existing full-width mobile layout.
+                </p>
+                <p>
+                  At narrow widths, use a single content column. Navigation moves into its Sheet and
+                  document tools reflow without page overflow. Keep grid and flex children at
+                  <code>min-width: 0</code>; allow long data tables to scroll locally. Use 44px
+                  touch targets, safe-area padding, and a visible composer when the software
+                  keyboard opens. Never disable zoom or intercept ordinary scrolling. Annotation
+                  gestures will require an explicit mode when annotations are implemented.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / A calmer workflow through progressive disclosure</summary>
+              <summary>Design / Feedback, motion, and accessibility</summary>
               <div class="appendix-content">
                 <p>
-                  Show the document and the next useful action first. The file list needs a strong
-                  filename, format, modified date, and relevant status; secondary metadata belongs
-                  in the inspector. A clear row selection and breadcrumb should explain location
-                  without repeating it in several headings. Preserve filters, sort order, scroll
-                  position, and preview position when returning from a file.
+                  Every file has a distinct loading, ready, empty, unsupported, and failed state.
+                  Show backend-confirmed job status and preserve draft text after failure. A last
+                  valid preview or query result may remain visible during refresh, with an honest
+                  progress or disconnected label. Do not imply a dispatched mutation was reversed
+                  when cancellation is merely requested.
                 </p>
                 <p>
-                  Keep one primary action per context: New report on Reports, Upload within a
-                  company, and Send change request in review. Place uncommon actions in a labeled
-                  overflow menu. Never hide an essential action behind hover alone. Use concise,
-                  specific copy such as “Preview is being prepared” or “This revision changed.
-                  Review the latest version”; preserve the user&#x27;s draft when an operation
-                  fails.
-                </p>
-                <p>
-                  The inspector opens to the relevant tab and remembers its width. Expanding a panel
-                  should not move the current document anchor out of view. Details such as source
-                  facts, instruction hashes, renderer diagnostics, or adapter status appear when
-                  they help resolve a question; package names and runtime mechanics stay out of
-                  ordinary product flows.
-                </p>
-                <p>
-                  Use a stable skeleton shaped like the eventual file row or page while data loads.
-                  Show the last valid preview during a refresh, with a quiet progress label. A blank
-                  file, unsupported format, failed preview, empty folder, and offline worker have
-                  distinct states with an appropriate next step. File previews and request status
-                  must always describe what the backend has confirmed.
-                </p>
-              </div>
-            </details>
-            <details>
-              <summary>Design / Motion with a purpose</summary>
-              <div class="appendix-content">
-                <p>
-                  Motion should explain a state change and preserve orientation. Implement it
-                  through shared CSS variables and shadcn/Radix state attributes. Use CSS
-                  transitions for ordinary controls and overlays. Add a motion library only if a
-                  specific interaction cannot be expressed cleanly with these primitives; document
-                  the reason.
+                  Use CSS and Base UI state attributes for ordinary feedback. Keep transitions
+                  interruptible, name the properties being animated, and avoid
+                  <code>transition: all</code>. Prefer opacity and transforms; the bounded sidebar
+                  grid transition is a deliberate layout exception. Motion must not delay commands,
+                  move the current document anchor unexpectedly, or animate every newly loaded row.
+                  <a
+                    href="https://base-ui.com/react/handbook/animation"
+                    target="_blank"
+                    rel="noopener"
+                    >Base UI animation guidance</a
+                  >.
                 </p>
                 <div class="table-wrap">
                   <table>
                     <thead>
                       <tr>
                         <th scope="col">Interaction</th>
-                        <th scope="col">Proposed duration</th>
+                        <th scope="col">Duration</th>
                         <th scope="col">Behavior</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Hover, press, focus treatment</td>
+                        <td>Hover, press, focus</td>
                         <td>100 to 140ms</td>
-                        <td>Color/opacity change; a press may use at most a 1px offset</td>
+                        <td>Color or opacity feedback</td>
                       </tr>
                       <tr>
-                        <td>Popover, menu, tooltip</td>
+                        <td>Menu and tooltip</td>
                         <td>120 to 160ms</td>
-                        <td>Small opacity/transform entrance with the correct transform origin</td>
+                        <td>Small entrance with the correct origin</td>
                       </tr>
                       <tr>
-                        <td>Inspector or mobile sheet</td>
+                        <td>Sidebar, inspector, mobile sheet</td>
                         <td>180 to 220ms</td>
-                        <td>
-                          Short transform/opacity transition; focus moves after the panel becomes
-                          usable
-                        </td>
+                        <td>Preserve orientation and focus</td>
                       </tr>
                       <tr>
-                        <td>Route/content change</td>
-                        <td>160 to 220ms</td>
-                        <td>
-                          Brief crossfade or at most 8px movement; keep navigation and document
-                          controls stable
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Saved/success acknowledgement</td>
+                        <td>Save acknowledgement</td>
                         <td>140 to 180ms</td>
-                        <td>Quiet icon or label transition, without blocking the next action</td>
+                        <td>Brief label or icon change</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p>
-                  Use <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code> for entrances and
-                  <code>ease-out</code> for simple feedback. Animate transforms and opacity,
-                  avoiding repeated layout work across large document surfaces. Resizing follows the
-                  pointer immediately and has no smoothing lag. Virtualized lists should not animate
-                  every arriving row. Avoid perpetual decorative motion, bouncing panels, parallax,
-                  and shimmering loaders.
-                </p>
-                <p>
-                  Honor <code>prefers-reduced-motion: reduce</code>: remove travel and spring
-                  effects, disable automatic transitions, and apply state changes immediately or
-                  with a brief opacity change. Focus visibility, live status messages, and keyboard
-                  controls work with animation disabled. Announce meaningful async status with a
-                  polite live region; motion or color cannot be the only status signal. Avoid
-                  intercepting standard scroll and touch gestures.
-                </p>
-                <p>
-                  Validate rapid repeated toggles, interruption midway through a panel animation,
-                  reduced-motion mode, and slower devices. An animation must not delay a command,
-                  hide a failure, clear a selection, or steal focus. Measure performance with a real
-                  multipage preview open.
+                  Honor <code>prefers-reduced-motion: reduce</code>; state, focus, and live feedback
+                  must remain complete without animation. Use semantic links for navigation and
+                  buttons for actions. Preserve visible, unobscured focus, return it after dialogs
+                  close, label controls, and announce meaningful async updates politely. Test the
+                  whole keyboard path, not just individual components. These are the adapted
+                  interaction requirements from Vercel&#x27;s
+                  <a href="https://vercel.com/design/guidelines" target="_blank" rel="noopener"
+                    >web interface guidelines</a
+                  >.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Phone behavior</summary>
+              <summary>Design / Effect Atom boundaries</summary>
               <div class="appendix-content">
                 <p>
-                  At narrow widths, switch to a single content surface. Navigation moves into a
-                  Sheet, file preview takes the full width, and Review/Context/Agent open as
-                  full-height panels or drawers. Preserve the exact navigation names and inspector
-                  tabs. Use 44px touch targets and safe-area padding; keep the composer visible with
-                  the software keyboard open.
+                  Views read feature atoms and send commands through runtime function atoms. One
+                  session registry owns the authenticated Confect client and its live reads. Keep
+                  shareable filters in the route URL, persisted panel preferences in their own Atom
+                  storage, and review drafts keyed by owner and source version through an Effect
+                  storage service. Use React refs for focus and geometry, and keep pure JSX
+                  straightforward.
                 </p>
                 <p>
-                  Pinch/scroll remain normal until annotation mode is selected. In annotation mode,
-                  a drag creates a box with handles and a clear Done/Cancel action. Do not treat
-                  every touch gesture as drawing. Delay heavy viewers until a file is opened; render
-                  only nearby pages/slides or visible sheet ranges.
+                  Typed failures must lead to a useful action: restore a connection, open the latest
+                  version, correct the request, or retry when safe. Preserve the user&#x27;s input
+                  and version context throughout. State management, theme changes, and panel motion
+                  must not create a second query cache or an extra client.
                 </p>
               </div>
             </details>
             <details>
-              <summary>Design / Visual and interaction acceptance</summary>
+              <summary>Design / Verification and future work</summary>
               <div class="appendix-content">
                 <p>
-                  Review light and dark screenshots at 1440×900, 1024×768, and a representative
-                  390px-wide iPhone viewport. Judge hierarchy, font fallback, icon baseline,
-                  density, toolbar order, active/hover/focus states, and panel geometry against this
-                  contract. Use long filenames, mixed formats, unavailable previews, and real folder
-                  depth from the fake Drive. The wireframe establishes workflow coverage; the
-                  product design should improve clarity and comfort as actual content is introduced.
+                  The September 8 theme and inspector checks verified loaded Geist fonts, Hugeicons,
+                  dark scrollbars, metadata-only Context, and a real PDF during pointer resizing.
+                  Keyboard resizing, saved width across reloads and routes, sidebar controls, and
+                  Base UI drawer focus/Escape behavior passed. At 900px the inspector clamped to
+                  available space; at 390px it became full width without a resize handle or
+                  horizontal overflow. The browser reported no console warnings or errors.
+                  <code>SETUP.md</code> records the measurements. The subsequent left-navigation
+                  check passed pointer/keyboard resizing, Escape cancellation,
+                  collapse/reopen/reload persistence, mobile handle removal, and independent
+                  inspector resizing through the shared hook. Remote iPhone access remains a
+                  deployment gate.
                 </p>
                 <p>
-                  Exercise keyboard navigation, focus restoration, Escape behavior, panel resizing,
-                  mobile selection, page zoom and comment positioning. Verify that opening the
-                  inspector does not create horizontal overflow, document text stays readable, and
-                  the keyboard does not hide Send. Check loading, empty, error, rendering,
-                  reconnecting, worker-offline, and instruction-conflict states using real labels.
+                  Subsequent browser checks verified the 29-resource library, search, Tools
+                  filtering, skill links, company/project reset, keyboard sorting, the version menu,
+                  and the 390px layout. The viewer pass also verified Markdown Preview/Source,
+                  syntax colors across YAML/Python/JSON/HTML, and an explicit static HTML preview
+                  with retained inline styling, no scripts, and no network requests. At 390px,
+                  content stayed within the viewport and view controls remained 44px high. These
+                  browser checks used actual copied resources; hostile-input cases were exercised in
+                  unit tests rather than a malicious browser fixture. Continue checking new screens
+                  at desktop, compact desktop, and phone widths. Include font fallback, long
+                  filenames, active/hover/focus states, repeated toggles, reduced motion, empty
+                  results, failures, and worker-offline behavior. Prior checks established
+                  review-draft persistence and real Word/PDF and workbook previews; a new feature
+                  needs its own interaction evidence.
                 </p>
                 <p>
-                  The connected shell has passed the local checks listed above. Broader acceptance
-                  requirements remain until exercised in the implemented UI. The local HTML plan is
-                  an illustrative document, not evidence that application features are complete.
-                </p>
-              </div>
-            </details>
-            <details>
-              <summary>Design / Effect Atom state and command boundaries</summary>
-              <div class="appendix-content">
-                <p>
-                  Keep application behavior out of JSX and event handlers. A view reads feature
-                  atoms and sends commands through runtime function atoms. A session-owned Atom
-                  registry supplies state and typed command outcomes. One Confect client feeds live
-                  reads into atoms through a schema-preserving adapter. Show typed missing-fact,
-                  revision-conflict, locked-file, and publication-conflict states with an action the
-                  user can take. Preserve draft text when a command fails. Cancellation displays a
-                  request until durable job state confirms completion; it does not imply a
-                  dispatched mutation was reversed.
-                </p>
-                <p>
-                  Use atoms for the inspector tab, annotation selection, preview zoom, panel
-                  preferences, draft editing, and derived submit state. Keep shareable filters in
-                  the route URL. Drafts persist through an Effect storage service, keyed by owner
-                  and source revision. Render async query/command states explicitly, with draft text
-                  and the last valid preview preserved when a refresh fails. Use React refs for
-                  focus and geometry.
+                  Page/cell annotations, full Office authoring, intake, new reports/invoices, the
+                  instruction editor, AI execution, and a light theme remain future capabilities.
+                  They must preserve version ownership and the original document. The visual plan
+                  includes labeled layout studies for some of these ideas; it is not evidence that
+                  they are implemented.
                 </p>
               </div>
             </details>
@@ -6451,6 +6744,27 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             </div>
           </div>
           <div class="source-grid">
+            <a href="https://vercel.com/design.md" target="_blank" rel="noopener"
+              >Vercel / design guidance <span>↗</span></a
+            >
+            <a href="https://vercel.com/design.dark.md" target="_blank" rel="noopener"
+              >Vercel / dark guidance <span>↗</span></a
+            >
+            <a href="https://vercel.com/design/guidelines" target="_blank" rel="noopener"
+              >Vercel / interface behavior <span>↗</span></a
+            >
+            <a href="https://vercel.com/font" target="_blank" rel="noopener"
+              >Geist / typography <span>↗</span></a
+            >
+            <a href="https://ui.shadcn.com/docs/monorepo" target="_blank" rel="noopener"
+              >shadcn / Base UI monorepo <span>↗</span></a
+            >
+            <a
+              href="https://hugeicons.com/docs/integrations/react/quick-start"
+              target="_blank"
+              rel="noopener"
+              >Hugeicons / React <span>↗</span></a
+            >
             <a
               href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
               target="_blank"
@@ -6509,15 +6823,17 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             Versions were researched on September 8, 2026. The Effect and Atom samples passed strict
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
-            connected app passes source checks and its configured Bun build. A recorded pass has 80
-            TypeScript tests plus 21 Python helper tests. Default CI passes 79 TypeScript tests and
-            skips one optional runtime check. That check runs a synthetic DOCX through actual worker
-            logic, Python/LibreOffice, PDF verification, and isolated backend commit/replay,
-            preserving source hashes and comment anchors without production records. Local browser
-            checks covered real Word/PDF and workbook previews, source context, sidebar behavior,
-            search, mobile layout, and draft persistence. Remote iPhone access remains unverified.
-            Copy evidence stays in the private data directory; no source documents are included in
-            this plan. Descriptions were edited using the published
+            connected app passes source checks and its configured Bun build. The latest source suite
+            passes 126 TypeScript tests and skips one optional runtime check. That optional check
+            passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
+            DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
+            backend commit/replay, preserving source hashes and comment anchors without production
+            records. Local browser checks covered real Word/PDF and workbook previews, sidebar
+            behavior, search, mobile layout, and draft persistence. The September 8 theme pass also
+            verified Geist, Hugeicons, metadata-only Context, inspector resizing/persistence, and
+            drawer focus without console errors. Remote iPhone access remains unverified. Copy
+            evidence stays in the private data directory; no source documents are included in this
+            plan. Descriptions were edited using the published
             <a
               href="https://github.com/blader/humanizer/blob/main/SKILL.md"
               target="_blank"
@@ -6553,7 +6869,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           web: [
             "Application",
             "TanStack Start",
-            "The web app owns navigation, file lists, and the preview workspace. shadcn supplies the interface components. An Atom registry owns shared UI state and command results. A single Confect WebSocket client feeds live streams into atoms; drafts persist through an Effect storage adapter.",
+            "The web app owns navigation, file lists, document previews, and the read-only Agents library. An Atom registry owns UI state and feature runtimes. One Confect WebSocket supplies live catalog/comment/job streams; the library uses independent authenticated HTTP reads. Source highlighting and static previews never execute tools or activate guidance.",
           ],
           convex: [
             "Local backend",
@@ -6568,7 +6884,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           render: [
             "Worker capability",
             "Document tools",
-            "Local tools extract source context, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
+            "Local tools extract content for document processing and validation, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
           ],
           files: [
             "Local storage",
@@ -6595,11 +6911,11 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
         const steps = [
           [
             "Choose the right source",
-            "Open an indexed company or project file. Preview a specific version, read its source context, and keep the original within reach.",
+            "Open an indexed company or project file. Preview a specific version, check its source metadata, and keep the original within reach.",
           ],
           [
-            "Read the source context",
-            "Inspect extracted source text and folder-based context. Company/project inference is labeled. Automatic intake and template generation remain future workflows.",
+            "Check the source details",
+            "Check file and source metadata, including labeled company/project inference from folders. The inspector does not show extracted document text. Automatic intake and template generation remain future workflows.",
           ],
           [
             "Request an exact correction",
@@ -6738,7 +7054,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
             p.setAttribute("d", d)
             p.setAttribute("fill", "none")
-            p.setAttribute("stroke", "#69776a")
+            p.setAttribute("stroke", "#666666")
             p.setAttribute("stroke-width", "1.2")
             p.setAttribute("marker-end", "url(#arrow)")
             if (both) p.setAttribute("marker-start", "url(#arrow)")

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="The architecture and build plan for HA Workspace: local Convex, Bun, Effect Atom, a verified fake Drive, and a modern document review interface."
@@ -11,23 +12,45 @@
     <title>HA Workspace · Architecture plan</title>
     <style>
       :root {
-        --bg: #111314;
-        --rail: #141617;
-        --surface: #191c1e;
-        --raised: #202426;
-        --line: #303638;
-        --ink: #eef1ed;
-        --muted: #abb3af;
-        --quiet: #929c96;
-        --accent: #d5e8a2;
-        --green: #a8ceae;
-        --blue: #a9c5df;
-        --amber: #e5c595;
-        --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        --bg: #000000;
+        --rail: #0a0a0a;
+        --surface: #111111;
+        --raised: #1a1a1a;
+        --line: #292929;
+        --ink: #ededed;
+        --muted: #a1a1a1;
+        --quiet: #888888;
+        --accent: #ededed;
+        --green: #a1a1a1;
+        --blue: #52a8ff;
+        --amber: #f5a623;
+        --mono:
+          "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+        --sans:
+          "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          sans-serif;
+        --focus: #52a8ff;
+        color-scheme: dark;
       }
       * {
         box-sizing: border-box;
+        scrollbar-color: #454545 var(--bg);
+        scrollbar-width: thin;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #454545;
+        border: 2px solid var(--bg);
+        border-radius: 8px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #666666;
       }
       html {
         scroll-behavior: smooth;
@@ -59,7 +82,7 @@
       button:focus-visible,
       a:focus-visible,
       summary:focus-visible {
-        outline: 2px solid var(--accent);
+        outline: 2px solid var(--focus);
         outline-offset: 5px;
       }
       button {
@@ -94,7 +117,7 @@
         display: block;
       }
       ::selection {
-        background: #d5e8a238;
+        background: #52a8ff40;
         color: var(--ink);
       }
       [hidden] {
@@ -113,6 +136,8 @@
         top: 10px;
       }
       .rail {
+        overflow-y: auto;
+        overscroll-behavior: contain;
         width: 222px;
         position: fixed;
         inset: 0 auto 0 0;
@@ -124,6 +149,7 @@
         z-index: 10;
       }
       .brand {
+        white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 11px;
@@ -132,14 +158,15 @@
         letter-spacing: -0.2px;
       }
       .brandmark {
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 24px;
+        flex: none;
         display: grid;
         place-items: center;
-        border: 1px solid #758064;
-        border-radius: 9px;
+        border: 1px solid #454545;
+        border-radius: 6px;
         color: var(--accent);
-        font: 12px var(--mono);
+        font: 500 12px var(--sans);
       }
       .brand small {
         display: block;
@@ -148,9 +175,7 @@
         margin-top: 5px;
       }
       .rail-label {
-        font: 10px var(--mono);
-        letter-spacing: 1.4px;
-        text-transform: uppercase;
+        font: 10px var(--sans);
         color: var(--quiet);
         margin: 53px 10px 12px;
       }
@@ -168,7 +193,7 @@
         font-size: 13px;
       }
       .nav a span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
       }
       .nav a:hover {
@@ -176,7 +201,7 @@
         color: var(--ink);
       }
       .nav a[aria-current="true"] {
-        background: #d5e8a20c;
+        background: #ededed0c;
         color: var(--accent);
       }
       .nav a[aria-current="true"] span {
@@ -216,11 +241,10 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 42px;
-        background: #111314ed;
+        background: var(--bg);
         position: sticky;
         top: 0;
         z-index: 8;
-        backdrop-filter: blur(12px);
         font-size: 12px;
       }
       .crumb {
@@ -239,7 +263,7 @@
         border: 1px solid var(--line);
         border-radius: 99px;
         padding: 3px 10px;
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--muted);
         white-space: nowrap;
       }
@@ -276,10 +300,8 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        font: 11px var(--mono);
-        letter-spacing: 1px;
+        font: 11px var(--sans);
         color: var(--accent);
-        text-transform: uppercase;
       }
       .eyebrow:before {
         content: "";
@@ -311,7 +333,7 @@
         flex-wrap: wrap;
         gap: 24px;
         margin-top: 31px;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       .meta-row span {
@@ -330,15 +352,13 @@
         align-items: center;
         gap: 22px;
         padding: 20px 23px;
-        background: #d5e8a207;
-        border: 1px solid #d5e8a223;
+        background: #ededed07;
+        border: 1px solid #ededed23;
         border-radius: 10px;
         margin-top: 36px;
       }
       .decision .label {
-        font: 10px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
+        font: 10px var(--sans);
         color: var(--accent);
         white-space: nowrap;
       }
@@ -358,7 +378,7 @@
         height: 24px;
         flex: none;
         color: var(--accent);
-        border: 1px solid #d5e8a244;
+        border: 1px solid #ededed44;
         display: grid;
         place-items: center;
         border-radius: 50%;
@@ -377,7 +397,7 @@
         margin-bottom: 28px;
       }
       .section-number {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 11px;
@@ -392,7 +412,7 @@
         padding-top: 25px;
       }
       .section-heading .tag {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         white-space: nowrap;
         padding-top: 33px;
@@ -414,7 +434,7 @@
         justify-content: space-between;
         padding: 15px 22px;
         border-bottom: 1px solid var(--line);
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       .map-header span:first-child {
@@ -424,8 +444,6 @@
         position: relative;
         padding: 25px;
         isolation: isolate;
-        background-image: radial-gradient(#ffffff09 0.8px, transparent 0.8px);
-        background-size: 18px 18px;
       }
       .map-grid {
         display: grid;
@@ -446,8 +464,8 @@
       .map-node {
         position: relative;
         text-align: left;
-        background: #1e2223;
-        border: 1px solid #3b4244;
+        background: #111111;
+        border: 1px solid #292929;
         padding: 18px;
         border-radius: 9px;
         min-height: 107px;
@@ -456,19 +474,16 @@
           border-color 0.15s;
       }
       .map-node:hover {
-        background: #242a2b;
-        border-color: #727d75;
+        background: #1a1a1a;
+        border-color: #454545;
       }
       .map-node[aria-pressed="true"] {
-        background: #252c25;
-        border-color: #91a56f;
-        box-shadow: 0 0 0 3px #d5e8a208;
+        background: #1f1f1f;
+        border-color: #888888;
       }
       .map-node .node-label {
         display: block;
-        font: 9px var(--mono);
-        letter-spacing: 0.7px;
-        text-transform: uppercase;
+        font: 9px var(--sans);
         color: var(--quiet);
         margin-bottom: 10px;
       }
@@ -487,7 +502,7 @@
         position: absolute;
         right: 13px;
         top: 12px;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
       }
       #node-client {
@@ -542,7 +557,7 @@
         gap: 25px;
         padding: 22px 25px;
         min-height: 126px;
-        background: #171a1b;
+        background: #0a0a0a;
       }
       .node-detail h3 {
         font-size: 14px;
@@ -553,7 +568,7 @@
         max-width: 690px;
       }
       .node-detail .detail-cap {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--accent);
         display: block;
         margin-bottom: 7px;
@@ -586,7 +601,7 @@
         display: grid;
         place-items: center;
         border-radius: 8px;
-        font: 13px var(--mono);
+        font: 13px var(--sans);
         color: var(--accent);
       }
       .stack-row h3 {
@@ -598,12 +613,12 @@
         max-width: 280px;
       }
       .version {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         padding-top: 3px;
       }
       .repo {
-        background: #171a1b;
+        background: #0a0a0a;
         border: 1px solid var(--line);
         border-radius: 10px;
         padding: 23px;
@@ -640,14 +655,14 @@
         gap: 14px;
         align-items: start;
         margin-top: 24px;
-        background: #e5c59507;
-        border: 1px solid #e5c59520;
+        background: #f5a62307;
+        border: 1px solid #f5a62320;
         padding: 17px 19px;
         border-radius: 8px;
       }
       .compatibility span {
         color: var(--amber);
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         padding-top: 3px;
         white-space: nowrap;
       }
@@ -673,7 +688,7 @@
         border-right: 0;
       }
       .flow-stage .count {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 19px;
@@ -693,7 +708,7 @@
         background: var(--raised);
       }
       .flow-stage[aria-pressed="true"] {
-        background: #d5e8a212;
+        background: #ededed12;
       }
       .flow-stage[aria-pressed="true"] .count {
         color: var(--accent);
@@ -723,9 +738,9 @@
         padding: 18px 0;
       }
       .format b {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         display: inline-block;
-        border: 1px solid #4b5252;
+        border: 1px solid #454545;
         border-radius: 5px;
         padding: 5px 8px;
         margin-bottom: 14px;
@@ -740,8 +755,8 @@
       }
       .boundary {
         padding: 18px 20px;
-        border-left: 2px solid #748864;
-        background: #d5e8a206;
+        border-left: 2px solid #888888;
+        background: #ededed06;
         margin-top: 15px;
         font-size: 13px;
       }
@@ -754,7 +769,7 @@
         padding: 19px;
         border: 1px solid var(--line);
         border-radius: 9px;
-        background: #171a1b;
+        background: #0a0a0a;
       }
       .model-group h3 {
         font-size: 14px;
@@ -777,7 +792,7 @@
         flex: 1;
       }
       .mock {
-        border: 1px solid #404646;
+        border: 1px solid #333333;
         border-radius: 11px;
         background: #212121;
         overflow: hidden;
@@ -794,7 +809,7 @@
       }
       .mock-top .mock-controls {
         letter-spacing: 10px;
-        color: #b7bcb6;
+        color: #b3b3b3;
       }
       .mock-body {
         display: grid;
@@ -842,7 +857,7 @@
         color: #bbb;
       }
       .paper {
-        background: #f9f9f6;
+        background: #ffffff;
         color: #333;
         width: 72%;
         max-width: 300px;
@@ -853,7 +868,6 @@
       }
       .paper-brand {
         font-size: 10px;
-        letter-spacing: 0.3px;
         font-weight: 600;
       }
       .paper-title {
@@ -869,7 +883,7 @@
       }
       .paper-line {
         height: 3px;
-        background: #d2d4cf;
+        background: #d4d4d4;
         margin: 7px 0;
         width: 100%;
       }
@@ -895,7 +909,7 @@
         height: 16px;
         display: grid;
         place-items: center;
-        font: 8px var(--mono);
+        font: 8px var(--sans);
       }
       .mock-inspector {
         padding: 15px;
@@ -1030,13 +1044,13 @@
         border-radius: 50%;
         display: grid;
         place-items: center;
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--quiet);
         background: var(--bg);
         z-index: 1;
       }
       .phase:first-child .phase-num {
-        border-color: #9aad79;
+        border-color: #888888;
         color: var(--accent);
       }
       .phase details {
@@ -1062,7 +1076,7 @@
         letter-spacing: -0.25px;
       }
       .phase summary .phase-status {
-        font: 9px var(--mono);
+        font: 9px var(--sans);
         color: var(--quiet);
         border: 1px solid var(--line);
         border-radius: 4px;
@@ -1070,7 +1084,7 @@
       }
       .phase summary:after {
         content: "+";
-        font: 17px var(--mono);
+        font: 17px var(--sans);
         color: var(--quiet);
         grid-column: 2;
         grid-row: 1;
@@ -1096,7 +1110,7 @@
       }
       .accept span {
         color: var(--accent);
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         display: block;
         margin-bottom: 5px;
       }
@@ -1117,7 +1131,7 @@
         gap: 12px;
       }
       .decision-list .mark {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         color: var(--accent);
         padding-top: 3px;
       }
@@ -1150,7 +1164,7 @@
       }
       .appendix details > summary:after {
         content: "+";
-        font: 16px var(--mono);
+        font: 16px var(--sans);
         color: var(--quiet);
       }
       .appendix details[open] > summary:after {
@@ -1189,7 +1203,7 @@
       }
       .appendix-content pre {
         padding: 19px;
-        background: #191c1e;
+        background: #111111;
         border: 1px solid var(--line);
         border-radius: 6px;
         overflow: auto;
@@ -1223,9 +1237,7 @@
         color: var(--ink);
       }
       .appendix-divider {
-        font: 10px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font: 10px var(--sans);
         color: var(--quiet);
         padding: 27px 4px 17px;
       }
@@ -1237,7 +1249,7 @@
       .source-grid a {
         font-size: 12px;
         padding: 13px 15px;
-        background: #191c1e;
+        background: #111111;
         border: 1px solid var(--line);
         border-radius: 7px;
         display: flex;
@@ -1315,8 +1327,8 @@
           font-size: 12px;
         }
         .brandmark {
-          width: 28px;
-          height: 28px;
+          width: 30px;
+          height: 22px;
         }
         .frame {
           margin-left: 168px;
@@ -1771,13 +1783,13 @@
       @media print {
         :root {
           --bg: #fff;
-          --surface: #f1f2f0;
-          --raised: #e9ece8;
-          --line: #d2d6d0;
-          --ink: #161b16;
-          --muted: #444b43;
-          --quiet: #535e50;
-          --accent: #405425;
+          --surface: #f5f5f5;
+          --raised: #ededed;
+          --line: #d4d4d4;
+          --ink: #171717;
+          --muted: #444444;
+          --quiet: #555555;
+          --accent: #171717;
           --blue: #2a5071;
         }
         body {
@@ -1789,15 +1801,15 @@
         .node-detail,
         .repo,
         .model-group {
-          background: #f2f4f0;
-          color: #161b16;
+          background: #f5f5f5;
+          color: #171717;
         }
         .mock {
           color: #ececec;
         }
         .compatibility,
         .boundary {
-          background: #f3f4ef;
+          background: #f5f5f5;
         }
         .rail,
         .topbar,
@@ -1824,7 +1836,7 @@
           font-size: 38px;
         }
         .hero h1 em {
-          color: #405425;
+          color: #171717;
         }
         .section {
           break-inside: avoid;
@@ -1874,10 +1886,8 @@
       .runtime-strip span,
       .choice-label {
         display: block;
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--accent);
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
         margin-bottom: 11px;
       }
       .runtime-strip h3 {
@@ -1892,9 +1902,9 @@
         grid-template-columns: 1.2fr 0.8fr;
         gap: 30px;
         padding: 26px;
-        border: 1px solid #d5e8a230;
+        border: 1px solid #ededed30;
         border-radius: 12px;
-        background: #d5e8a207;
+        background: #ededed07;
       }
       .architecture-choice h3 {
         font-size: 20px;
@@ -1912,7 +1922,7 @@
         flex-wrap: wrap;
       }
       .feature-tags span {
-        font: 11px var(--mono);
+        font: 11px var(--sans);
         padding: 9px 12px;
         border: 1px solid var(--line);
         border-radius: 6px;
@@ -1928,7 +1938,7 @@
       }
       .dependency-map > b {
         color: var(--quiet);
-        font: 22px var(--mono);
+        font: 22px var(--sans);
         text-align: center;
       }
       .dependency-layer {
@@ -1939,9 +1949,7 @@
         background: var(--surface);
       }
       .dependency-layer span {
-        font: 9px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
+        font: 9px var(--sans);
         color: var(--quiet);
       }
       .dependency-layer h3 {
@@ -1952,8 +1960,8 @@
         font-size: 12px;
       }
       .dependency-layer.core {
-        border-color: #697b51;
-        background: #d5e8a20a;
+        border-color: #666666;
+        background: #ededed0a;
       }
       .dependency-layer.core span {
         color: var(--accent);
@@ -1984,7 +1992,7 @@
         padding-top: 17px;
       }
       .effect-principles span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
       }
       .effect-principles h4 {
@@ -2003,7 +2011,7 @@
         min-width: 0;
         border: 1px solid var(--line);
         border-radius: 11px;
-        background: #171b1c;
+        background: #0a0a0a;
         overflow: hidden;
       }
       .code-title {
@@ -2025,7 +2033,7 @@
         overflow: auto;
         font-size: 11px;
         line-height: 1.9;
-        color: #d6ddcc;
+        color: #d4d4d4;
         tab-size: 2;
       }
       .code-window pre code {
@@ -2102,7 +2110,7 @@
       }
       .durability li {
         padding-left: 18px;
-        border-left: 2px solid #657754;
+        border-left: 2px solid #666666;
       }
       .durability b {
         display: block;
@@ -2223,11 +2231,11 @@
         .code-window,
         .durability,
         .feature-tags span {
-          background: #f1f2ef;
-          color: #161b16;
+          background: #f5f5f5;
+          color: #171717;
         }
         .code-window pre {
-          color: #161b16;
+          color: #171717;
         }
         .code-study,
         .durability {
@@ -2254,14 +2262,12 @@
         background: var(--surface);
       }
       .atom-path .atom-owner {
-        border-color: #889b69;
-        background: #d5e8a20c;
+        border-color: #888888;
+        background: #ededed0c;
       }
       .atom-path span {
         display: block;
-        font: 9px var(--mono);
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
+        font: 9px var(--sans);
         color: var(--quiet);
         margin-bottom: 10px;
       }
@@ -2303,7 +2309,7 @@
         margin-top: 23px;
       }
       .atom-note > span {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         white-space: nowrap;
         color: var(--accent);
         padding-top: 4px;
@@ -2332,7 +2338,7 @@
       @media print {
         .atom-path > div,
         .atom-path .atom-owner {
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
       }
 
@@ -2347,12 +2353,10 @@
         min-width: 0;
       }
       .setup-label {
-        font: 10px var(--mono);
+        font: 10px var(--sans);
         color: var(--quiet);
         display: block;
         margin-bottom: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
       }
       .setup-grid h3 {
         font-size: 20px;
@@ -2392,10 +2396,8 @@
       }
       .drive-path small {
         display: block;
-        font: 9px var(--mono);
+        font: 9px var(--sans);
         color: var(--quiet);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
       .drive-path strong {
         display: block;
@@ -2436,7 +2438,7 @@
         margin: 22px 0;
       }
       .motion-timings b {
-        font: 20px var(--mono);
+        font: 20px var(--sans);
         font-weight: 400;
         color: var(--accent);
         display: block;
@@ -2457,7 +2459,7 @@
         height: 175px;
         border: 1px solid var(--line);
         border-radius: 9px;
-        background: #1c2023;
+        background: #111111;
         position: relative;
         overflow: hidden;
       }
@@ -2468,18 +2470,18 @@
         width: 47%;
         height: 150px;
         padding: 24px 16px;
-        background: #edf0ea;
+        background: #ffffff;
         box-shadow: 0 2px 10px #0003;
       }
       .motion-page i {
         height: 3px;
         display: block;
-        background: #c6cdc4;
+        background: #cccccc;
         margin-bottom: 11px;
       }
       .motion-page i:first-child {
         width: 60%;
-        background: #939f90;
+        background: #999999;
         margin-bottom: 21px;
       }
       .motion-pane {
@@ -2488,8 +2490,8 @@
         inset-block: 0;
         width: 42%;
         padding: 15px;
-        background: #16191b;
-        border-left: 1px solid #3a4541;
+        background: #000000;
+        border-left: 1px solid #292929;
         transform: translateX(14px);
         opacity: 0;
         transition:
@@ -2506,7 +2508,7 @@
         display: block;
         width: 95%;
         height: 3px;
-        background: #3d4a44;
+        background: #333333;
         margin-bottom: 8px;
       }
       .motion-pane > i:nth-child(3) {
@@ -2520,7 +2522,7 @@
         left: 10px;
         right: 10px;
         padding: 10px 8px;
-        border: 1px solid #38423c;
+        border: 1px solid #333333;
         border-radius: 8px;
       }
       .motion-preview[data-open="true"] .motion-pane {
@@ -2592,12 +2594,12 @@
       @media print {
         .motion-preview,
         .drive-path {
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
         .motion-pane {
           transform: none;
           opacity: 1;
-          background: #f1f2ef;
+          background: #f5f5f5;
         }
         .motion-button {
           display: none;
@@ -2612,8 +2614,7 @@
     <a class="skip" href="#main">Skip to plan</a>
     <aside class="rail" id="rail">
       <a class="brand" href="#overview"
-        ><span class="brandmark">HA</span
-        ><span>HA Workspace<small>Architecture &amp; design</small></span></a
+        ><span class="brandmark">HA</span><span>HA Workspace</span></a
       >
       <div class="rail-label">The plan</div>
       <nav class="nav" aria-label="Plan sections">
@@ -2625,13 +2626,14 @@
         <a href="#workflow"><span>04</span>Document workflow</a>
         <a href="#data"><span>05</span>Data model</a>
         <a href="#interface"><span>06</span>Interface</a>
-        <a href="#roadmap"><span>07</span>Build sequence</a>
-        <a href="#details"><span>08</span>Engineering notes</a>
+        <a href="#agent-library"><span>07</span>Agents library</a>
+        <a href="#roadmap"><span>08</span>Build sequence</a>
+        <a href="#details"><span>09</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
         <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
-        Foundation in progress<br />Updated September 8, 2026
+        Connected local prototype<br />Updated September 8, 2026
       </div>
     </aside>
     <div class="frame">
@@ -2664,7 +2666,7 @@
       </header>
       <main class="content" id="main">
         <section class="hero" id="overview" aria-labelledby="title">
-          <div class="eyebrow">Personal software / HA Consulting</div>
+          <div class="eyebrow">HA Consulting / Architecture plan</div>
           <h1>A workspace for your files.<br /><em>A faster way to review.</em></h1>
           <p class="intro">
             Keep company files and templates in one place. Open a document, point to what needs
@@ -2755,7 +2757,7 @@
         <section class="section" id="architecture">
           <div class="section-heading">
             <div>
-              <span class="section-number">01 / Architecture</span>
+              <span class="section-number">Architecture</span>
               <h2>Where each part runs</h2>
             </div>
             <p>
@@ -2780,7 +2782,7 @@
                     markerHeight="5"
                     orient="auto-start-reverse"
                   >
-                    <path d="M0 0 10 5 0 10" fill="#69776a" />
+                    <path d="M0 0 10 5 0 10" fill="#666666" />
                   </marker>
                 </defs>
                 <g id="wires"></g>
@@ -2845,7 +2847,7 @@
         <section class="section" id="stack">
           <div class="section-heading">
             <div>
-              <span class="section-number">02 / Foundation</span>
+              <span class="section-number">Foundation</span>
               <h2>A small Bun monorepo</h2>
             </div>
             <p>
@@ -2878,14 +2880,14 @@
                 <div class="stack-logo">T</div>
                 <div>
                   <h3>TanStack Start</h3>
-                  <p>Routes and the server shell. Start from shadcn's monorepo template.</p>
+                  <p>Routes and the server shell. Use the established shadcn monorepo structure.</p>
                 </div>
                 <span class="version">1.168.50</span>
               </div>
               <div class="stack-row">
                 <div class="stack-logo">/</div>
                 <div>
-                  <h3>shadcn + Tailwind</h3>
+                  <h3>Base UI + shadcn</h3>
                   <p>Accessible components with shared colors, spacing, and typography.</p>
                 </div>
                 <span class="version">4.21.0 / 4.3.3</span>
@@ -2975,9 +2977,10 @@ bun.lock</pre>
               Bun <code>1.4.2</code> is the latest stable release checked for this plan, following
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
-              declares Node tooling. The configured production build passes. A recorded verification
-              pass includes 80 TypeScript tests under Doppler and 21 Python document-helper tests.
-              Default CI runs 79 TypeScript tests and skips one optional local-runtime check.
+              declares Node tooling. The configured production build passes. The latest source suite
+              passes 126 TypeScript tests and skips one optional local-runtime check. That optional
+              test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
+              tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
                 >Bun release notes ↗</a
               >
@@ -2988,7 +2991,7 @@ bun.lock</pre>
         <section class="section" id="effect-architecture">
           <div class="section-heading">
             <div>
-              <span class="section-number">03 / Architecture decision</span>
+              <span class="section-number">Architecture decision</span>
               <h2>One product. Clear boundaries.</h2>
             </div>
             <p>
@@ -3160,8 +3163,8 @@ bun.lock</pre>
               <div>
                 <h4>Runtime function atoms</h4>
                 <p>
-                  Request a revision, save instructions, or cancel a job. Pending, success, and
-                  typed failures stay visible.
+                  Request a revision, save a comment, or cancel a job. Pending, success, and typed
+                  failures stay visible.
                 </p>
               </div>
               <div>
@@ -3234,7 +3237,7 @@ bun.lock</pre>
         <section class="section" id="workflow">
           <div class="section-heading">
             <div>
-              <span class="section-number">04 / The review loop</span>
+              <span class="section-number">The review loop</span>
               <h2>From a file to its next revision</h2>
             </div>
             <p>
@@ -3248,8 +3251,8 @@ bun.lock</pre>
               ><small>Company &amp; project</small>
             </button>
             <button class="flow-stage" data-step="1" aria-pressed="false">
-              <span class="count">02</span><strong>Read the context</strong
-              ><small>Source excerpts</small>
+              <span class="count">02</span><strong>Check the source</strong
+              ><small>File &amp; source details</small>
             </button>
             <button class="flow-stage" data-step="2" aria-pressed="false">
               <span class="count">03</span><strong>Request a change</strong
@@ -3267,8 +3270,8 @@ bun.lock</pre>
           <div class="flow-caption" aria-live="polite">
             <h3 id="step-title">Choose the right source</h3>
             <p id="step-description">
-              Open an indexed company or project file. Preview a specific version, read its source
-              context, and keep the original within reach.
+              Open an indexed company or project file. Preview a specific version, check its source
+              details, and keep the original within reach.
             </p>
           </div>
           <div class="format-grid">
@@ -3315,7 +3318,7 @@ bun.lock</pre>
         <section class="section" id="data">
           <div class="section-heading">
             <div>
-              <span class="section-number">05 / Durable context</span>
+              <span class="section-number">Durable context</span>
               <h2>Keep the facts with the work</h2>
             </div>
             <p>
@@ -3358,31 +3361,37 @@ bun.lock</pre>
         <section class="section" id="interface">
           <div class="section-heading">
             <div>
-              <span class="section-number">06 / Interface direction</span>
+              <span class="section-number">Interface direction</span>
               <h2>Familiar controls, room to read</h2>
             </div>
             <p>
-              The wireframe guides the workflow. The connected app adds T3-style fully collapsible
-              navigation, quiet controls, persistent Atom state, and reduced-motion support.
+              The wireframe guides the workflow. Vercel-inspired neutral surfaces, Geist typography,
+              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. Rounded
+              selection menus fit the viewport and scroll locally. The T3-style sidebar keeps its
+              saved state and reduced-motion support.
             </p>
           </div>
           <p class="footnote">
-            The application sidebar has a permanent top-left toggle, Ctrl/Cmd+B, a saved Atom
-            preference, and a separate mobile Sheet. The layout study below also illustrates future
-            annotations and instruction editing.
+            Both desktop edges support drag and keyboard resizing, with separate saved Atom widths.
+            Navigation starts at 248px (220–360px); the inspector starts at 330px (280–560px), with
+            available space limiting each. Sidebar collapse preserves its width, Ctrl/Cmd+B stays
+            available, and mobile uses an independent 280px navigation Sheet. The layout study below
+            also illustrates future annotations and instruction editing.
           </p>
           <div
             class="mock"
             aria-label="Illustrative desktop layout, not the implemented application"
           >
             <div class="mock-top">
-              <span>HA Consulting / Reports / DSAI</span><span class="mock-controls">↓ ··· ▥</span>
+              <span>HA Consulting / Reports / Example project</span
+              ><span class="mock-controls">↓ ··· ▥</span>
             </div>
             <div class="mock-body">
               <div class="mock-nav">
                 <div class="mock-brand">HA Consulting</div>
                 <span>Companies</span><span class="selected">Reports</span><span>Invoices</span
-                ><span>Templates</span><small>Recent files</small><span>DSAI</span><span>IAD5</span>
+                ><span>Templates</span><span>Agents</span><small>Recent files</small
+                ><span>Example project</span><span>Recent report</span>
               </div>
               <div class="mock-preview">
                 <div class="mock-preview-bar">
@@ -3476,13 +3485,14 @@ bun.lock</pre>
             </div>
           </div>
           <p class="footnote">
-            Layout study. Inspector tabs are interactive; the document is a diagram of the proposed
-            review surface.
+            Layout study. Inspector tabs are interactive; the document shows future review tools.
+            The plan uses locally available Geist or a system fallback and makes no font requests.
+            The application bundles its own Geist fonts.
           </p>
           <div class="design-metrics">
             <div>
               <b>248<small>px</small></b
-              ><span>Proposed sidebar width</span>
+              ><span>Default sidebar width</span>
             </div>
             <div>
               <b>14<small>px</small></b
@@ -3494,22 +3504,22 @@ bun.lock</pre>
             </div>
             <div>
               <b>44<small>px</small></b
-              ><span>Proposed touch targets</span>
+              ><span>Touch target size</span>
             </div>
           </div>
           <div class="design-bottom">
             <div class="design-note">
-              <div class="palette" aria-label="Proposed neutral palette">
-                <span class="swatch" style="background: #111416" title="Sidebar #111416"></span
-                ><span class="swatch" style="background: #16191b" title="Main #16191b"></span
-                ><span class="swatch" style="background: #1c2023" title="Preview #1c2023"></span
-                ><span class="swatch" style="background: #282f31" title="Selected #282f31"></span
-                ><span class="swatch" style="background: #edf1ed" title="Text #edf1ed"></span>
+              <div class="palette" aria-label="Adopted neutral dark palette">
+                <span class="swatch" style="background: #0a0a0a" title="Sidebar #0a0a0a"></span
+                ><span class="swatch" style="background: #000000" title="Main #000000"></span
+                ><span class="swatch" style="background: #111111" title="Preview #111111"></span
+                ><span class="swatch" style="background: #1f1f1f" title="Selected #1f1f1f"></span
+                ><span class="swatch" style="background: #ededed" title="Text #ededed"></span>
               </div>
               <p>
-                Use system fonts, one outline icon set, and semantic color tokens. Group related
-                controls with spacing and fine dividers. The finished interface has its own visual
-                system.
+                Geist Sans for the interface, Mono for code and identifiers. Base UI through shadcn
+                base-nova, with Hugeicons and a neutral dark palette. Use spacing and fine dividers
+                to group controls. Keep color for focus and meaningful state.
               </p>
             </div>
             <p>
@@ -3564,10 +3574,67 @@ bun.lock</pre>
           </div>
         </section>
 
+        <section class="section" id="agent-library">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Agents library</span>
+              <h2>The files behind the workflow</h2>
+            </div>
+            <p>
+              Read the skills and project guidance retained in the local Drive copy. Search the
+              library, open the original source text, and follow the files a skill depends on.
+            </p>
+          </div>
+          <div class="setup-grid">
+            <article>
+              <span class="setup-label">Current resource checkpoint</span>
+              <h3>29 resources</h3>
+              <p>3 skills, 2 guidance files, 11 references, 8 tools, and 5 configuration files.</p>
+            </article>
+            <article>
+              <span class="setup-label">Copy preserved</span>
+              <h3>16 files added</h3>
+              <p>
+                Missing support files were copied and hash-verified. The three existing skill
+                entrypoints stayed unchanged.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Available to read</span>
+              <h3>Review before use</h3>
+              <p>
+                Opening guidance does not activate it or execute tools. The revision worker
+                continues to use its built-in rules.
+              </p>
+            </article>
+          </div>
+          <div class="model-caption">
+            <p>
+              Source shows syntax colors and line numbers, with plain-text fallback. Markdown opens
+              in a formatted Preview with known-resource links. HTML starts in Source; Preview is an
+              explicit, sanitized static view inside an isolated iframe. Related resources and
+              metadata stay in the shared resizable inspector.
+            </p>
+            <p>
+              Read-only HTTP atoms bootstrap the local owner session for each request, independently
+              of Confect. Refresh retries a failed startup and discovers newly copied allowed
+              resources. Source code never executes; previews cannot activate instructions. No
+              Convex changes or copied source content enter the repository.
+            </p>
+          </div>
+          <p class="footnote">
+            Browser checks passed for the library, search, filters, related links, the four Base UI
+            dropdowns, and the 390px layout. Markdown and highlighted Source passed across real
+            resources. Static HTML Preview retained inline styling with zero network requests and no
+            scripts. Hostile inputs have unit-test coverage; no malicious browser fixture was run.
+            Runtime activation and instruction editing remain future workflows.
+          </p>
+        </section>
+
         <section class="section" id="roadmap">
           <div class="section-heading">
             <div>
-              <span class="section-number">07 / Build sequence</span>
+              <span class="section-number">Build sequence</span>
               <h2>Prove the review loop first</h2>
             </div>
             <p>
@@ -3603,13 +3670,16 @@ bun.lock</pre>
                 </summary>
                 <p>
                   Company/project files, category filters, search, sorting, versions, and source
-                  context share one clear workspace. The T3-inspired sidebar fully collapses and
-                  remembers its state.
+                  metadata share one clear workspace. The T3-inspired sidebar fully collapses and
+                  remembers its width and open state. Both desktop sidebars resize with pointer or
+                  keyboard input. Mobile keeps a separate navigation drawer and full-width
+                  inspector.
                 </p>
                 <div class="accept">
-                  <span>Checked</span>Desktop controls and the local 390 × 844 mobile viewport work.
-                  The mobile Sheet is independent; reduced-motion preferences remove panel travel.
-                  Remote iPhone use remains a separate gate.
+                  <span>Checked</span>Geist, Hugeicons, and dark scrollbars verified. Inspector
+                  drag, keyboard controls, saved width, and 900px clamping pass. At 390px it fills
+                  the viewport without overflow; the mobile drawer restores focus. Remote iPhone use
+                  remains a separate gate.
                 </div>
               </details>
             </div>
@@ -3626,8 +3696,9 @@ bun.lock</pre>
                 </p>
                 <div class="accept">
                   <span>Checked</span>Browser checks covered a real three-page Word/PDF, a bounded
-                  workbook grid, extracted context, search results, and draft persistence. Rich
-                  page/cell annotations are still planned.
+                  workbook grid, search results, and draft persistence. The inspector now shows
+                  source metadata, with the earlier extracted-text panel removed. Rich page/cell
+                  annotations are still planned.
                 </div>
               </details>
             </div>
@@ -3654,12 +3725,13 @@ bun.lock</pre>
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Generate reports and connect skills</h3>
+                  <h3>Generate reports and activate instructions</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add template-aware intake and generation with the general/Dulles rules, followed
-                  by a replaceable agent runtime and versioned instruction editor.
+                  The copied skills are already available to read in Agents. Add template-aware
+                  intake and generation with the general/Dulles rules, then a replaceable runtime
+                  and explicit, versioned instruction activation.
                 </p>
                 <div class="accept">
                   <span>Ready when</span>Missing facts are collected once; client/template authority
@@ -3715,7 +3787,7 @@ bun.lock</pre>
         <section class="section" id="details">
           <div class="section-heading">
             <div>
-              <span class="section-number">08 / Engineering notes</span>
+              <span class="section-number">Engineering notes</span>
               <h2>The details behind the diagrams</h2>
             </div>
           </div>
@@ -3738,6 +3810,27 @@ bun.lock</pre>
             </div>
           </div>
           <div class="source-grid">
+            <a href="https://vercel.com/design.md" target="_blank" rel="noopener"
+              >Vercel / design guidance <span>↗</span></a
+            >
+            <a href="https://vercel.com/design.dark.md" target="_blank" rel="noopener"
+              >Vercel / dark guidance <span>↗</span></a
+            >
+            <a href="https://vercel.com/design/guidelines" target="_blank" rel="noopener"
+              >Vercel / interface behavior <span>↗</span></a
+            >
+            <a href="https://vercel.com/font" target="_blank" rel="noopener"
+              >Geist / typography <span>↗</span></a
+            >
+            <a href="https://ui.shadcn.com/docs/monorepo" target="_blank" rel="noopener"
+              >shadcn / Base UI monorepo <span>↗</span></a
+            >
+            <a
+              href="https://hugeicons.com/docs/integrations/react/quick-start"
+              target="_blank"
+              rel="noopener"
+              >Hugeicons / React <span>↗</span></a
+            >
             <a
               href="https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx"
               target="_blank"
@@ -3796,15 +3889,17 @@ bun.lock</pre>
             Versions were researched on September 8, 2026. The Effect and Atom samples passed strict
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
-            connected app passes source checks and its configured Bun build. A recorded pass has 80
-            TypeScript tests plus 21 Python helper tests. Default CI passes 79 TypeScript tests and
-            skips one optional runtime check. That check runs a synthetic DOCX through actual worker
-            logic, Python/LibreOffice, PDF verification, and isolated backend commit/replay,
-            preserving source hashes and comment anchors without production records. Local browser
-            checks covered real Word/PDF and workbook previews, source context, sidebar behavior,
-            search, mobile layout, and draft persistence. Remote iPhone access remains unverified.
-            Copy evidence stays in the private data directory; no source documents are included in
-            this plan. Descriptions were edited using the published
+            connected app passes source checks and its configured Bun build. The latest source suite
+            passes 126 TypeScript tests and skips one optional runtime check. That optional check
+            passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
+            DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
+            backend commit/replay, preserving source hashes and comment anchors without production
+            records. Local browser checks covered real Word/PDF and workbook previews, sidebar
+            behavior, search, mobile layout, and draft persistence. The September 8 theme pass also
+            verified Geist, Hugeicons, metadata-only Context, inspector resizing/persistence, and
+            drawer focus without console errors. Remote iPhone access remains unverified. Copy
+            evidence stays in the private data directory; no source documents are included in this
+            plan. Descriptions were edited using the published
             <a
               href="https://github.com/blader/humanizer/blob/main/SKILL.md"
               target="_blank"
@@ -3840,7 +3935,7 @@ bun.lock</pre>
           web: [
             "Application",
             "TanStack Start",
-            "The web app owns navigation, file lists, and the preview workspace. shadcn supplies the interface components. An Atom registry owns shared UI state and command results. A single Confect WebSocket client feeds live streams into atoms; drafts persist through an Effect storage adapter.",
+            "The web app owns navigation, file lists, document previews, and the read-only Agents library. An Atom registry owns UI state and feature runtimes. One Confect WebSocket supplies live catalog/comment/job streams; the library uses independent authenticated HTTP reads. Source highlighting and static previews never execute tools or activate guidance.",
           ],
           convex: [
             "Local backend",
@@ -3855,7 +3950,7 @@ bun.lock</pre>
           render: [
             "Worker capability",
             "Document tools",
-            "Local tools extract source context, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
+            "Local tools extract content for document processing and validation, render Word/PowerPoint previews, and apply bounded exact-text corrections. DOCX checks run before rendering; source files remain unchanged. Template-based generation remains planned.",
           ],
           files: [
             "Local storage",
@@ -3882,11 +3977,11 @@ bun.lock</pre>
         const steps = [
           [
             "Choose the right source",
-            "Open an indexed company or project file. Preview a specific version, read its source context, and keep the original within reach.",
+            "Open an indexed company or project file. Preview a specific version, check its source metadata, and keep the original within reach.",
           ],
           [
-            "Read the source context",
-            "Inspect extracted source text and folder-based context. Company/project inference is labeled. Automatic intake and template generation remain future workflows.",
+            "Check the source details",
+            "Check file and source metadata, including labeled company/project inference from folders. The inspector does not show extracted document text. Automatic intake and template generation remain future workflows.",
           ],
           [
             "Request an exact correction",
@@ -4025,7 +4120,7 @@ bun.lock</pre>
             const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
             p.setAttribute("d", d)
             p.setAttribute("fill", "none")
-            p.setAttribute("stroke", "#69776a")
+            p.setAttribute("stroke", "#666666")
             p.setAttribute("stroke-width", "1.2")
             p.setAttribute("marker-end", "url(#arrow)")
             if (both) p.setAttribute("marker-start", "url(#arrow)")

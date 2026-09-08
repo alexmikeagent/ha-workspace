@@ -18,17 +18,22 @@
     "@tanstack/react-router": "1.170.33",
     "@tanstack/react-start": "1.168.50",
     "@workspace/ui": "workspace:*",
+    "dompurify": "3.4.15",
     "effect": "4.0.0-rc.112",
-    "lucide-react": "1.42.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "scheduler": "0.27.0"
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "scheduler": "0.27.0",
+    "shiki": "4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.3",
+    "@types/jsdom": "30.0.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
     "@vitejs/plugin-react": "6.1.1",
+    "jsdom": "30.0.1",
     "tailwindcss": "4.3.3",
     "vite-plus": "0.3.0"
   }

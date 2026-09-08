@@ -25,9 +25,19 @@ import {
   ShieldCheck,
   Sparkles,
   X,
-} from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+} from "@workspace/ui/components/icons"
+import { Button, buttonVariants } from "@workspace/ui/components/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/ui/components/sheet"
+import { ResizableInspector } from "@/features/workspace/resizable-inspector"
+import { ResizableWorkspaceShell } from "@/features/workspace/resizable-workspace-shell"
+import { AgentsWorkspace } from "@/features/agents/workspace"
 import {
   desktopSidebarOpenAtom,
   filePageAtom,
@@ -83,6 +93,12 @@ const sections = [
     icon: Layers2,
     description: "Browse the retained references behind your reports and invoices.",
   },
+  {
+    id: "agents",
+    label: "Agents",
+    icon: Sparkles,
+    description: "Skills, project instructions, and the files behind them.",
+  },
 ] as const
 
 export const Route = createFileRoute("/")({
@@ -103,15 +119,12 @@ function Navigation({
   return (
     <>
       <div className="workspace-brand">
-        <span className="brand-mark">
-          H<span>A</span>
+        <span className="brand-mark" aria-hidden="true">
+          HA
         </span>
-        <div>
-          <strong>{import.meta.env.VITE_APP_NAME}</strong>
-          <span>Personal workspace</span>
-        </div>
+        <strong>{import.meta.env.VITE_APP_NAME}</strong>
       </div>
-      <div className="nav-group-label">WORKSPACE</div>
+      <div className="nav-group-label">Workspace</div>
       <nav aria-label="Workspace navigation" className="workspace-nav">
         {sections.map((item) => (
           <Link
@@ -129,7 +142,7 @@ function Navigation({
         ))}
       </nav>
       <div className="sidebar-collections">
-        <div className="nav-group-label">CONNECTED SOURCE</div>
+        <div className="nav-group-label">Connected source</div>
         <div className="source-row">
           <HardDrive size={17} />
           <div>
@@ -147,7 +160,7 @@ function Navigation({
         <div className="profile-avatar">HA</div>
         <div>
           <strong>HA Consulting</strong>
-          <span>Local owner session</span>
+          <span>Local owner</span>
         </div>
         <ShieldCheck size={17} />
       </div>
@@ -191,146 +204,155 @@ function Workspace() {
   }, [setDesktopOpen, setMobileOpen])
 
   return (
-    <div
+    <ResizableWorkspaceShell
       className={`workspace-shell connected-shell ${search.file ? "has-document" : "has-catalog"}`}
-      data-sidebar={desktopOpen ? "expanded" : "collapsed"}
+      expanded={desktopOpen}
     >
-      <a href="#workspace-main" className="skip-link">
-        Skip to workspace
-      </a>
-      <div className="sidebar-toggle-wrap">
-        <Button
-          className="desktop-sidebar-toggle"
-          variant="ghost"
-          size="icon"
-          onClick={() => setDesktopOpen(!desktopOpen)}
-          aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
-          aria-expanded={desktopOpen}
-          aria-controls="desktop-navigation"
-          aria-keyshortcuts="Control+B Meta+B"
-          aria-describedby="sidebar-toggle-tip"
-        >
-          {desktopOpen ? <PanelLeftClose /> : <PanelLeft />}
-        </Button>
-        <span id="sidebar-toggle-tip" role="tooltip">
-          {desktopOpen ? "Collapse" : "Expand"} sidebar <kbd>Ctrl / ⌘ B</kbd>
-        </span>
-      </div>
-      <aside id="desktop-navigation" className="desktop-sidebar" inert={!desktopOpen}>
-        <div className="sidebar-inner">
-          <Navigation section={search.section} catalog={catalog} />
-        </div>
-      </aside>
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="mobile-sidebar">
-          <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
-          <SheetDescription className="sr-only">
-            Browse companies, reports, invoices, and templates.
-          </SheetDescription>
-          <Navigation
-            section={search.section}
-            catalog={catalog}
-            close={() => setMobileOpen(false)}
-          />
-        </SheetContent>
-      </Sheet>
-      <div className="workspace-body">
-        <header className="topbar">
-          <div className="breadcrumbs">
+      {(sidebarResizeHandle) => (
+        <>
+          <a href="#workspace-main" className="skip-link">
+            Skip to workspace
+          </a>
+          <div className="sidebar-toggle-wrap">
             <Button
-              className="mobile-menu"
+              className="desktop-sidebar-toggle"
               variant="ghost"
               size="icon"
-              aria-label="Open navigation"
-              onClick={() => setMobileOpen(true)}
+              onClick={() => setDesktopOpen(!desktopOpen)}
+              aria-label={desktopOpen ? "Collapse sidebar" : "Expand sidebar"}
+              aria-expanded={desktopOpen}
+              aria-controls="desktop-navigation"
+              aria-keyshortcuts="Control+B Meta+B"
+              aria-describedby="sidebar-toggle-tip"
             >
-              <Menu />
+              {desktopOpen ? <PanelLeftClose /> : <PanelLeft />}
             </Button>
-            <Link to="/" search={{ section: search.section }} className="breadcrumb-home">
-              {current.label}
-            </Link>
-            {company && (
-              <>
-                <ChevronRight size={13} />
-                <Link to="/" search={{ section: search.section, company: company.id }}>
-                  {company.name}
-                </Link>
-              </>
-            )}
-            {project && (
-              <>
-                <ChevronRight size={13} />
-                <span>{project.name}</span>
-              </>
-            )}
-            {search.file && (
-              <>
-                <ChevronRight size={13} />
-                <strong>Document</strong>
-              </>
-            )}
-          </div>
-          <div className="topbar-actions">
-            <span className="connection-label">
-              <span className={AsyncResult.isFailure(state) ? "status-dot issue" : "status-dot"} />
-              {AsyncResult.isFailure(state)
-                ? "Connection interrupted"
-                : catalog
-                  ? "Local workspace"
-                  : "Connecting…"}
+            <span id="sidebar-toggle-tip" role="tooltip">
+              {desktopOpen ? "Collapse" : "Expand"} sidebar <kbd>Ctrl / ⌘ B</kbd>
             </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setInspectorOpen(!inspectorOpen)}
-              aria-label={inspectorOpen ? "Close inspector" : "Open inspector"}
-              aria-expanded={inspectorOpen}
-            >
-              <PanelRight />
-            </Button>
           </div>
-        </header>
-        {search.file ? (
-          <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
-        ) : (
-          <div className="workspace-columns">
-            <main id="workspace-main" className="workspace-main catalog-main">
-              <div className="page-heading">
-                <div>
-                  <span className="eyebrow">
-                    {company ? "COMPANY WORKSPACE" : "YOUR WORK, CONNECTED"}
-                  </span>
-                  <h1>{project?.name ?? company?.name ?? current.label}</h1>
-                  <p>
-                    {company
-                      ? `${company.fileCount.toLocaleString()} files across ${company.projectCount} ${company.projectCount === 1 ? "project" : "projects"}.`
-                      : current.description}
-                  </p>
-                </div>
-                <span className="section-icon">
-                  <current.icon size={23} />
-                </span>
+          <aside id="desktop-navigation" className="desktop-sidebar" inert={!desktopOpen}>
+            <div className="sidebar-inner">
+              <Navigation section={search.section} catalog={catalog} />
+            </div>
+          </aside>
+          {sidebarResizeHandle}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetContent side="left" className="mobile-sidebar">
+              <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
+              <SheetDescription className="sr-only">
+                Browse companies, reports, invoices, templates, and agents.
+              </SheetDescription>
+              <Navigation
+                section={search.section}
+                catalog={catalog}
+                close={() => setMobileOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+          <div className="workspace-body">
+            <header className="topbar">
+              <div className="breadcrumbs">
+                <Button
+                  className="mobile-menu"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open navigation"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <Menu />
+                </Button>
+                <Link to="/" search={{ section: search.section }} className="breadcrumb-home">
+                  {current.label}
+                </Link>
+                {company && (
+                  <>
+                    <ChevronRight size={13} />
+                    <Link to="/" search={{ section: search.section, company: company.id }}>
+                      {company.name}
+                    </Link>
+                  </>
+                )}
+                {project && (
+                  <>
+                    <ChevronRight size={13} />
+                    <span>{project.name}</span>
+                  </>
+                )}
+                {search.file && (
+                  <>
+                    <ChevronRight size={13} />
+                    <strong>Document</strong>
+                  </>
+                )}
+                {search.section === "agents" && search.resource && (
+                  <>
+                    <ChevronRight size={13} />
+                    <strong>Resource</strong>
+                  </>
+                )}
               </div>
-              {AsyncResult.isFailure(state) && (
-                <output className="connection-banner">
-                  {errorOf(state)}
-                  {catalog && " Showing the last available files."}
-                </output>
-              )}
-              <CatalogControls search={search} catalog={catalog} />
-              {catalog ? (
-                <CatalogContent search={search} catalog={catalog} />
-              ) : AsyncResult.isFailure(state) ? (
-                <ConnectionFailure search={search} />
-              ) : (
-                <LoadingRows />
-              )}
-            </main>
-            {inspectorOpen && <CatalogInspector catalog={catalog} />}
+              <div className="topbar-actions">
+                <span className="connection-label">
+                  <span
+                    className={AsyncResult.isFailure(state) ? "status-dot issue" : "status-dot"}
+                  />
+                  {AsyncResult.isFailure(state)
+                    ? "Connection interrupted"
+                    : catalog
+                      ? "Local workspace"
+                      : "Connecting…"}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setInspectorOpen(!inspectorOpen)}
+                  aria-label={inspectorOpen ? "Close inspector" : "Open inspector"}
+                  aria-expanded={inspectorOpen}
+                >
+                  <PanelRight />
+                </Button>
+              </div>
+            </header>
+            {search.section === "agents" ? (
+              <AgentsWorkspace search={search} />
+            ) : search.file ? (
+              <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
+            ) : (
+              <div className="workspace-columns">
+                <main id="workspace-main" className="workspace-main catalog-main">
+                  <div className="page-heading">
+                    <div>
+                      <h1>{project?.name ?? company?.name ?? current.label}</h1>
+                      <p>
+                        {company
+                          ? `${company.fileCount.toLocaleString()} files across ${company.projectCount} ${company.projectCount === 1 ? "project" : "projects"}.`
+                          : current.description}
+                      </p>
+                    </div>
+                  </div>
+                  {AsyncResult.isFailure(state) && (
+                    <output className="connection-banner">
+                      {errorOf(state)}
+                      {catalog && " Showing the last available files."}
+                    </output>
+                  )}
+                  <CatalogControls search={search} catalog={catalog} />
+                  {catalog ? (
+                    <CatalogContent search={search} catalog={catalog} />
+                  ) : AsyncResult.isFailure(state) ? (
+                    <ConnectionFailure search={search} />
+                  ) : (
+                    <LoadingRows />
+                  )}
+                </main>
+                {inspectorOpen && <CatalogInspector catalog={catalog} />}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </ResizableWorkspaceShell>
   )
 }
 
@@ -355,6 +377,18 @@ function CatalogControls({ search, catalog }: { search: WorkspaceSearch; catalog
   const [sort, setSort] = useAtom(sortAtom)
   const projects =
     catalog?.projects.filter((item) => !search.company || item.companyId === search.company) ?? []
+  const companyOptions = [
+    { value: "", label: "All companies" },
+    ...(catalog?.companies.map((company) => ({ value: company.id, label: company.name })) ?? []),
+  ]
+  const projectOptions = [
+    { value: "", label: "All projects" },
+    ...projects.map((project) => ({ value: project.id, label: project.name })),
+  ]
+  const sortOptions = [
+    { value: "recent", label: "Recently modified" },
+    { value: "name", label: "Name A–Z" },
+  ]
   return (
     <div className="catalog-controls">
       <search>
@@ -391,56 +425,84 @@ function CatalogControls({ search, catalog }: { search: WorkspaceSearch; catalog
         </form>
       </search>
       <div className="filter-row">
-        <label>
+        <label htmlFor="company-filter">
           <span className="sr-only">Company filter</span>
-          <select
-            aria-label="Filter by company"
+          <Select
+            items={companyOptions}
             value={search.company ?? ""}
-            onChange={(event) => {
+            onValueChange={(value) => {
               void navigate({
                 to: "/",
-                search: { ...search, company: event.target.value || undefined, project: undefined },
+                search: { ...search, company: value || undefined, project: undefined },
               })
             }}
           >
-            <option value="">All companies</option>
-            {catalog?.companies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="company-filter"
+              className="workspace-select w-full"
+              aria-label="Filter by company"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {companyOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
-        <label>
+        <label htmlFor="project-filter">
           <span className="sr-only">Project filter</span>
-          <select
-            aria-label="Filter by project"
+          <Select
+            items={projectOptions}
             value={search.project ?? ""}
-            onChange={(event) => {
+            onValueChange={(value) => {
               void navigate({
                 to: "/",
-                search: { ...search, project: event.target.value || undefined },
+                search: { ...search, project: value || undefined },
               })
             }}
           >
-            <option value="">All projects</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="project-filter"
+              className="workspace-select w-full"
+              aria-label="Filter by project"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {projectOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
-        <label className="sort-select">
+        <label htmlFor="file-sort" className="sort-select">
           <span className="sr-only">Sort files</span>
-          <select
-            aria-label="Sort files"
+          <Select
+            items={sortOptions}
             value={sort}
-            onChange={(event) => setSort(event.target.value === "name" ? "name" : "recent")}
+            onValueChange={(value) => setSort(value === "name" ? "name" : "recent")}
           >
-            <option value="recent">Recently modified</option>
-            <option value="name">Name A–Z</option>
-          </select>
+            <SelectTrigger
+              id="file-sort"
+              className="workspace-select w-full"
+              aria-label="Sort files"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
       </div>
       {(search.q || search.company || search.project) && (
@@ -647,7 +709,7 @@ function FileRow({
 function CatalogInspector({ catalog }: { catalog?: Catalog }) {
   const [, setInspectorOpen] = useAtom(inspectorOpenAtom)
   return (
-    <aside className="workspace-inspector catalog-inspector" aria-label="Workspace context">
+    <ResizableInspector className="catalog-inspector" label="Workspace context">
       <div className="inspector-heading">
         <span>Workspace context</span>
         <Button
@@ -707,7 +769,7 @@ function CatalogInspector({ catalog }: { catalog?: Catalog }) {
         <ShieldCheck size={13} />
         Original files stay separate
       </div>
-    </aside>
+    </ResizableInspector>
   )
 }
 
@@ -779,6 +841,10 @@ function ReadyFileWorkspace({
     )
   const companyName = catalog?.companies.find((item) => item.id === details.file.companyId)?.name
   const projectName = catalog?.projects.find((item) => item.id === details.file.projectId)?.name
+  const versionOptions = details.versions.map((item) => ({
+    value: item.id,
+    label: `Version ${item.number}${item.id === details.file.currentVersionId ? " · Current" : ""}`,
+  }))
   return (
     <div className="workspace-columns document-columns">
       <main id="workspace-main" className="document-main">
@@ -798,30 +864,40 @@ function ReadyFileWorkspace({
               {projectName && ` / ${projectName}`}
             </p>
           </div>
-          <Button asChild variant="outline">
-            <a href={versionUrl(details.file.id, version.id, "download")}>
-              <Download size={14} />
-              <span>Download</span>
-            </a>
-          </Button>
+          <a
+            className={buttonVariants({ variant: "outline" })}
+            aria-label="Download document"
+            href={versionUrl(details.file.id, version.id, "download")}
+          >
+            <Download size={14} />
+            <span>Download</span>
+          </a>
         </div>
         <div className="document-version-bar">
-          <label>
+          <label htmlFor="document-version">
             <span className="sr-only">Document version</span>
-            <select
-              aria-label="Document version"
+            <Select
+              items={versionOptions}
               value={version.id}
-              onChange={(event) => {
-                void navigate({ to: "/", search: { ...search, version: event.target.value } })
+              onValueChange={(value) => {
+                if (value) void navigate({ to: "/", search: { ...search, version: value } })
               }}
             >
-              {details.versions.map((item) => (
-                <option key={item.id} value={item.id}>
-                  Version {item.number}
-                  {item.id === details.file.currentVersionId ? " · Current" : ""}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger
+                id="document-version"
+                className="workspace-select"
+                aria-label="Document version"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {versionOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </label>
           <span>
             {formatDate(version.modifiedAt)}
@@ -846,7 +922,7 @@ function ReadyFileWorkspace({
         <DocumentPreview details={details} version={version} />
       </main>
       {inspectorOpen && (
-        <aside className="workspace-inspector document-inspector" aria-label="Document inspector">
+        <ResizableInspector className="document-inspector" label="Document inspector">
           <div className="inspector-heading">
             <span>Document workspace</span>
             <Button
@@ -893,7 +969,7 @@ function ReadyFileWorkspace({
               </Button>
             </div>
           )}
-        </aside>
+        </ResizableInspector>
       )}
     </div>
   )

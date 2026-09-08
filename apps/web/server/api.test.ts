@@ -2,6 +2,7 @@ import { it } from "@effect/vitest"
 import { LocalAuth, SessionError } from "@ha/backend/local-auth"
 import { DriveError, DriveStore, type StoredFile } from "@ha/documents/drive-store"
 import { PreviewStore } from "@ha/documents/preview"
+import { AgentLibraryStore } from "@ha/documents/agent-library"
 import { Effect, Layer } from "effect"
 import { expect } from "vite-plus/test"
 import { LocalApi, LocalApiLive, LocalApiSettings, LocalFileResponse } from "./api"
@@ -32,6 +33,15 @@ const record: StoredFile = {
     sha256: "c".repeat(64),
     sourceLabel: "Example",
   },
+}
+const agentResource = {
+  id: "d".repeat(64),
+  name: "Example Skill",
+  kind: "skill" as const,
+  relativePath: "HA_Consulting_Work/.agents/skills/example/SKILL.md",
+  skillId: "d".repeat(64),
+  sizeBytes: 10,
+  modifiedAt: 1,
 }
 
 function fixture(errorCode?: string) {
@@ -89,6 +99,23 @@ function fixture(errorCode?: string) {
               notes: ["Reference material"],
             }),
         }),
+        Layer.succeed(AgentLibraryStore, {
+          list: () =>
+            Effect.sync(() => {
+              calls.push("agents:list")
+              return { resources: [agentResource], scannedAt: 1 }
+            }),
+          get: () =>
+            Effect.sync(() => {
+              calls.push("agents:get")
+              return {
+                resource: agentResource,
+                content: "# Example Skill",
+                truncated: false,
+                supportingResources: [],
+              }
+            }),
+        }),
         Layer.succeed(LocalFileResponse, {
           serve: (_path, mime, name) =>
             Effect.sync(() => {
@@ -123,6 +150,49 @@ function request(
 const authenticated = (path: string, token = "owner-token") =>
   request(path, { headers: { cookie: `${sessionCookieName}=${token}` } })
 const readJson = (response: Response) => Effect.promise(() => response.json() as Promise<unknown>)
+
+it.effect.each(["/api/agents", `/api/agents/${agentResource.id}`])(
+  "requires a valid local owner before reading the agent library at %s",
+  (path) =>
+    Effect.gen(function* () {
+      const api = fixture()
+      expect((yield* api.handle(request(path))).status).toBe(401)
+      expect((yield* api.handle(authenticated(path, "expired-token"))).status).toBe(401)
+      expect((yield* api.handle(authenticated(path, "importer-token"))).status).toBe(403)
+      expect(
+        (yield* api.handle(
+          request(path, {
+            headers: {
+              cookie: `${sessionCookieName}=owner-token`,
+              origin: "https://foreign.example",
+            },
+          }),
+        )).status,
+      ).toBe(403)
+      expect((yield* api.handle(authenticated(path), "192.168.1.12")).status).toBe(403)
+      expect(api.calls).toEqual([])
+    }),
+)
+
+it.effect("serves agent source as private JSON and rejects resource path parameters", () =>
+  Effect.gen(function* () {
+    const api = fixture()
+    const list = yield* api.handle(authenticated("/api/agents"))
+    expect(list.status).toBe(200)
+    expect(list.headers.get("cache-control")).toBe("private, no-store")
+    expect(yield* readJson(list)).toEqual({ resources: [agentResource], scannedAt: 1 })
+    const detail = yield* api.handle(authenticated(`/api/agents/${agentResource.id}`))
+    expect(detail.headers.get("content-type")).toContain("application/json")
+    expect(yield* readJson(detail)).toMatchObject({ content: "# Example Skill", truncated: false })
+    expect(api.calls).toEqual(["agents:list", "agents:get"])
+    expect((yield* api.handle(authenticated("/api/agents/%2e%2e%2fprivate"))).status).toBe(404)
+    expect(
+      (yield* api.handle(authenticated(`/api/agents/${agentResource.id}?path=/private/secret`)))
+        .status,
+    ).toBe(400)
+    expect(api.calls).toEqual(["agents:list", "agents:get"])
+  }),
+)
 
 it.effect("bootstraps a private owner session and keeps an existing session identity", () =>
   Effect.gen(function* () {

@@ -1,6 +1,6 @@
 # Effect architecture and coding guide
 
-Adopted for HA Workspace on September 8, 2026. The connected implementation uses Effect v4 RC, one authenticated Confect/Atom browser runtime, local file capabilities, and durable revision jobs. Doppler injection and the configured Bun production build pass. Current verification includes 80 TypeScript tests under Doppler and 21 Python document-helper tests. Default CI runs 79 TypeScript tests and skips the optional local-runtime test; `SETUP.md` separates runtime/browser evidence from source checks. The linked API probes remain historical examples, not substitutes for application tests.
+Adopted for HA Workspace on September 8, 2026. The connected implementation uses Effect v4 RC, one authenticated Confect/Atom browser runtime, local file capabilities, and durable revision jobs. Doppler injection and the configured Bun production build pass. The latest source suite passes 126 TypeScript tests and skips one optional local-runtime test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests; `SETUP.md` separates runtime/browser evidence from source checks. The linked API probes remain historical examples, not substitutes for application tests.
 
 ## Architecture decision: hexagonal modular monolith
 
@@ -10,13 +10,14 @@ Organize code by feature. Use Effect services as ports: small interfaces describ
 
 The application of that architecture to this project is:
 
-| Module       | Owns                                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------------------- |
-| Catalog      | Companies, projects, files, immutable versions, preview manifests                                     |
-| Review       | Version-specific annotations, comments and revision requests                                          |
-| HA policies  | Template selection, intake requirements, report/invoice rules, client evidence and publication checks |
-| Instructions | AGENTS.md and skill versions, drafts, apply operations and source conflicts                           |
-| Jobs         | Durable work requests, attempts, leases, cancellation, progress and completion                        |
+| Module         | Owns                                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------------------- |
+| Catalog        | Companies, projects, files, immutable versions, preview manifests                                     |
+| Review         | Version-specific annotations, comments and revision requests                                          |
+| HA policies    | Template selection, intake requirements, report/invoice rules, client evidence and publication checks |
+| Agents library | Read-only copied skills/guidance/supporting resources; bounded discovery and source reads             |
+| Instructions   | Future instruction versions, drafts, apply operations and source conflicts                            |
+| Jobs           | Durable work requests, attempts, leases, cancellation, progress and completion                        |
 
 Mirror these feature names inside `domain` and `application`. Keep each feature’s schemas, use cases and tests close together. Reporting and invoicing can remain workflows under HA policies until their size warrants separate modules. Start with the existing workspace packages; do not create a package for every service.
 
@@ -49,7 +50,7 @@ Pure calculations and JSX stay ordinary TypeScript/React. A total calculation ne
 | External libraries         | Wrap their Promise/callback APIs once; map exceptions into the port’s declared errors                                  |
 | Document/agent processes   | Acquire, stream output, cancel, and release through scoped services                                                    |
 
-Use a session-owned Atom registry and runtime. Dispose session resources on logout or owner change; SSR authentication and registries belong to their request. Do not place mutable user identity or request-bound Convex context in a process-wide singleton. RC.112 scopes `Atom.runtime` layer memoization to its registry; avoid a global memo map for user services. [Pinned Atom implementation](https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/unstable/reactivity/Atom.ts).
+Use a session-owned Atom registry for feature runtimes. Dispose session resources on logout or owner change; SSR authentication and registries belong to their request. Do not place mutable user identity or request-bound Convex context in a process-wide singleton. RC.112 scopes `Atom.runtime` layer memoization to its registry; avoid a global memo map for user services. [Pinned Atom implementation](https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/unstable/reactivity/Atom.ts).
 
 ## Effect Atom owns application state in the UI
 
@@ -57,17 +58,18 @@ Adopt `@effect/atom-react@4.0.0-rc.112` with `Atom`, `AtomRegistry`, and `AsyncR
 
 This is the state ownership model:
 
-| State                                                   | Owner and lifetime                                                                               |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Inspector tab, selected annotation, zoom, panel widths  | Feature atoms in the authenticated workspace registry                                            |
-| Composer and instruction drafts                         | Atoms keyed by owner, document/revision, and draft kind; persist through an injected draft store |
-| Pending command, typed error, local progress            | Runtime function atoms and `AsyncResult`; command success contains the durable job ID            |
-| Live files, comments, job progress, active instructions | Read atoms projecting the single Confect subscription stream; Convex remains authoritative       |
-| Derived view state                                      | Derived atoms combining local state and live reads; avoid copying lists into writable atoms      |
-| Shareable company/file/filter selection                 | TanStack Router URL state, read by the feature boundary; no independently writable duplicate     |
-| Focus, element measurements and animation details       | React refs and component lifecycle where local DOM ownership is clearer                          |
+| State                                                  | Owner and lifetime                                                                                   |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Inspector tab, selected annotation, zoom, panel widths | Feature atoms in the authenticated workspace registry                                                |
+| Composer and instruction drafts                        | Atoms keyed by owner, document/revision, and draft kind; persist through an injected draft store     |
+| Pending command, typed error, local progress           | Runtime function atoms and `AsyncResult`; command success contains the durable job ID                |
+| Live files, comments and job progress                  | Read atoms projecting the single Confect subscription stream; Convex remains authoritative           |
+| Copied agent library and resource source               | Schema-decoded HTTP read atoms in an independent local runtime; owner-session bootstrap on each read |
+| Derived view state                                     | Derived atoms combining local state and live reads; avoid copying lists into writable atoms          |
+| Shareable company/file/filter selection                | TanStack Router URL state, read by the feature boundary; no independently writable duplicate         |
+| Focus, element measurements and animation details      | React refs and component lifecycle where local DOM ownership is clearer                              |
 
-Create one stable `Atom.runtime` from the browser's live Layer inside its session boundary. Use its `fn` constructor for commands and its stream-backed atoms for reads and progress. This replaces the separate browser `ManagedRuntime` bridge. Keep command/use-case definitions in the application package and atom definitions in each web feature, so application code does not import UI reactivity APIs. Standalone server and worker boundaries retain their own scoped execution model.
+Create stable `Atom.runtime` values from capability-specific Layers inside the same registry. The document workspace owns one Confect runtime; local library reads and syntax highlighting have independent runtimes so they do not inherit an unrelated connection failure. Use runtime function atoms for commands and stream-backed atoms for live reads and progress. These runtimes replace the separate browser `ManagedRuntime` bridge without duplicating transports or caches. Keep command/use-case definitions in the application package and atom definitions in each web feature, so application code does not import UI reactivity APIs. Standalone server and worker boundaries retain their own scoped execution model.
 
 The browser uses one scoped `@confect/js` WebSocket client as its transport. Its typed commands and `reactiveQueryResult` streams become application-service adapters. The Atom registry owns the reactive presentation graph. Do not mount parallel Confect React query hooks, a second Convex client, or a second query cache for the same data. Preserve Confect codecs and explicit typed query errors in the bridge. This integration is implemented in `apps/web/src/features/workspace/catalog.ts`; the session layer waits for authentication confirmation before exposing live query streams. [Confect JavaScript client](https://confect.dev/v10/clients/js/websocket.md).
 
@@ -92,6 +94,10 @@ The sidebar open preference uses `Atom.kvs` with a Boolean schema. Review and re
 Confect's `workspace` functions own metadata, comments, and durable revision transitions on the isolated `3220` backend. The Bun worker claims one attempt, checks cancellation while it runs, creates a new candidate, validates and renders supported Word output, then commits with base-version/lease/fencing checks. Exact-text correction is a bounded deterministic operation. It does not turn natural-language comments into edits or implement AI task execution.
 
 The optional synthetic-document test composes actual worker logic with real Python/LibreOffice processes and isolated `convex-test` backend functions. It proves corrected DOCX/PDF output, preserved source hashes and comment anchors, idempotent commit replay, and staging cleanup without production records. It requires the Doppler-provided document-tool paths; the default source suite skips it when those runtimes are absent.
+
+The read-only Agents library uses `AgentLibraryStore` with shared Effect schemas and typed failures. Its same-origin HTTP reads use a small `Atom.runtime(Layer.empty)` in the existing app registry. Each request bootstraps the local owner session with `readSession`, then fetches and decodes the library response. This runtime is independent of Confect availability and creates no WebSocket or second query cache. Refresh can retry a failed authentication bootstrap; a focused test exercises that recovery. Discover only the bounded approved working-copy locations, keep source reads read-only, and isolate any formatted preview. Reading a resource cannot activate instructions, mutate Drive, or dispatch a worker tool. A future activation command needs its own durable authorization and version snapshot.
+
+`SourceHighlighter` is a separate scoped Effect capability. Its lazy Shiki layer is shared within the registry and disposes the grammar instance when released. Token rendering stays ordinary React text, with explicit plain-text fallback on failure or size limits. Markdown parsing and HTML sanitization are view boundaries, never tool dispatch or instruction activation.
 
 The rules below also cover planned template generation, richer annotations, instructions, and final publication. Those contracts remain requirements; the existence of a shared Effect runtime does not mean every planned feature has been implemented.
 

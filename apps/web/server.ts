@@ -2,6 +2,7 @@ import { BunRuntime, BunServices } from "@effect/platform-bun"
 import { LocalAuthLive } from "@ha/backend/local-auth"
 import { DriveStoreLive } from "@ha/documents/drive-store"
 import { PreviewStoreLive } from "@ha/documents/preview"
+import { AgentLibraryStoreLive } from "@ha/documents/agent-library"
 import { Config, Effect, FileSystem, Layer, Schema } from "effect"
 import { LocalApi, LocalApiLive, LocalApiSettingsLive, LocalFileResponseLive } from "./server/api"
 import { jsonResponse } from "./server/security"
@@ -86,7 +87,9 @@ const main = Effect.gen(function* () {
   yield* Effect.never
 })
 
-const DocumentsLive = PreviewStoreLive.pipe(Layer.provideMerge(DriveStoreLive))
+const DocumentsLive = Layer.mergeAll(PreviewStoreLive, AgentLibraryStoreLive).pipe(
+  Layer.provideMerge(DriveStoreLive),
+)
 const ApiLive = LocalApiLive.pipe(
   Layer.provide(
     Layer.mergeAll(LocalAuthLive, DocumentsLive, LocalApiSettingsLive, LocalFileResponseLive),

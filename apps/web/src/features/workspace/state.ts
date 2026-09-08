@@ -2,7 +2,7 @@ import { Atom } from "effect/unstable/reactivity"
 import { Schema } from "effect"
 import { KeyValueStore } from "effect/unstable/persistence"
 
-export type WorkspaceSection = "companies" | "reports" | "invoices" | "templates"
+export type WorkspaceSection = "companies" | "reports" | "invoices" | "templates" | "agents"
 export type InspectorTab = "review" | "context" | "agent"
 
 // Each RegistryProvider owns these values. Nothing is shared between SSR requests.
@@ -13,6 +13,28 @@ export const desktopSidebarOpenAtom = Atom.kvs({
   key: "ha-workspace.ui.sidebar-open.v1",
   schema: Schema.Boolean,
   defaultValue: () => true,
+})
+export const SIDEBAR_MIN_WIDTH = 220
+export const SIDEBAR_MAX_WIDTH = 360
+export const SIDEBAR_DEFAULT_WIDTH = 248
+export const desktopSidebarWidthAtom = Atom.kvs({
+  runtime: preferenceRuntime,
+  key: "ha-workspace.ui.sidebar-width.v1",
+  schema: Schema.Finite.check(
+    Schema.isBetween({ minimum: SIDEBAR_MIN_WIDTH, maximum: SIDEBAR_MAX_WIDTH }),
+  ),
+  defaultValue: () => SIDEBAR_DEFAULT_WIDTH,
+})
+export const INSPECTOR_MIN_WIDTH = 280
+export const INSPECTOR_MAX_WIDTH = 560
+export const INSPECTOR_DEFAULT_WIDTH = 330
+export const inspectorWidthAtom = Atom.kvs({
+  runtime: preferenceRuntime,
+  key: "ha-workspace.ui.inspector-width.v1",
+  schema: Schema.Finite.check(
+    Schema.isBetween({ minimum: INSPECTOR_MIN_WIDTH, maximum: INSPECTOR_MAX_WIDTH }),
+  ),
+  defaultValue: () => INSPECTOR_DEFAULT_WIDTH,
 })
 export const inspectorOpenAtom = Atom.writable(
   () => typeof window !== "undefined" && window.innerWidth > 1100,
@@ -29,6 +51,7 @@ export interface WorkspaceSearch {
   project?: string
   file?: string
   version?: string
+  resource?: string
   q?: string
 }
 
@@ -40,13 +63,15 @@ export function validateWorkspaceSearch(search: Record<string, unknown>): Worksp
     section:
       search.section === "reports" ||
       search.section === "invoices" ||
-      search.section === "templates"
+      search.section === "templates" ||
+      search.section === "agents"
         ? search.section
         : "companies",
     company: shortString(search.company),
     project: shortString(search.project),
     file: shortString(search.file),
     version: shortString(search.version),
+    resource: shortString(search.resource),
     q: shortString(search.q),
   }
 }
