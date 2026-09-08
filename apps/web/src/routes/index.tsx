@@ -27,9 +27,17 @@ import {
   X,
 } from "@workspace/ui/components/icons"
 import { Button, buttonVariants } from "@workspace/ui/components/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/ui/components/sheet"
 import { ResizableInspector } from "@/features/workspace/resizable-inspector"
 import { ResizableWorkspaceShell } from "@/features/workspace/resizable-workspace-shell"
+import { AgentsWorkspace } from "@/features/agents/workspace"
 import {
   desktopSidebarOpenAtom,
   filePageAtom,
@@ -84,6 +92,12 @@ const sections = [
     label: "Templates",
     icon: Layers2,
     description: "Browse the retained references behind your reports and invoices.",
+  },
+  {
+    id: "agents",
+    label: "Agents",
+    icon: Sparkles,
+    description: "Skills, project instructions, and the files behind them.",
   },
 ] as const
 
@@ -227,7 +241,7 @@ function Workspace() {
             <SheetContent side="left" className="mobile-sidebar">
               <SheetTitle className="sr-only">Workspace navigation</SheetTitle>
               <SheetDescription className="sr-only">
-                Browse companies, reports, invoices, and templates.
+                Browse companies, reports, invoices, templates, and agents.
               </SheetDescription>
               <Navigation
                 section={search.section}
@@ -271,6 +285,12 @@ function Workspace() {
                     <strong>Document</strong>
                   </>
                 )}
+                {search.section === "agents" && search.resource && (
+                  <>
+                    <ChevronRight size={13} />
+                    <strong>Resource</strong>
+                  </>
+                )}
               </div>
               <div className="topbar-actions">
                 <span className="connection-label">
@@ -294,7 +314,9 @@ function Workspace() {
                 </Button>
               </div>
             </header>
-            {search.file ? (
+            {search.section === "agents" ? (
+              <AgentsWorkspace search={search} />
+            ) : search.file ? (
               <FileWorkspace fileId={search.file} search={search} catalog={catalog} />
             ) : (
               <div className="workspace-columns">
@@ -355,6 +377,18 @@ function CatalogControls({ search, catalog }: { search: WorkspaceSearch; catalog
   const [sort, setSort] = useAtom(sortAtom)
   const projects =
     catalog?.projects.filter((item) => !search.company || item.companyId === search.company) ?? []
+  const companyOptions = [
+    { value: "", label: "All companies" },
+    ...(catalog?.companies.map((company) => ({ value: company.id, label: company.name })) ?? []),
+  ]
+  const projectOptions = [
+    { value: "", label: "All projects" },
+    ...projects.map((project) => ({ value: project.id, label: project.name })),
+  ]
+  const sortOptions = [
+    { value: "recent", label: "Recently modified" },
+    { value: "name", label: "Name A–Z" },
+  ]
   return (
     <div className="catalog-controls">
       <search>
@@ -391,56 +425,84 @@ function CatalogControls({ search, catalog }: { search: WorkspaceSearch; catalog
         </form>
       </search>
       <div className="filter-row">
-        <label>
+        <label htmlFor="company-filter">
           <span className="sr-only">Company filter</span>
-          <select
-            aria-label="Filter by company"
+          <Select
+            items={companyOptions}
             value={search.company ?? ""}
-            onChange={(event) => {
+            onValueChange={(value) => {
               void navigate({
                 to: "/",
-                search: { ...search, company: event.target.value || undefined, project: undefined },
+                search: { ...search, company: value || undefined, project: undefined },
               })
             }}
           >
-            <option value="">All companies</option>
-            {catalog?.companies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="company-filter"
+              className="workspace-select w-full"
+              aria-label="Filter by company"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {companyOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
-        <label>
+        <label htmlFor="project-filter">
           <span className="sr-only">Project filter</span>
-          <select
-            aria-label="Filter by project"
+          <Select
+            items={projectOptions}
             value={search.project ?? ""}
-            onChange={(event) => {
+            onValueChange={(value) => {
               void navigate({
                 to: "/",
-                search: { ...search, project: event.target.value || undefined },
+                search: { ...search, project: value || undefined },
               })
             }}
           >
-            <option value="">All projects</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="project-filter"
+              className="workspace-select w-full"
+              aria-label="Filter by project"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {projectOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
-        <label className="sort-select">
+        <label htmlFor="file-sort" className="sort-select">
           <span className="sr-only">Sort files</span>
-          <select
-            aria-label="Sort files"
+          <Select
+            items={sortOptions}
             value={sort}
-            onChange={(event) => setSort(event.target.value === "name" ? "name" : "recent")}
+            onValueChange={(value) => setSort(value === "name" ? "name" : "recent")}
           >
-            <option value="recent">Recently modified</option>
-            <option value="name">Name A–Z</option>
-          </select>
+            <SelectTrigger
+              id="file-sort"
+              className="workspace-select w-full"
+              aria-label="Sort files"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
       </div>
       {(search.q || search.company || search.project) && (
@@ -779,6 +841,10 @@ function ReadyFileWorkspace({
     )
   const companyName = catalog?.companies.find((item) => item.id === details.file.companyId)?.name
   const projectName = catalog?.projects.find((item) => item.id === details.file.projectId)?.name
+  const versionOptions = details.versions.map((item) => ({
+    value: item.id,
+    label: `Version ${item.number}${item.id === details.file.currentVersionId ? " · Current" : ""}`,
+  }))
   return (
     <div className="workspace-columns document-columns">
       <main id="workspace-main" className="document-main">
@@ -808,22 +874,30 @@ function ReadyFileWorkspace({
           </a>
         </div>
         <div className="document-version-bar">
-          <label>
+          <label htmlFor="document-version">
             <span className="sr-only">Document version</span>
-            <select
-              aria-label="Document version"
+            <Select
+              items={versionOptions}
               value={version.id}
-              onChange={(event) => {
-                void navigate({ to: "/", search: { ...search, version: event.target.value } })
+              onValueChange={(value) => {
+                if (value) void navigate({ to: "/", search: { ...search, version: value } })
               }}
             >
-              {details.versions.map((item) => (
-                <option key={item.id} value={item.id}>
-                  Version {item.number}
-                  {item.id === details.file.currentVersionId ? " · Current" : ""}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger
+                id="document-version"
+                className="workspace-select"
+                aria-label="Document version"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {versionOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </label>
           <span>
             {formatDate(version.modifiedAt)}

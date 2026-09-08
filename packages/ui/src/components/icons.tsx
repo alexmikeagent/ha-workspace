@@ -2,6 +2,8 @@ import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import {
   ArrowLeft01Icon,
   ArrowLeft02Icon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
   ArrowRight01Icon,
   ArrowRight02Icon,
   BubbleChatIcon,
@@ -28,6 +30,7 @@ import {
   SentIcon,
   SparklesIcon,
   Tick02Icon,
+  UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons"
 import {
   forwardRef,
@@ -86,6 +89,9 @@ export const Building2 = createIcon("Company", Building03Icon)
 export const Check = createIcon("Check", Tick02Icon)
 export const ChevronLeft = createIcon("ChevronLeft", ArrowLeft01Icon)
 export const ChevronRight = createIcon("ChevronRight", ArrowRight01Icon)
+export const ChevronDown = createIcon("ChevronDown", ArrowDown01Icon)
+export const ChevronUp = createIcon("ChevronUp", ArrowUp01Icon)
+export const ChevronsUpDown = createIcon("Select", UnfoldMoreIcon)
 export const Download = createIcon("Download", Download04Icon)
 export const FileQuestion = createIcon("FileQuestion", FileQuestionMarkIcon)
 export const FileText = createIcon("Document", File02Icon)

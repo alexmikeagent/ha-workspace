@@ -72,6 +72,9 @@ export const workspaceRuntime = Atom.runtime(
 )
 
 export function catalogKey(search: WorkspaceSearch) {
+  if (search.section === "agents") {
+    return JSON.stringify({ search: "", companyId: "", projectId: "", category: "" })
+  }
   return JSON.stringify({
     search: search.q ?? "",
     companyId: search.company ?? "",

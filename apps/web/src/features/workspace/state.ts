@@ -2,7 +2,7 @@ import { Atom } from "effect/unstable/reactivity"
 import { Schema } from "effect"
 import { KeyValueStore } from "effect/unstable/persistence"
 
-export type WorkspaceSection = "companies" | "reports" | "invoices" | "templates"
+export type WorkspaceSection = "companies" | "reports" | "invoices" | "templates" | "agents"
 export type InspectorTab = "review" | "context" | "agent"
 
 // Each RegistryProvider owns these values. Nothing is shared between SSR requests.
@@ -51,6 +51,7 @@ export interface WorkspaceSearch {
   project?: string
   file?: string
   version?: string
+  resource?: string
   q?: string
 }
 
@@ -62,13 +63,15 @@ export function validateWorkspaceSearch(search: Record<string, unknown>): Worksp
     section:
       search.section === "reports" ||
       search.section === "invoices" ||
-      search.section === "templates"
+      search.section === "templates" ||
+      search.section === "agents"
         ? search.section
         : "companies",
     company: shortString(search.company),
     project: shortString(search.project),
     file: shortString(search.file),
     version: shortString(search.version),
+    resource: shortString(search.resource),
     q: shortString(search.q),
   }
 }
