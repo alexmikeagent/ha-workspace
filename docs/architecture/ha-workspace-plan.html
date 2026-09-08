@@ -136,6 +136,8 @@
         top: 10px;
       }
       .rail {
+        overflow-y: auto;
+        overscroll-behavior: contain;
         width: 222px;
         position: fixed;
         inset: 0 auto 0 0;
@@ -2624,13 +2626,14 @@
         <a href="#workflow"><span>04</span>Document workflow</a>
         <a href="#data"><span>05</span>Data model</a>
         <a href="#interface"><span>06</span>Interface</a>
-        <a href="#roadmap"><span>07</span>Build sequence</a>
-        <a href="#details"><span>08</span>Engineering notes</a>
+        <a href="#agent-library"><span>07</span>Agents library</a>
+        <a href="#roadmap"><span>08</span>Build sequence</a>
+        <a href="#details"><span>09</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
         <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
-        Foundation in progress<br />Updated September 8, 2026
+        Connected local prototype<br />Updated September 8, 2026
       </div>
     </aside>
     <div class="frame">
@@ -2975,7 +2978,7 @@ bun.lock</pre>
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
               declares Node tooling. The configured production build passes. The latest source suite
-              passes 89 TypeScript tests and skips one optional local-runtime check. That optional
+              passes 121 TypeScript tests and skips one optional local-runtime check. That optional
               test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
               tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
@@ -3185,8 +3188,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div>
                 <h4>Runtime function atoms</h4>
                 <p>
-                  Request a revision, save instructions, or cancel a job. Pending, success, and
-                  typed failures stay visible.
+                  Request a revision, save a comment, or cancel a job. Pending, success, and typed
+                  failures stay visible.
                 </p>
               </div>
               <div>
@@ -3388,8 +3391,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
             </div>
             <p>
               The wireframe guides the workflow. Vercel-inspired neutral surfaces, Geist typography,
-              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. The
-              T3-style sidebar keeps its saved state and reduced-motion support.
+              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. Rounded
+              selection menus fit the viewport and scroll locally. The T3-style sidebar keeps its
+              saved state and reduced-motion support.
             </p>
           </div>
           <p class="footnote">
@@ -3411,8 +3415,8 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="mock-nav">
                 <div class="mock-brand">HA Consulting</div>
                 <span>Companies</span><span class="selected">Reports</span><span>Invoices</span
-                ><span>Templates</span><small>Recent files</small><span>Example project</span
-                ><span>Recent report</span>
+                ><span>Templates</span><span>Agents</span><small>Recent files</small
+                ><span>Example project</span><span>Recent report</span>
               </div>
               <div class="mock-preview">
                 <div class="mock-preview-bar">
@@ -3595,6 +3599,63 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
           </div>
         </section>
 
+        <section class="section" id="agent-library">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Agents library</span>
+              <h2>The files behind the workflow</h2>
+            </div>
+            <p>
+              Read the skills and project guidance retained in the local Drive copy. Search the
+              library, open the original source text, and follow the files a skill depends on.
+            </p>
+          </div>
+          <div class="setup-grid">
+            <article>
+              <span class="setup-label">Current resource checkpoint</span>
+              <h3>29 resources</h3>
+              <p>3 skills, 2 guidance files, 11 references, 8 tools, and 5 configuration files.</p>
+            </article>
+            <article>
+              <span class="setup-label">Copy preserved</span>
+              <h3>16 files added</h3>
+              <p>
+                Missing support files were copied and hash-verified. The three existing skill
+                entrypoints stayed unchanged.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Available to read</span>
+              <h3>Review before use</h3>
+              <p>
+                Opening guidance does not activate it or execute tools. The revision worker
+                continues to use its built-in rules.
+              </p>
+            </article>
+          </div>
+          <div class="model-caption">
+            <p>
+              Source shows syntax colors and line numbers, with plain-text fallback. Markdown opens
+              in a formatted Preview with known-resource links. HTML starts in Source; Preview is an
+              explicit, sanitized static view inside an isolated iframe. Related resources and
+              metadata stay in the shared resizable inspector.
+            </p>
+            <p>
+              Read-only HTTP atoms bootstrap the local owner session for each request, independently
+              of Confect. Refresh retries a failed startup and discovers newly copied allowed
+              resources. Source code never executes; previews cannot activate instructions. No
+              Convex changes or copied source content enter the repository.
+            </p>
+          </div>
+          <p class="footnote">
+            Browser checks passed for the library, search, filters, related links, the four Base UI
+            dropdowns, and the 390px layout. Markdown and highlighted Source passed across real
+            resources. Static HTML Preview retained inline styling with zero network requests and no
+            scripts. Hostile inputs have unit-test coverage; no malicious browser fixture was run.
+            Runtime activation and instruction editing remain future workflows.
+          </p>
+        </section>
+
         <section class="section" id="roadmap">
           <div class="section-heading">
             <div>
@@ -3689,12 +3750,13 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Generate reports and connect skills</h3>
+                  <h3>Generate reports and activate instructions</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add template-aware intake and generation with the general/Dulles rules, followed
-                  by a replaceable agent runtime and versioned instruction editor.
+                  The copied skills are already available to read in Agents. Add template-aware
+                  intake and generation with the general/Dulles rules, then a replaceable runtime
+                  and explicit, versioned instruction activation.
                 </p>
                 <div class="accept">
                   <span>Ready when</span>Missing facts are collected once; client/template authority
@@ -3933,6 +3995,42 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               </div>
             </details>
             <details>
+              <summary>Implementation / Agents library and dropdown update</summary>
+              <div class="appendix-content">
+                <p>
+                  Agents now opens the copied project resource library, with 29 discovered resources
+                  at this checkpoint: 3 skills, 2 guidance files, 11 references, 8 tools, and 5
+                  configuration files. Sixteen missing support files were copied additively and
+                  hash-verified; the three existing skill entrypoints were preserved. This
+                  supplements the earlier document-copy checkpoint without replacing source files or
+                  adding private resource content to Git.
+                </p>
+                <p>
+                  The library supports search and kind filters, skill cards, highlighted Source,
+                  formatted Markdown Preview, explicit static HTML Preview, and links to related
+                  resources. Its metadata uses the existing resizable inspector. Refresh rescans the
+                  approved copied guidance/tools and <code>.agents/skills</code> structure. The
+                  read-only API uses the existing local owner session, but its browser HTTP/Atom
+                  runtime is independent of Confect. Every request bootstraps that session, and
+                  Refresh can recover after a transient authentication failure. No Convex schema or
+                  deployment changes are required. Opening a skill does not activate it, and the
+                  document worker retains its built-in rules.
+                </p>
+                <p>
+                  Company, project, sort, and version controls now use shared Base UI Select menus
+                  with keyboard interaction, bounded popup scrolling, and the project theme. Browser
+                  checks verified 29 resources and three skills, the eight-item Tools filter,
+                  AGENTS.md search, five related links from a skill, company/project reset, keyboard
+                  sorting, the version menu, and a 390px layout without horizontal overflow. The
+                  menus retain ordinary scrolling after removing extra scroll-arrow overlays. The
+                  viewer-specific checks also passed; the dated record below distinguishes real-file
+                  browser checks from unit security cases. The complete run passed 121 tests and
+                  skipped one optional local-runtime test, source checks passed, and the production
+                  build passed.
+                </p>
+              </div>
+            </details>
+            <details>
               <summary>Implementation / What copying proves</summary>
               <div class="appendix-content">
                 <p>
@@ -3998,7 +4096,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The configured production build and Doppler injection have passed. Source checks
                   and the expanding TypeScript suite cover domain, transport, authorization,
-                  storage, preview, and queue boundaries. The latest source suite passes 89
+                  storage, preview, and queue boundaries. The latest source suite passes 121
                   TypeScript tests and skips one optional runtime integration test. That optional
                   test passed in the earlier Doppler-configured verification, alongside 21 Python
                   document-helper tests. Live backend checks establish authenticated reads and
@@ -4088,6 +4186,48 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   preference was preserved. These are local browser checks; remote iPhone access
                   remains unverified.
                 </p>
+                <h3>September 8, 2026: Agents viewer and selection-menu QA</h3>
+                <p>
+                  Vite+ checked 127 formatted files and 83 source files successfully. The full suite
+                  passed 121 tests and skipped one optional local-runtime test; the production build
+                  passed. The lazy Shiki chunk is about 803 KB raw / 128 KB gzip and triggers the
+                  build&#x27;s size advisory. It loads when syntax coloring is needed; basic
+                  navigation does not require it.
+                </p>
+                <ul>
+                  <li>
+                    Markdown opened in Preview with readable headings, lists, and code; frontmatter
+                    was hidden. Source showed 78 lines with five syntax colors in Geist Mono. YAML
+                    (5 lines), Python (209), JSON (85), and HTML (186) also showed syntax colors.
+                  </li>
+                  <li>
+                    HTML opened in Source. Its explicit static Preview retained the template&#x27;s
+                    inline layout styling, with an empty iframe sandbox, no-referrer policy, and
+                    restrictive CSP. Inspection found no script elements and recorded zero network
+                    requests during that preview.
+                  </li>
+                  <li>
+                    At 390px, Markdown had no horizontal page overflow, view controls were 44px
+                    high, and resize handles were absent.
+                  </li>
+                  <li>
+                    The dropdown popup showed the selection checkmark without the former overlay
+                    artifact. Fourteen options scrolled within a maximum 384px panel, using the
+                    neutral background and rounded corners. At 390px, the popup measured 192 × 384px
+                    between x=18px and x=210px; options were 44px high with no horizontal overflow.
+                    The final browser log had no warnings or errors.
+                  </li>
+                  <li>
+                    After restoring the local backend, authenticated catalog verification again
+                    returned 7,225 files, 13 companies, and 55 projects.
+                  </li>
+                </ul>
+                <p>
+                  The browser pass used real copied resources. Malicious-input behavior is covered
+                  by 18 unit security cases; a malicious browser fixture was not exercised. No
+                  source documents or private screenshots are included in this record, and remote
+                  iPhone access remains unverified.
+                </p>
                 <p>
                   Remaining gates include sustained reconnect/worker recovery, concurrent renderer
                   stress, backup and restore, remote identity and Tailscale access, and real iPhone
@@ -4164,9 +4304,9 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The app reads a standalone copy of the consulting and inspection collections.
                   Company/project groupings come from folder evidence, with ambiguous context kept
-                  explicit. All four navigation categories share file rows, filters, search, and the
-                  version workspace. Catalog queries cap returned matches and tell the view when to
-                  narrow a search.
+                  explicit. The four document categories share file rows, filters, search, and the
+                  version workspace. Agents is a separate read-only resource library. Catalog
+                  queries cap returned matches and tell the view when to narrow a search.
                 </p>
                 <p>
                   PDF and image previews use protected local content URLs. Word and PowerPoint
@@ -4236,10 +4376,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
-                        <td>Agent panel</td>
+                        <td>Agents library</td>
                         <td>
-                          Project AGENTS.md and skill list; Markdown preview, editing, revision
-                          comparison, save/apply states
+                          Copied skills, guidance, tools and references; source/preview viewing,
+                          search and related resources
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Agent editor</td>
+                        <td>
+                          Future instruction editing, revision comparison, save/apply states and
+                          runtime activation
                         </td>
                       </tr>
                       <tr>
@@ -4658,12 +4805,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 </p>
                 <p>
                   Use Effect Atom as the UI state layer: <code>@effect/atom-react</code> with the v4
-                  reactivity modules. One session-owned registry and
-                  <code>Atom.runtime</code> handle feature state, derived values, typed commands,
-                  and stream-backed reads. Use one scoped <code>@confect/js</code> WebSocket client
-                  for live queries and commands; an adapter preserves its schema codecs and typed
-                  query results. Do not add parallel Confect React subscriptions or a second query
-                  cache.
+                  reactivity modules. One session-owned registry owns feature atoms and their
+                  runtimes for derived values, typed commands, and stream-backed reads. Use one
+                  scoped <code>@confect/js</code> WebSocket client for live queries and commands; an
+                  adapter preserves its schema codecs and typed query results. Do not add parallel
+                  Confect React subscriptions or a second query cache.
                   <a
                     href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/atom/react/README.md"
                     target="_blank"
@@ -4919,6 +5065,70 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
               </div>
             </details>
             <details>
+              <summary>Architecture / Read-only Agents library</summary>
+              <div class="appendix-content">
+                <p>
+                  <code>/?section=agents</code> opens the copied project library;
+                  <code>resource</code> selects a resource by opaque ID. The current checkpoint
+                  contains 29 resources: 3 skills, 2 guidance files, 11 references, 8 tools, and 5
+                  configuration files. Sixteen missing support files were copied additively and
+                  verified by hash; the three existing <code>SKILL.md</code> files were preserved.
+                  These resources stay outside Git, alongside the other private working-copy data.
+                </p>
+                <p>
+                  The authenticated <code>GET /api/agents</code> and
+                  <code>GET /api/agents/:id</code> endpoints use the existing local owner session.
+                  <code>AgentLibraryStore</code> is an Effect service in the documents adapter, with
+                  shared schemas in the domain package. Browser reads use an independent
+                  <code>Atom.runtime(Layer.empty)</code> inside the existing app registry. Each list
+                  or detail request first calls <code>readSession</code>, then makes the
+                  authenticated HTTP request and decodes its response. This filesystem-backed
+                  library does not depend on the Confect connection layer, so a Convex startup
+                  failure need not block it. A focused retry test verifies that Refresh recovers
+                  after a transient owner-session failure without opening a WebSocket. The library
+                  does not add Convex tables, subscriptions, or deployment changes.
+                </p>
+                <p>
+                  Discovery covers fixed approved guidance, the template manifest, local tools, and
+                  valid skill directories under <code>.agents/skills</code>. A skill exposes its
+                  <code>SKILL.md</code>, agent configuration, references, scripts, and supported
+                  text assets. Refresh rescans these locations; a newly copied allowed skill can
+                  appear without editing a hardcoded card list. The scan is bounded to 128
+                  resources, 256 entries per directory, and six nested levels; source previews are
+                  capped at 256 KiB. It rejects out-of-root paths and symlinks, excludes task-owned
+                  <code>.codex-*</code> directories, and filters hidden, operational, and
+                  credential-like names. Binary or invalid UTF-8 resources are not rendered as text.
+                </p>
+                <p>
+                  The UI provides search, kind filters, skill cards, linked supporting resources,
+                  and Source/Preview viewing with metadata in the existing resizable inspector.
+                  Source uses line numbers and lazy Shiki syntax tokens for recognized formats, with
+                  a readable plain-text fallback for unknown types, oversized content, or
+                  highlighting failure. The scoped highlighter is shared within the registry and
+                  released with it. Its production chunk is about 803 KB raw / 128 KB gzip, loaded
+                  only when syntax coloring is needed; the build reports a size advisory.
+                </p>
+                <p>
+                  Markdown defaults to Preview with GitHub-flavored Markdown tables, lists, and code
+                  blocks. Raw HTML is skipped. A relative link navigates only when it resolves to a
+                  known related resource; unmatched/external links are displayed as text, and images
+                  use placeholders. HTML defaults to Source. Its explicit Preview sanitizes static
+                  markup with DOMPurify, removes scripts/forms/active navigation, and renders in an
+                  iframe with an empty sandbox and a restrictive content security policy. Remote
+                  fetches are blocked; permitted embedded raster data images can render. The
+                  original source remains available, and scripts are never executed.
+                </p>
+                <p>
+                  Highlighting and formatted Markdown fall back to source above 100,000 characters,
+                  3,000 lines, or a 3,000-character line. The API&#x27;s independent source-read cap
+                  remains 256 KiB; truncation is shown. HTML preview also has its own size guard.
+                  Opening a resource neither activates its instructions nor runs its tools. The
+                  revision worker continues to use its built-in rules. Editable instructions and
+                  runtime activation require a later explicit workflow.
+                </p>
+              </div>
+            </details>
+            <details>
               <summary>Architecture / Planned agent integration and editable instructions</summary>
               <div class="appendix-content">
                 <p>
@@ -4945,14 +5155,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   prose.
                 </p>
                 <p>
-                  The future Agent panel will list active project instructions and relevant skill
-                  versions. The current panel states that execution and instruction editing are not
-                  connected. Editing auto-saves a draft; an explicit Apply action activates it.
-                  Compare the source hash before replacing an allowlisted instruction file, preserve
-                  a recoverable prior version, and show conflicts instead of overwriting another
-                  edit. An active run retains its instruction snapshot; changes apply to subsequent
-                  runs. Skill assets/scripts are linked as package dependencies so a SKILL.md
-                  preview is not misrepresented as the entire skill.
+                  The Agents library now exposes copied guidance and skill resources for reading.
+                  The document Agent tab still states that execution and instruction editing are not
+                  connected. A future editor will distinguish available resources from the versions
+                  explicitly activated for a run. Editing auto-saves a draft; an explicit Apply
+                  action activates it. Compare the source hash before replacing an allowlisted
+                  instruction file, preserve a recoverable prior version, and show conflicts instead
+                  of overwriting another edit. An active run retains its instruction snapshot;
+                  changes apply to subsequent runs. Skill assets/scripts are linked as package
+                  dependencies so a SKILL.md preview is not misrepresented as the entire skill.
                 </p>
               </div>
             </details>
@@ -5070,10 +5281,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                     rules in that workflow.
                   </li>
                   <li>
-                    <strong>Agent and instruction editor:</strong> connect the replaceable runtime
-                    adapter, stream durable progress, save/apply instruction versions, and preserve
-                    the active run&#x27;s snapshot. Existing desktop history and credentials are not
-                    implicitly inherited.
+                    <strong>Agents library and later activation:</strong> read-only discovery,
+                    search, source viewing, and related resources are implemented. Next connect the
+                    replaceable runtime adapter, stream durable progress, save/apply instruction
+                    versions, and preserve the active run&#x27;s snapshot. Existing desktop history
+                    and credentials are not implicitly inherited.
                   </li>
                   <li>
                     <strong>Remote access and operations:</strong> establish remote authentication
@@ -5099,7 +5311,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   Adopted for HA Workspace on September 8, 2026. The connected implementation uses
                   Effect v4 RC, one authenticated Confect/Atom browser runtime, local file
                   capabilities, and durable revision jobs. Doppler injection and the configured Bun
-                  production build pass. The latest source suite passes 89 TypeScript tests and
+                  production build pass. The latest source suite passes 121 TypeScript tests and
                   skips one optional local-runtime test. That optional test passed in the earlier
                   Doppler-configured verification, alongside 21 Python document-helper tests;
                   <code>SETUP.md</code> separates runtime/browser evidence from source checks. The
@@ -5157,10 +5369,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
+                        <td>Agents library</td>
+                        <td>
+                          Read-only copied skills/guidance/supporting resources; bounded discovery
+                          and source reads
+                        </td>
+                      </tr>
+                      <tr>
                         <td>Instructions</td>
                         <td>
-                          AGENTS.md and skill versions, drafts, apply operations and source
-                          conflicts
+                          Future instruction versions, drafts, apply operations and source conflicts
                         </td>
                       </tr>
                       <tr>
@@ -5296,11 +5514,11 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  Use a session-owned Atom registry and runtime. Dispose session resources on logout
-                  or owner change; SSR authentication and registries belong to their request. Do not
-                  place mutable user identity or request-bound Convex context in a process-wide
-                  singleton. RC.112 scopes <code>Atom.runtime</code> layer memoization to its
-                  registry; avoid a global memo map for user services.
+                  Use a session-owned Atom registry for feature runtimes. Dispose session resources
+                  on logout or owner change; SSR authentication and registries belong to their
+                  request. Do not place mutable user identity or request-bound Convex context in a
+                  process-wide singleton. RC.112 scopes <code>Atom.runtime</code> layer memoization
+                  to its registry; avoid a global memo map for user services.
                   <a
                     href="https://github.com/Effect-TS/effect/blob/effect%404.0.0-rc.112/packages/effect/src/unstable/reactivity/Atom.ts"
                     target="_blank"
@@ -5363,10 +5581,17 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                         </td>
                       </tr>
                       <tr>
-                        <td>Live files, comments, job progress, active instructions</td>
+                        <td>Live files, comments and job progress</td>
                         <td>
                           Read atoms projecting the single Confect subscription stream; Convex
                           remains authoritative
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Copied agent library and resource source</td>
+                        <td>
+                          Schema-decoded HTTP read atoms in an independent local runtime;
+                          owner-session bootstrap on each read
                         </td>
                       </tr>
                       <tr>
@@ -5393,13 +5618,16 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   </table>
                 </div>
                 <p>
-                  Create one stable <code>Atom.runtime</code> from the browser&#x27;s live Layer
-                  inside its session boundary. Use its <code>fn</code> constructor for commands and
-                  its stream-backed atoms for reads and progress. This replaces the separate browser
-                  <code>ManagedRuntime</code> bridge. Keep command/use-case definitions in the
-                  application package and atom definitions in each web feature, so application code
-                  does not import UI reactivity APIs. Standalone server and worker boundaries retain
-                  their own scoped execution model.
+                  Create stable <code>Atom.runtime</code> values from capability-specific Layers
+                  inside the same registry. The document workspace owns one Confect runtime; local
+                  library reads and syntax highlighting have independent runtimes so they do not
+                  inherit an unrelated connection failure. Use runtime function atoms for commands
+                  and stream-backed atoms for live reads and progress. These runtimes replace the
+                  separate browser <code>ManagedRuntime</code> bridge without duplicating transports
+                  or caches. Keep command/use-case definitions in the application package and atom
+                  definitions in each web feature, so application code does not import UI reactivity
+                  APIs. Standalone server and worker boundaries retain their own scoped execution
+                  model.
                 </p>
                 <p>
                   The browser uses one scoped <code>@confect/js</code> WebSocket client as its
@@ -5531,6 +5759,26 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   comment anchors, idempotent commit replay, and staging cleanup without production
                   records. It requires the Doppler-provided document-tool paths; the default source
                   suite skips it when those runtimes are absent.
+                </p>
+                <p>
+                  The read-only Agents library uses <code>AgentLibraryStore</code> with shared
+                  Effect schemas and typed failures. Its same-origin HTTP reads use a small
+                  <code>Atom.runtime(Layer.empty)</code> in the existing app registry. Each request
+                  bootstraps the local owner session with <code>readSession</code>, then fetches and
+                  decodes the library response. This runtime is independent of Confect availability
+                  and creates no WebSocket or second query cache. Refresh can retry a failed
+                  authentication bootstrap; a focused test exercises that recovery. Discover only
+                  the bounded approved working-copy locations, keep source reads read-only, and
+                  isolate any formatted preview. Reading a resource cannot activate instructions,
+                  mutate Drive, or dispatch a worker tool. A future activation command needs its own
+                  durable authorization and version snapshot.
+                </p>
+                <p>
+                  <code>SourceHighlighter</code> is a separate scoped Effect capability. Its lazy
+                  Shiki layer is shared within the registry and disposes the grammar instance when
+                  released. Token rendering stays ordinary React text, with explicit plain-text
+                  fallback on failure or size limits. Markdown parsing and HTML sanitization are
+                  view boundaries, never tool dispatch or instruction activation.
                 </p>
                 <p>
                   The rules below also cover planned template generation, richer annotations,
@@ -6257,11 +6505,54 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   and avoid hiding the scroll affordance.
                 </p>
                 <p>
-                  Keep Companies, Reports, Invoices, and Templates in that navigation order. Put the
-                  version chooser and file actions in a stable toolbar. Review, Context, and Agent
-                  share one inspector instead of opening competing sidebars. Each screen should have
-                  one clear primary action; unavailable authoring features should not appear as
-                  working buttons.
+                  Keep Companies, Reports, Invoices, Templates, and Agents in that navigation order.
+                  Put the version chooser and file actions in a stable toolbar. Review, Context, and
+                  Agent share one inspector instead of opening competing sidebars. Each screen
+                  should have one clear primary action; unavailable authoring features should not
+                  appear as working buttons.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Design / Agents and selection menus</summary>
+              <div class="appendix-content">
+                <p>
+                  Agents is a resource library, separate from document files and the document
+                  inspector&#x27;s Agent tab. Show skills as cards with their actual descriptions
+                  and supporting-file counts. Guidance, references, tools, and configuration files
+                  use concise linked rows. Search covers names, descriptions, and copied relative
+                  paths; kind filters make a large library manageable. Refresh, empty results,
+                  unavailable resources, and truncated previews need distinct feedback.
+                </p>
+                <p>
+                  Every resource has a readable Source view with line numbers and syntax colors for
+                  supported formats. Keep source text selectable, horizontally scrollable, and
+                  available when highlighting fails or the file exceeds the formatting limit. Reuse
+                  the existing right inspector and its saved width for type, path, size, and related
+                  resources.
+                </p>
+                <p>
+                  Markdown opens in Preview with readable headings, GitHub-flavored tables/lists,
+                  and code examples; Source stays one click away. Relative links work only for known
+                  related library resources. External or unmatched links remain labels, images are
+                  placeholders, and raw HTML is skipped. HTML opens in Source and offers an explicit
+                  sanitized static Preview in an isolated iframe. Keep the choice and read-only
+                  status visible. This viewer does not provide editing, script execution, external
+                  navigation, or a guarantee that a source page will look identical to its original
+                  rendering. The read-only label and activation note stay visible: opening guidance
+                  does not change an agent&#x27;s instructions or execute code. Do not show Save,
+                  Apply, or Run controls before those operations exist.
+                </p>
+                <p>
+                  Company, project, sort, and version controls use the shared Base UI Select
+                  component. Its rounded, neutral popup is positioned within the viewport and uses
+                  ordinary local scrolling when options exceed the available height. Extra
+                  scroll-arrow overlays are removed. Keep selected and keyboard-highlighted options
+                  distinct, use Hugeicons consistently, and retain control labels, focus
+                  restoration, and reduced-motion transitions. Phone triggers and options use 44px
+                  targets and 16px text. Verify pointer selection, keyboard/typeahead, Escape,
+                  focus, scrolling, and narrow-screen placement in the rendered app; custom dropdown
+                  styling is not proof of those behaviors.
                 </p>
               </div>
             </details>
@@ -6276,12 +6567,12 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                 </p>
                 <p>
                   The desktop toolbar targets 52px, with 32px content gutters where width permits.
-                  Compact layouts use 24px gutters and phone layouts 16px. The shared
-                  catalog/document inspector starts at 330px. Its persisted Effect Atom preference
-                  uses <code>ha-workspace.ui.inspector-width.v1</code> in the existing storage
-                  runtime. Width is bounded to 280 to 560px, with the live maximum constrained by
-                  the container width minus 360px and a 280px floor. Narrowing the viewport clamps
-                  the rendered width without erasing the saved preference.
+                  Compact layouts use 24px gutters and phone layouts 16px. The shared catalog,
+                  document, and Agents inspector starts at 330px. Its persisted Effect Atom
+                  preference uses <code>ha-workspace.ui.inspector-width.v1</code> in the existing
+                  storage runtime. Width is bounded to 280 to 560px, with the live maximum
+                  constrained by the container width minus 360px and a 280px floor. Narrowing the
+                  viewport clamps the rendered width without erasing the saved preference.
                 </p>
                 <p>
                   Above 760px, drag the separator or use ArrowLeft to widen and ArrowRight to narrow
@@ -6406,11 +6697,19 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
                   deployment gate.
                 </p>
                 <p>
-                  Continue checking new screens at desktop, compact desktop, and phone widths.
-                  Include font fallback, long filenames, active/hover/focus states, repeated
-                  toggles, reduced motion, empty results, failures, and worker-offline behavior.
-                  Prior checks established review-draft persistence and real Word/PDF and workbook
-                  previews; a new feature needs its own interaction evidence.
+                  Subsequent browser checks verified the 29-resource library, search, Tools
+                  filtering, skill links, company/project reset, keyboard sorting, the version menu,
+                  and the 390px layout. The viewer pass also verified Markdown Preview/Source,
+                  syntax colors across YAML/Python/JSON/HTML, and an explicit static HTML preview
+                  with retained inline styling, no scripts, and no network requests. At 390px,
+                  content stayed within the viewport and view controls remained 44px high. These
+                  browser checks used actual copied resources; hostile-input cases were exercised in
+                  unit tests rather than a malicious browser fixture. Continue checking new screens
+                  at desktop, compact desktop, and phone widths. Include font fallback, long
+                  filenames, active/hover/focus states, repeated toggles, reduced motion, empty
+                  results, failures, and worker-offline behavior. Prior checks established
+                  review-draft persistence and real Word/PDF and workbook previews; a new feature
+                  needs its own interaction evidence.
                 </p>
                 <p>
                   Page/cell annotations, full Office authoring, intake, new reports/invoices, the
@@ -6511,7 +6810,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
             connected app passes source checks and its configured Bun build. The latest source suite
-            passes 89 TypeScript tests and skips one optional runtime check. That optional check
+            passes 121 TypeScript tests and skips one optional runtime check. That optional check
             passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
             DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
             backend commit/replay, preserving source hashes and comment anchors without production
@@ -6556,7 +6855,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
           web: [
             "Application",
             "TanStack Start",
-            "The web app owns navigation, file lists, and the preview workspace. shadcn supplies the interface components. An Atom registry owns shared UI state and command results. A single Confect WebSocket client feeds live streams into atoms; drafts persist through an Effect storage adapter.",
+            "The web app owns navigation, file lists, document previews, and the read-only Agents library. An Atom registry owns UI state and feature runtimes. One Confect WebSocket supplies live catalog/comment/job streams; the library uses independent authenticated HTTP reads. Source highlighting and static previews never execute tools or activate guidance.",
           ],
           convex: [
             "Local backend",

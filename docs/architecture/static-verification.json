@@ -1,8 +1,8 @@
 {
-  "checkedAt": "2026-09-08T15:23:32.944704+00:00",
+  "checkedAt": "2026-09-08T16:00:35.134268+00:00",
   "htmlGenerated": true,
-  "uniqueIds": 39,
-  "localAnchorsValid": 14,
+  "uniqueIds": 40,
+  "localAnchorsValid": 15,
   "embeddedJavaScriptSyntaxValid": true,
   "oneStandaloneCopyPolicy": true,
   "copiedInputCheckpoint": {
@@ -19,8 +19,8 @@
     "eligiblePathAudit": "No omissions or extra fixtures"
   },
   "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
-  "planBrowserVerification": "Not rerun during this theme documentation update. Static validation does not establish visual behavior.",
-  "applicationVerification": "Vite+ checked 111 formatted files and 69 source files with no lint warnings or type errors. Latest source suite: 89 tests passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Configured production build passed.",
+  "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior; application browser QA is recorded separately.",
+  "applicationVerification": "Vite+ checked 127 formatted files and 83 source files successfully. Full suite: 121 passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Production build passed with a lazy Shiki chunk size advisory (about 803 KB raw / 128 KB gzip).",
   "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
   "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed.",
   "externalAssets": 0,
@@ -73,5 +73,47 @@
     "filters": "Catalog filters aligned on one row at 1280px",
     "restoredState": "Left navigation 248px, desktop viewport; user inspector preference 280px preserved",
     "limitations": "Local viewport checks only; remote iPhone access unverified"
+  },
+  "agentsLibraryUpdate": {
+    "resources": 29,
+    "byKind": {
+      "skill": 3,
+      "instruction": 2,
+      "reference": 11,
+      "tool": 8,
+      "configuration": 5
+    },
+    "copy": "16 missing support files copied additively and hash-verified; 3 existing SKILL.md files preserved",
+    "scope": "Authenticated read-only Agents library; search, kind filters, skill cards, highlighted Source, GFM Markdown Preview, explicit sanitized static HTML Preview, related support files, shared resizable metadata inspector, explicit Refresh",
+    "boundaries": "Approved copied paths only; bounded discovery and text previews, symlink/path rejection, task-owned/operational/credential-like name exclusions; no activation or execution and no Convex changes",
+    "state": "Shared Effect schemas and AgentLibraryStore. Browser read atoms use independent Atom.runtime(Layer.empty) in the existing registry; each read bootstraps the owner session, then authenticated HTTP; no Confect connection dependency.",
+    "selectionMenus": "Company, project, sort, and version migrated to shared Base UI Select",
+    "verification": "Browser library/menu checks passed: 29 resources, 3 skills, 8 Tools, guidance search, five related skill links, company/project reset, keyboard sort, version menu, 390px layout. Viewer browser checks and final source/test/build checks passed."
+  },
+  "agentViewerUpdate": {
+    "source": "Line-numbered Source with lazy scoped Shiki tokens for supported types; plain-text fallback for unknown format, excessive size/line length, or highlighting failure",
+    "markdown": "Defaults to Preview with GFM and highlighted code; raw HTML omitted, images replaced by labels, relative links navigate only to known related resources; external/unmatched links inert",
+    "html": "Defaults to Source; explicit DOMPurify-sanitized static Preview with restrictive CSP in an empty-sandbox iframe; no script execution/forms/active navigation or remote fetches",
+    "limits": "API 256 KiB source cap; highlighting/Markdown fallback above 100,000 characters, 3,000 lines, or a 3,000-character line; independent HTML preview size guard",
+    "readOnly": "Opening a resource never activates instructions or invokes tools",
+    "verification": "Real-resource browser pass completed; 18 unit security cases cover hostile inputs, but no malicious browser fixture was exercised."
+  },
+  "agentViewerBrowserVerification": {
+    "date": "2026-09-08",
+    "markdown": "Defaults to Preview; legible headings/lists/code and hidden frontmatter. Source: 78 lines, 5 colors, Geist Mono.",
+    "sourceLanguages": {
+      "yaml": "5 lines / 3 colors",
+      "python": "209 lines / 7 colors",
+      "json": "85 lines / 5 colors",
+      "html": "186 lines / 7 colors"
+    },
+    "html": "Defaults to Source. Explicit static Preview retained inline CSS; sandbox empty, no-referrer, restrictive CSP. Zero script elements and zero network requests observed during preview.",
+    "mobile": "390px Markdown view without horizontal overflow; controls 44px; no resize handles",
+    "dropdown": "Selection Check icon only; 14 options in scrollable panel, maximum height 384px, #111 background, about 8.4px radius; overlay artifact absent",
+    "backend": "Restored local backend; authenticated catalog again returned 7,225 files, 13 companies, 55 projects",
+    "securityScope": "Real copied resources tested in browser. Hostile inputs covered by 18 unit security cases; malicious browser fixture not exercised.",
+    "limits": "Remote iPhone access unverified; no private filenames or screenshots stored.",
+    "mobileDropdown": "At 390px: left 18px, right 210px, width 192px, height 384px, option height 44px; no horizontal overflow.",
+    "console": "Final browser logs: zero warnings and errors."
   }
 }

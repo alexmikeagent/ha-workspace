@@ -136,6 +136,8 @@
         top: 10px;
       }
       .rail {
+        overflow-y: auto;
+        overscroll-behavior: contain;
         width: 222px;
         position: fixed;
         inset: 0 auto 0 0;
@@ -2624,13 +2626,14 @@
         <a href="#workflow"><span>04</span>Document workflow</a>
         <a href="#data"><span>05</span>Data model</a>
         <a href="#interface"><span>06</span>Interface</a>
-        <a href="#roadmap"><span>07</span>Build sequence</a>
-        <a href="#details"><span>08</span>Engineering notes</a>
+        <a href="#agent-library"><span>07</span>Agents library</a>
+        <a href="#roadmap"><span>08</span>Build sequence</a>
+        <a href="#details"><span>09</span>Engineering notes</a>
       </nav>
       <div class="rail-bottom">
         <strong><span class="dot"></span>Local services connected</strong>Isolated Convex + Bun
         <div class="rule"></div>
-        Foundation in progress<br />Updated September 8, 2026
+        Connected local prototype<br />Updated September 8, 2026
       </div>
     </aside>
     <div class="frame">
@@ -2975,7 +2978,7 @@ bun.lock</pre>
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
               declares Node tooling. The configured production build passes. The latest source suite
-              passes 89 TypeScript tests and skips one optional local-runtime check. That optional
+              passes 121 TypeScript tests and skips one optional local-runtime check. That optional
               test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
               tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
@@ -3160,8 +3163,8 @@ bun.lock</pre>
               <div>
                 <h4>Runtime function atoms</h4>
                 <p>
-                  Request a revision, save instructions, or cancel a job. Pending, success, and
-                  typed failures stay visible.
+                  Request a revision, save a comment, or cancel a job. Pending, success, and typed
+                  failures stay visible.
                 </p>
               </div>
               <div>
@@ -3363,8 +3366,9 @@ bun.lock</pre>
             </div>
             <p>
               The wireframe guides the workflow. Vercel-inspired neutral surfaces, Geist typography,
-              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. The
-              T3-style sidebar keeps its saved state and reduced-motion support.
+              Base UI controls, and Hugeicons give the workspace a quieter visual rhythm. Rounded
+              selection menus fit the viewport and scroll locally. The T3-style sidebar keeps its
+              saved state and reduced-motion support.
             </p>
           </div>
           <p class="footnote">
@@ -3386,8 +3390,8 @@ bun.lock</pre>
               <div class="mock-nav">
                 <div class="mock-brand">HA Consulting</div>
                 <span>Companies</span><span class="selected">Reports</span><span>Invoices</span
-                ><span>Templates</span><small>Recent files</small><span>Example project</span
-                ><span>Recent report</span>
+                ><span>Templates</span><span>Agents</span><small>Recent files</small
+                ><span>Example project</span><span>Recent report</span>
               </div>
               <div class="mock-preview">
                 <div class="mock-preview-bar">
@@ -3570,6 +3574,63 @@ bun.lock</pre>
           </div>
         </section>
 
+        <section class="section" id="agent-library">
+          <div class="section-heading">
+            <div>
+              <span class="section-number">Agents library</span>
+              <h2>The files behind the workflow</h2>
+            </div>
+            <p>
+              Read the skills and project guidance retained in the local Drive copy. Search the
+              library, open the original source text, and follow the files a skill depends on.
+            </p>
+          </div>
+          <div class="setup-grid">
+            <article>
+              <span class="setup-label">Current resource checkpoint</span>
+              <h3>29 resources</h3>
+              <p>3 skills, 2 guidance files, 11 references, 8 tools, and 5 configuration files.</p>
+            </article>
+            <article>
+              <span class="setup-label">Copy preserved</span>
+              <h3>16 files added</h3>
+              <p>
+                Missing support files were copied and hash-verified. The three existing skill
+                entrypoints stayed unchanged.
+              </p>
+            </article>
+            <article>
+              <span class="setup-label">Available to read</span>
+              <h3>Review before use</h3>
+              <p>
+                Opening guidance does not activate it or execute tools. The revision worker
+                continues to use its built-in rules.
+              </p>
+            </article>
+          </div>
+          <div class="model-caption">
+            <p>
+              Source shows syntax colors and line numbers, with plain-text fallback. Markdown opens
+              in a formatted Preview with known-resource links. HTML starts in Source; Preview is an
+              explicit, sanitized static view inside an isolated iframe. Related resources and
+              metadata stay in the shared resizable inspector.
+            </p>
+            <p>
+              Read-only HTTP atoms bootstrap the local owner session for each request, independently
+              of Confect. Refresh retries a failed startup and discovers newly copied allowed
+              resources. Source code never executes; previews cannot activate instructions. No
+              Convex changes or copied source content enter the repository.
+            </p>
+          </div>
+          <p class="footnote">
+            Browser checks passed for the library, search, filters, related links, the four Base UI
+            dropdowns, and the 390px layout. Markdown and highlighted Source passed across real
+            resources. Static HTML Preview retained inline styling with zero network requests and no
+            scripts. Hostile inputs have unit-test coverage; no malicious browser fixture was run.
+            Runtime activation and instruction editing remain future workflows.
+          </p>
+        </section>
+
         <section class="section" id="roadmap">
           <div class="section-heading">
             <div>
@@ -3664,12 +3725,13 @@ bun.lock</pre>
               <div class="phase-num">05</div>
               <details>
                 <summary>
-                  <h3>Generate reports and connect skills</h3>
+                  <h3>Generate reports and activate instructions</h3>
                   <span class="phase-status">Planned</span>
                 </summary>
                 <p>
-                  Add template-aware intake and generation with the general/Dulles rules, followed
-                  by a replaceable agent runtime and versioned instruction editor.
+                  The copied skills are already available to read in Agents. Add template-aware
+                  intake and generation with the general/Dulles rules, then a replaceable runtime
+                  and explicit, versioned instruction activation.
                 </p>
                 <div class="accept">
                   <span>Ready when</span>Missing facts are collected once; client/template authority
@@ -3828,7 +3890,7 @@ bun.lock</pre>
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
             connected app passes source checks and its configured Bun build. The latest source suite
-            passes 89 TypeScript tests and skips one optional runtime check. That optional check
+            passes 121 TypeScript tests and skips one optional runtime check. That optional check
             passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
             DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
             backend commit/replay, preserving source hashes and comment anchors without production
@@ -3873,7 +3935,7 @@ bun.lock</pre>
           web: [
             "Application",
             "TanStack Start",
-            "The web app owns navigation, file lists, and the preview workspace. shadcn supplies the interface components. An Atom registry owns shared UI state and command results. A single Confect WebSocket client feeds live streams into atoms; drafts persist through an Effect storage adapter.",
+            "The web app owns navigation, file lists, document previews, and the read-only Agents library. An Atom registry owns UI state and feature runtimes. One Confect WebSocket supplies live catalog/comment/job streams; the library uses independent authenticated HTTP reads. Source highlighting and static previews never execute tools or activate guidance.",
           ],
           convex: [
             "Local backend",

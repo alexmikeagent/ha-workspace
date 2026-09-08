@@ -32,6 +32,14 @@ For DOCX, TXT, and Markdown, a revision request can replace one exact match with
 
 The sidebar fully collapses off canvas and remembers its state through a schema-backed Atom preference. Desktop width is independently saved: 248px by default, bounded to 220–360px and the available viewport. Its right-edge separator supports dragging and keyboard resizing while expanded. Collapsing retains the chosen width. Its top-left button remains available; Ctrl/Cmd+B toggles it outside text inputs. Mobile navigation uses a separate Sheet. Reduced-motion settings remove panel travel and transitions. The catalog and document inspector also share a persisted width preference: 330px by default, bounded to 280–560px and the available container. Desktop resizing supports pointer drag and keyboard controls; phone layouts stay full width. This behavior follows the [T3 Code layout](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/AppSidebarLayout.tsx) and [sidebar implementation](https://github.com/pingdotgg/t3code/blob/main/apps/web/src/components/ui/sidebar.tsx), adapted to the workspace's own visual system.
 
+## Agents library and dropdown update
+
+Agents now opens the copied project resource library, with 29 discovered resources at this checkpoint: 3 skills, 2 guidance files, 11 references, 8 tools, and 5 configuration files. Sixteen missing support files were copied additively and hash-verified; the three existing skill entrypoints were preserved. This supplements the earlier document-copy checkpoint without replacing source files or adding private resource content to Git.
+
+The library supports search and kind filters, skill cards, highlighted Source, formatted Markdown Preview, explicit static HTML Preview, and links to related resources. Its metadata uses the existing resizable inspector. Refresh rescans the approved copied guidance/tools and `.agents/skills` structure. The read-only API uses the existing local owner session, but its browser HTTP/Atom runtime is independent of Confect. Every request bootstraps that session, and Refresh can recover after a transient authentication failure. No Convex schema or deployment changes are required. Opening a skill does not activate it, and the document worker retains its built-in rules.
+
+Company, project, sort, and version controls now use shared Base UI Select menus with keyboard interaction, bounded popup scrolling, and the project theme. Browser checks verified 29 resources and three skills, the eight-item Tools filter, AGENTS.md search, five related links from a skill, company/project reset, keyboard sorting, the version menu, and a 390px layout without horizontal overflow. The menus retain ordinary scrolling after removing extra scroll-arrow overlays. The viewer-specific checks also passed; the dated record below distinguishes real-file browser checks from unit security cases. The complete run passed 121 tests and skipped one optional local-runtime test, source checks passed, and the production build passed.
+
 ## What copying proves
 
 The original baseline copied 2,867 files in 989 directories, totaling 1,275,661,520 bytes. SHA-256 inventories matched at copy time, without modifying sources or sharing hardlinks. The user then added `HA inspection`. The latest checkpoint copied 7,185 inspection files, bringing the input total to 10,052 files and 4,062,865,634 bytes. Captured substantive files passed SHA-256 verification. A later source scan saw 28 arrivals beyond the checkpoint, so downloading was still active. Catch-up passes preserve newly arriving source files as live mirror repair continues. They do not delete destination content or register the working copy with a sync service.
@@ -48,7 +56,7 @@ The root README lists the current key names. `bun run backend:start` starts the 
 
 ## Verification and remaining gates
 
-The configured production build and Doppler injection have passed. Source checks and the expanding TypeScript suite cover domain, transport, authorization, storage, preview, and queue boundaries. The latest source suite passes 89 TypeScript tests and skips one optional runtime integration test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests. Live backend checks establish authenticated reads and commands on the isolated instance.
+The configured production build and Doppler injection have passed. Source checks and the expanding TypeScript suite cover domain, transport, authorization, storage, preview, and queue boundaries. The latest source suite passes 121 TypeScript tests and skips one optional runtime integration test. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python document-helper tests. Live backend checks establish authenticated reads and commands on the isolated instance.
 
 Earlier integrated-browser checks confirmed desktop sidebar collapse/persistence and Ctrl/Cmd+B, a real three-page DOCX PDF preview, the earlier source-text panel (subsequently removed), mobile layout at 390 × 844, drawer focus/navigation/close, a search returning real files, a bounded workbook grid with labeled cached values, and an unsent review draft surviving a full reload. No real client comment or revision was created by that browser check. These local viewport checks do not establish remote iPhone access.
 
@@ -75,5 +83,17 @@ Vite+ checked 111 formatted files and 69 source files without warnings or type e
 - The shared pointer logic still resized the inspector from 280px to 320px and back, independently of the 248px navigation width. No browser errors appeared. Catalog filters aligned on one row at a 1280px viewport.
 
 Navigation was restored to 248px on desktop. The user's 280px inspector preference was preserved. These are local browser checks; remote iPhone access remains unverified.
+
+### September 8, 2026 — Agents viewer and selection-menu QA
+
+Vite+ checked 127 formatted files and 83 source files successfully. The full suite passed 121 tests and skipped one optional local-runtime test; the production build passed. The lazy Shiki chunk is about 803 KB raw / 128 KB gzip and triggers the build's size advisory. It loads when syntax coloring is needed; basic navigation does not require it.
+
+- Markdown opened in Preview with readable headings, lists, and code; frontmatter was hidden. Source showed 78 lines with five syntax colors in Geist Mono. YAML (5 lines), Python (209), JSON (85), and HTML (186) also showed syntax colors.
+- HTML opened in Source. Its explicit static Preview retained the template's inline layout styling, with an empty iframe sandbox, no-referrer policy, and restrictive CSP. Inspection found no script elements and recorded zero network requests during that preview.
+- At 390px, Markdown had no horizontal page overflow, view controls were 44px high, and resize handles were absent.
+- The dropdown popup showed the selection checkmark without the former overlay artifact. Fourteen options scrolled within a maximum 384px panel, using the neutral background and rounded corners. At 390px, the popup measured 192 × 384px between x=18px and x=210px; options were 44px high with no horizontal overflow. The final browser log had no warnings or errors.
+- After restoring the local backend, authenticated catalog verification again returned 7,225 files, 13 companies, and 55 projects.
+
+The browser pass used real copied resources. Malicious-input behavior is covered by 18 unit security cases; a malicious browser fixture was not exercised. No source documents or private screenshots are included in this record, and remote iPhone access remains unverified.
 
 Remaining gates include sustained reconnect/worker recovery, concurrent renderer stress, backup and restore, remote identity and Tailscale access, and real iPhone testing. Page/rectangle/cell annotations, automatic intake, template-based report and invoice generation, a skill/instruction editor, AI execution, and full Office authoring are not connected product features. Their architectural requirements remain in the plan without being presented as completed work.
