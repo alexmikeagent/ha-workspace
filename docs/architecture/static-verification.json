@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-08T16:00:35.134268+00:00",
+  "checkedAt": "2026-09-08T16:11:55.593517+00:00",
   "htmlGenerated": true,
   "uniqueIds": 40,
   "localAnchorsValid": 15,
@@ -20,7 +20,7 @@
   },
   "originalPlanningSourcesUnchanged": "This update only changed repository documentation; original Drive planning files were not edited.",
   "planBrowserVerification": "Not rerun during this documentation update. Static validation does not establish visual behavior; application browser QA is recorded separately.",
-  "applicationVerification": "Vite+ checked 127 formatted files and 83 source files successfully. Full suite: 121 passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Production build passed with a lazy Shiki chunk size advisory (about 803 KB raw / 128 KB gzip).",
+  "applicationVerification": "Vite+ checked 127 formatted files and 83 source files successfully. Full suite: 126 passed and 1 optional local-runtime test skipped. That optional test passed in the earlier Doppler-configured verification, alongside 21 Python helper tests. Production build passed with a lazy Shiki chunk size advisory (about 803 KB raw / 128 KB gzip).",
   "applicationBrowserVerification": "Root task verified desktop sidebar collapse/persistence/shortcut, local 390x844 layout and mobile drawer, real Word/PDF and workbook previews, source context, search, and draft persistence. Remote iPhone access remains unverified.",
   "documentRuntimeVerification": "Synthetic DOCX through actual worker logic, real Python/LibreOffice, PDF and extracted-text checks, and isolated convex-test commit/replay; source hash, comment anchors, version count, and staging cleanup verified; no production records or client documents changed.",
   "externalAssets": 0,
@@ -115,5 +115,11 @@
     "limits": "Remote iPhone access unverified; no private filenames or screenshots stored.",
     "mobileDropdown": "At 390px: left 18px, right 210px, width 192px, height 384px, option height 44px; no horizontal overflow.",
     "console": "Final browser logs: zero warnings and errors."
+  },
+  "agentHtmlTemplateUpdate": {
+    "scope": "HTML Preview only: an Unfilled template note appears for recognized @@PLACEHOLDER@@ tokens; the viewer does not fill them",
+    "metadata": "Preview-owned responsive viewport and allowlisted color-scheme metadata; inert fragment parsing retained",
+    "fidelity": "Full html/body root attributes are not preserved; static preview is not a full-fidelity page renderer",
+    "verification": "Confirmed follow-up: 23 HTML-preview tests including five metadata regression cases; full suite 126 passed and 1 optional local-runtime test skipped; production build passed. Earlier viewer/security records retain their historical counts."
   }
 }

@@ -271,6 +271,12 @@ export function AgentResourceViewer({
       {truncated && (
         <output className="agent-viewer-note">This preview shows the beginning of the file.</output>
       )}
+      {mode === "preview" && language === "html" && /@@[A-Z][A-Z0-9_]*@@/.test(content) && (
+        <p className="agent-viewer-note">
+          <strong>Unfilled template.</strong> Placeholders are part of this file; a generated report
+          supplies the content.
+        </p>
+      )}
       <div className={`agent-viewer-body agent-viewer-${mode}`} id={panelId}>
         {mode === "source" ? (
           <SourceCode content={content} language={language} label={`${resource.name} source`} />

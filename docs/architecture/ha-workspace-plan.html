@@ -2978,7 +2978,7 @@ bun.lock</pre>
               the Rust rewrite in 1.4. Pin <code>effect@4.0.0-rc.112</code>, matching
               Atom/platform/test packages, and <code>@confect/*@10.0.0-next.21</code>. Confect still
               declares Node tooling. The configured production build passes. The latest source suite
-              passes 121 TypeScript tests and skips one optional local-runtime check. That optional
+              passes 126 TypeScript tests and skips one optional local-runtime check. That optional
               test passed in the earlier Doppler-configured run, alongside 21 Python document-helper
               tests.
               <a href="https://bun.com/blog/bun-v1.4.2" target="_blank" rel="noopener"
@@ -4024,7 +4024,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   sorting, the version menu, and a 390px layout without horizontal overflow. The
                   menus retain ordinary scrolling after removing extra scroll-arrow overlays. The
                   viewer-specific checks also passed; the dated record below distinguishes real-file
-                  browser checks from unit security cases. The complete run passed 121 tests and
+                  browser checks from unit security cases. The complete run passed 126 tests and
                   skipped one optional local-runtime test, source checks passed, and the production
                   build passed.
                 </p>
@@ -4088,6 +4088,15 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   production Bun server. <code>worker:check</code> is a storage readiness check, not
                   a job runner.
                 </p>
+                <p>
+                  HTML Preview now labels recognized <code>@@PLACEHOLDER@@</code> tokens as an
+                  unfilled template. It uses a responsive viewport and allowlisted color-scheme
+                  metadata while preserving inert fragment parsing and the existing sandbox. Root
+                  <code>html</code>/<code>body</code> attributes remain a known fidelity limit. The
+                  follow-up passed 23 HTML-preview tests, including five metadata regressions; the
+                  full suite passed 126 tests with one optional runtime test skipped, and the
+                  production build passed. Earlier dated QA records retain their original counts.
+                </p>
               </div>
             </details>
             <details>
@@ -4096,7 +4105,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                 <p>
                   The configured production build and Doppler injection have passed. Source checks
                   and the expanding TypeScript suite cover domain, transport, authorization,
-                  storage, preview, and queue boundaries. The latest source suite passes 121
+                  storage, preview, and queue boundaries. The latest source suite passes 126
                   TypeScript tests and skips one optional runtime integration test. That optional
                   test passed in the earlier Doppler-configured verification, alongside 21 Python
                   document-helper tests. Live backend checks establish authenticated reads and
@@ -5116,7 +5125,12 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   markup with DOMPurify, removes scripts/forms/active navigation, and renders in an
                   iframe with an empty sandbox and a restrictive content security policy. Remote
                   fetches are blocked; permitted embedded raster data images can render. The
-                  original source remains available, and scripts are never executed.
+                  original source remains available, and scripts are never executed. The preview
+                  supplies a responsive viewport and retains only allowlisted color-scheme metadata.
+                  Root <code>html</code>/<code>body</code> attributes are not fully preserved, so
+                  this remains a static approximation rather than a full-fidelity page renderer. In
+                  HTML Preview only, recognized <code>@@PLACEHOLDER@@</code> tokens show an Unfilled
+                  template note; the viewer does not populate them.
                 </p>
                 <p>
                   Highlighting and formatted Markdown fall back to source above 100,000 characters,
@@ -5311,7 +5325,7 @@ export const requestRevision = Effect.fn(&quot;documents.requestRevision&quot;)(
                   Adopted for HA Workspace on September 8, 2026. The connected implementation uses
                   Effect v4 RC, one authenticated Confect/Atom browser runtime, local file
                   capabilities, and durable revision jobs. Doppler injection and the configured Bun
-                  production build pass. The latest source suite passes 121 TypeScript tests and
+                  production build pass. The latest source suite passes 126 TypeScript tests and
                   skips one optional local-runtime test. That optional test passed in the earlier
                   Doppler-configured verification, alongside 21 Python document-helper tests;
                   <code>SETUP.md</code> separates runtime/browser evidence from source checks. The
@@ -6810,7 +6824,7 @@ export function fromResultStream&lt;A, E, R, ER&gt;(
             typechecking. Fake-stream checks passed for shared subscriptions, typed-error recovery,
             session isolation, and cleanup under Node. The Start scaffold baseline build passed. The
             connected app passes source checks and its configured Bun build. The latest source suite
-            passes 121 TypeScript tests and skips one optional runtime check. That optional check
+            passes 126 TypeScript tests and skips one optional runtime check. That optional check
             passed in the earlier Doppler run, alongside 21 Python helper tests. It runs a synthetic
             DOCX through actual worker logic, Python/LibreOffice, PDF verification, and isolated
             backend commit/replay, preserving source hashes and comment anchors without production

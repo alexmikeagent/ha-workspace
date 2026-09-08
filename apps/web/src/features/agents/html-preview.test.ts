@@ -38,6 +38,46 @@ function expectInactive(document: Document) {
 afterEach(() => vi.unstubAllGlobals())
 
 describe("agent HTML preview isolation", () => {
+  it("owns a responsive viewport before source styles without disabling zoom", () => {
+    const document = read(`<head>
+      <meta name="viewport" content="width=1200, initial-scale=0.5, user-scalable=no">
+      <style>@media (max-width: 600px) { .report { display: block; } }</style>
+      </head><body><main class="report">Report</main></body>`)
+    const viewports = document.querySelectorAll('meta[name="viewport"]')
+    expect(viewports).toHaveLength(1)
+    expect(viewports[0]?.getAttribute("content")).toBe("width=device-width, initial-scale=1")
+    expect(document.head.contains(viewports[0] ?? null)).toBe(true)
+    expect(document.querySelector("style")?.textContent).toContain("max-width: 600px")
+    expect(document.head.firstElementChild?.getAttribute("http-equiv")).toBe(
+      "Content-Security-Policy",
+    )
+    expectInactive(document)
+  })
+
+  it("retains validated color-scheme metadata without copying source policy attributes", () => {
+    const document = read(`<head><meta name="COLOR-SCHEME" content="  Light   Dark "
+      onload="alert(1)" data-secret="ignored"><meta name="referrer" content="unsafe-url"></head>
+      <body><p>Appearance</p></body>`)
+    const schemes = document.querySelectorAll('meta[name="color-scheme"]')
+    expect(schemes).toHaveLength(1)
+    expect(schemes[0]?.outerHTML).toBe('<meta name="color-scheme" content="light dark">')
+    expect(document.querySelectorAll('meta[name="referrer"]')).toHaveLength(1)
+    expect(document.querySelector('meta[name="referrer"]')?.getAttribute("content")).toBe(
+      "no-referrer",
+    )
+    expectInactive(document)
+  })
+
+  it.each([
+    '<meta name="color-scheme" content="dark; url(https://example.invalid)">',
+    '<meta name="color-scheme" content="&quot;><script>alert(1)</script>">',
+    '<meta name="color-scheme" content="dark" http-equiv="refresh">',
+  ])("does not promote arbitrary source metadata into the preview head: %s", (metadata) => {
+    const document = read(`${metadata}<p>Report</p>`)
+    expect(document.querySelector('meta[name="color-scheme"]')).toBeNull()
+    expectInactive(document)
+  })
+
   it("preserves static report layout, inline CSS, data images, and embedded font CSS", () => {
     const document = read(`<!doctype html><html><head><style>
       @font-face { font-family: Embedded; src: url(data:font/woff2;base64,AA==); }
