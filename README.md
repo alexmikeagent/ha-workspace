@@ -109,7 +109,22 @@ All application settings and secrets belong to [Doppler](https://dashboard.doppl
 | `AUTH_PRIVATE_JWK`, `AUTH_JWKS`, `AUTH_ISSUER`, `AUTH_AUDIENCE`     | Local signing and backend verification               |
 | `PYTHON_BIN`, `LIBREOFFICE_BIN`                                     | Local extraction, verification, and conversion tools |
 
-The local owner session uses a signed JWT, an HttpOnly same-origin cookie for files, and an in-memory browser token for Convex. It is a loopback prototype, not a multiuser login system. Tailscale exposure, remote authentication, backup/restore, and iPhone access need their own checks before enabling remote use. CLI bootstrap credentials stay in the tools' credential stores outside Git.
+The owner session uses a signed JWT, an HttpOnly same-origin cookie for files, and an in-memory browser token for Convex. Local access remains available. Optional Tailscale access is restricted to one configured owner; this is not a multiuser login system. CLI bootstrap credentials stay in the tools' credential stores outside Git.
+
+### Private Tailscale access
+
+Use the production build for remote access. `TAILSCALE_ACCESS_JSON` in Doppler enables it and contains `origin` (the exact HTTPS web origin), `ownerLogin` (the owner's Tailscale login), and `convexUrl` (the HTTPS client backend origin on the same Tailscale hostname, at a different port). Omit this setting to retain local-only access. Keep `CONVEX_SELF_HOSTED_URL` on loopback for server and worker operations.
+
+With the app and dedicated backend running, configure Tailscale Serve on unused ports:
+
+```sh
+tailscale serve --bg --https=10443 http://127.0.0.1:4310
+tailscale serve --bg --https=11443 http://127.0.0.1:3220
+```
+
+The browser opens the web origin on 10443. The API checks its exact host, same-origin request metadata, and the owner identity inserted by Serve before issuing a session or serving files. Remote cookies use `Secure`; remote sessions receive the HTTPS backend address for authenticated WebSockets. Both application listeners remain on loopback. Use Serve, not Funnel; the site is private to Tailscale. The backend's application functions still require a signed session. See [Serve identity headers](https://tailscale.com/docs/features/tailscale-serve#identity-headers).
+
+September 9 verification: HTTPS session bootstrap, catalog subscription, and report preview passed through Serve on the host; 134 tests and source checks passed. Physical iPhone testing and automatic application startup after reboot remain unverified. Serve's background configuration persists, but the app, backend, and worker must also be running. To remove only these proxies, use `tailscale serve --https=10443 off` and `tailscale serve --https=11443 off`.
 
 ## Development practice
 

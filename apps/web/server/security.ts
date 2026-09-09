@@ -7,18 +7,27 @@ export class HttpError extends Schema.TaggedError<HttpError>()("HttpError", {
 
 export type LocalPolicy = {
   readonly authorities: ReadonlySet<string>
+  readonly tailscale?: {
+    readonly origin: string
+    readonly ownerLogin: string
+    readonly convexUrl: string
+  }
 }
 
 const loopbackAddresses = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"])
 
-// Ignore forwarding headers: only the loopback listener and explicit app/API
-// authorities are trusted. A Vite proxy must preserve the browser's Host header.
+// Serve strips client-supplied identity headers and inserts the authenticated
+// tailnet login. Trust these only on loopback and for the configured HTTPS host.
 export const validateLocalRequest = Effect.fn("http.validateLocalRequest")(function* (
   request: Request,
   remoteAddress: string | undefined,
   policy: LocalPolicy,
 ) {
-  const denied = () => new HttpError({ status: 403, message: "Open this workspace locally." })
+  const denied = () =>
+    new HttpError({
+      status: 403,
+      message: "Use the local workspace or its authorized Tailscale connection.",
+    })
   const url = yield* Effect.try({ try: () => new URL(request.url), catch: denied })
   const host = request.headers.get("host")
   if (
@@ -26,13 +35,20 @@ export const validateLocalRequest = Effect.fn("http.validateLocalRequest")(funct
     !loopbackAddresses.has(remoteAddress) ||
     url.protocol !== "http:" ||
     !host ||
-    !policy.authorities.has(host) ||
-    !policy.authorities.has(url.host)
+    host !== url.host
   ) {
     return yield* denied()
   }
+  const tailscale = policy.tailscale
+  const isTailscale = tailscale && host === new URL(tailscale.origin).host
+  if (isTailscale) {
+    if (request.headers.get("tailscale-user-login") !== tailscale.ownerLogin) return yield* denied()
+  } else if (!policy.authorities.has(host) || request.headers.has("tailscale-user-login")) {
+    return yield* denied()
+  }
   const origin = request.headers.get("origin")
-  if (origin && origin !== `http://${host}`) return yield* denied()
+  if (origin && origin !== (isTailscale ? tailscale.origin : `http://${host}`))
+    return yield* denied()
   const site = request.headers.get("sec-fetch-site")
   if (site && site !== "same-origin" && site !== "none") return yield* denied()
   return url

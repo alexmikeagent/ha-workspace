@@ -6,7 +6,12 @@ import { AgentLibraryStore } from "@ha/documents/agent-library"
 import { Effect, Layer } from "effect"
 import { expect } from "vite-plus/test"
 import { LocalApi, LocalApiLive, LocalApiSettings, LocalFileResponse } from "./api"
-import { downloadDisposition, privateHeaders, sessionCookieName } from "./security"
+import {
+  downloadDisposition,
+  privateHeaders,
+  sessionCookieName,
+  type LocalPolicy,
+} from "./security"
 
 const fileId = "a".repeat(64)
 const versionId = "b".repeat(64)
@@ -44,7 +49,7 @@ const agentResource = {
   modifiedAt: 1,
 }
 
-function fixture(errorCode?: string) {
+function fixture(errorCode?: string, tailscale?: LocalPolicy["tailscale"]) {
   const calls: string[] = []
   const failure = () =>
     new DriveError({ code: errorCode ?? "NotFound", message: "The copied version is unavailable." })
@@ -69,7 +74,10 @@ function fixture(errorCode?: string) {
                 : Effect.fail(new SessionError({ message: "Expired." })),
         }),
         Layer.succeed(LocalApiSettings, {
-          policy: { authorities: new Set(["127.0.0.1:4310", "127.0.0.1:4312"]) },
+          policy: {
+            authorities: new Set(["127.0.0.1:4310", "127.0.0.1:4312"]),
+            ...(tailscale ? { tailscale } : {}),
+          },
           convexUrl: "http://127.0.0.1:3220",
         }),
         Layer.succeed(DriveStore, {
@@ -150,6 +158,70 @@ function request(
 const authenticated = (path: string, token = "owner-token") =>
   request(path, { headers: { cookie: `${sessionCookieName}=${token}` } })
 const readJson = (response: Response) => Effect.promise(() => response.json() as Promise<unknown>)
+
+const tailscale = {
+  origin: "https://workspace.example.ts.net:10443",
+  ownerLogin: "owner@example.com",
+  convexUrl: "https://workspace.example.ts.net:11443",
+}
+const remoteRequest = (headers: Record<string, string> = {}) =>
+  new Request("http://workspace.example.ts.net:10443/api/session", {
+    headers: {
+      host: "workspace.example.ts.net:10443",
+      origin: tailscale.origin,
+      "sec-fetch-site": "same-origin",
+      "tailscale-user-login": tailscale.ownerLogin,
+      ...headers,
+    },
+  })
+
+it.effect(
+  "issues a secure session with a reachable backend only for the configured Tailscale owner",
+  () =>
+    Effect.gen(function* () {
+      const api = fixture(undefined, tailscale)
+      const response = yield* api.handle(remoteRequest())
+      expect(response.status).toBe(200)
+      expect(response.headers.get("set-cookie")).toContain("; Secure")
+      expect(yield* readJson(response)).toMatchObject({
+        convexUrl: tailscale.convexUrl,
+        subject: "local:akh",
+      })
+      const local = yield* api.handle(request("/api/session"))
+      expect(yield* readJson(local)).toMatchObject({ convexUrl: "http://127.0.0.1:3220" })
+    }),
+)
+
+it.effect.each([
+  { "tailscale-user-login": "" },
+  { "tailscale-user-login": "another@example.com" },
+  { origin: "https://attacker.example" },
+  { origin: "http://workspace.example.ts.net:10443" },
+  { "sec-fetch-site": "cross-site" },
+  { host: "127.0.0.1:4310" },
+] as Record<string, string>[])("rejects unauthorized remote session headers: %j", (headers) =>
+  Effect.gen(function* () {
+    const api = fixture(undefined, tailscale)
+    expect((yield* api.handle(remoteRequest(headers))).status).toBe(403)
+    expect(api.calls).toEqual([])
+  }),
+)
+
+it.effect("keeps Tailscale opt-in and rejects identity headers from direct network peers", () =>
+  Effect.gen(function* () {
+    const localOnly = fixture()
+    expect((yield* localOnly.handle(remoteRequest())).status).toBe(403)
+    const api = fixture(undefined, tailscale)
+    expect((yield* api.handle(remoteRequest(), "100.64.0.10")).status).toBe(403)
+    expect(
+      (yield* api.handle(
+        request("/api/session", { headers: { "tailscale-user-login": tailscale.ownerLogin } }),
+      )).status,
+    ).toBe(403)
+    expect(api.calls).toEqual([])
+    expect(localOnly.calls).toEqual([])
+  }),
+)
 
 it.effect.each(["/api/agents", `/api/agents/${agentResource.id}`])(
   "requires a valid local owner before reading the agent library at %s",
