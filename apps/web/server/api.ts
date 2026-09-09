@@ -2,7 +2,7 @@ import { LocalAuth, type LocalIdentity } from "@ha/backend/local-auth"
 import { DriveError, DriveStore } from "@ha/documents/drive-store"
 import { PreviewStore } from "@ha/documents/preview"
 import { AgentLibraryError, AgentLibraryStore } from "@ha/documents/agent-library"
-import { Config, Context, Effect, Layer } from "effect"
+import { Config, Context, Effect, Layer, Option, Schema } from "effect"
 import {
   HttpError,
   downloadDisposition,
@@ -26,6 +26,49 @@ export const LocalApiSettingsLive = Layer.effect(
     const port = yield* Config.port("PORT")
     const apiPort = yield* Config.port("API_PORT")
     const convexUrl = yield* Config.url("CONVEX_SELF_HOSTED_URL")
+    const tailscaleJson = yield* Config.option(Config.string("TAILSCALE_ACCESS_JSON"))
+    const tailscale = Option.isSome(tailscaleJson)
+      ? yield* Schema.decodeUnknownEffect(
+          Schema.fromJsonString(
+            Schema.Struct({
+              origin: Schema.String,
+              ownerLogin: Schema.NonEmptyString,
+              convexUrl: Schema.String,
+            }),
+          ),
+        )(tailscaleJson.value).pipe(
+          Effect.mapError(
+            () => new HttpError({ status: 500, message: "Tailscale configuration is invalid." }),
+          ),
+        )
+      : undefined
+    if (tailscale) {
+      const valid = yield* Effect.try({
+        try: () => {
+          const web = new URL(tailscale.origin)
+          const backend = new URL(tailscale.convexUrl)
+          return (
+            [web, backend].every(
+              (value) =>
+                value.protocol === "https:" &&
+                value.hostname.endsWith(".ts.net") &&
+                !value.username &&
+                !value.password &&
+                !value.search &&
+                !value.hash &&
+                value.pathname === "/",
+            ) &&
+            web.hostname === backend.hostname &&
+            web.origin !== backend.origin &&
+            web.origin === tailscale.origin &&
+            backend.origin === tailscale.convexUrl
+          )
+        },
+        catch: () => new HttpError({ status: 500, message: "Tailscale addresses are invalid." }),
+      })
+      if (!valid)
+        return yield* new HttpError({ status: 500, message: "Tailscale addresses are invalid." })
+    }
     if (
       convexUrl.protocol !== "http:" ||
       !["127.0.0.1", "localhost"].includes(convexUrl.hostname) ||
@@ -39,6 +82,7 @@ export const LocalApiSettingsLive = Layer.effect(
     }
     return {
       policy: {
+        ...(tailscale ? { tailscale } : {}),
         authorities: new Set(
           ["127.0.0.1", "localhost"].flatMap((host) => [`${host}:${port}`, `${host}:${apiPort}`]),
         ),
@@ -156,6 +200,8 @@ export const LocalApiLive = Layer.effect(
         )
       }
       if (url.pathname === "/api/session") {
+        const remoteSession =
+          settings.policy.tailscale && url.host === new URL(settings.policy.tailscale.origin).host
         const previous = yield* owner(sessionCookie(request)).pipe(
           Effect.catch(() => Effect.succeed(null)),
         )
@@ -182,13 +228,13 @@ export const LocalApiLive = Layer.effect(
           {
             sessionId: identity.sessionId,
             token,
-            convexUrl: settings.convexUrl,
+            convexUrl: remoteSession ? settings.policy.tailscale!.convexUrl : settings.convexUrl,
             expiresAt,
             subject: identity.sub,
           },
           200,
           {
-            "Set-Cookie": `${sessionCookieName}=${token}; Path=/api; HttpOnly; SameSite=Strict; Max-Age=${sessionSeconds}`,
+            "Set-Cookie": `${sessionCookieName}=${token}; Path=/api; HttpOnly; SameSite=Strict; Max-Age=${sessionSeconds}${remoteSession ? "; Secure" : ""}`,
           },
         )
       }
